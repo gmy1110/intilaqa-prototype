@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>Intilaqa — إنطلاقة | Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#E8ECE6;font-family:'Poppins',system-ui,sans-serif;height:100%;overflow-x:hidden;}
+  *{box-sizing:border-box;}
+  #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;color:#7C8A82;}
+  #loading .dot{width:34px;height:34px;border-radius:50%;background:#26443A;position:relative;animation:spin 1s linear infinite;}
+  #loading .dot::after{content:"";position:absolute;top:3px;left:3px;width:10px;height:10px;border-radius:50%;background:#C7A24C;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #err{display:none;padding:24px;max-width:640px;margin:40px auto;background:#fff;border:1px solid #C4553B;border-radius:14px;color:#1B241F;font-size:14px;white-space:pre-wrap;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="loading"><div class="dot"></div><div>Loading Intilaqa prototype…</div></div>
+<pre id="err"></pre>
+<script>
+  window.__err=function(m){var l=document.getElementById('loading');if(l)l.style.display='none';var e=document.getElementById('err');e.style.display='block';e.textContent='Could not start:\n\n'+m;};
+  window.addEventListener('error',function(ev){if(ev&&ev.message)window.__err(ev.message);});
+</script>
+<script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<script type="text/babel" data-presets="react">
+try {
+  const { useState } = React;
+
+
+
+// ============================================================
+// INTILAQA — إنطلاقة | Prototype v3
+// Redesigned to match the new visual language:
+// warm off-white ground, deep forest greens, sand-gold accent,
+// bottom tab bar navigation, bilingual EN/AR (RTL).
+// ============================================================
+
+const C = {
+  forest: "#26443A",     // deep forest — hero panels, filled dots, highlight card
+  forestDk: "#1E3730",
+  pine: "#3A5A4E",
+  sage: "#8AA398",
+  sageLt: "#E7EDE8",     // sage chip bg
+  ink: "#1B241F",        // near-black text
+  mute: "#7C8A82",       // muted grey-green text
+  gold: "#C7A24C",       // sand-gold accent
+  goldSoft: "#F1E4C6",   // soft gold tag bg
+  goldText: "#B08A2E",
+  paper: "#F5F3EC",      // warm off-white app ground
+  card: "#FFFFFF",
+  line: "#E7E4DA",
+  lineSoft: "#EFEDE4",
+};
+
+const T = {
+  en: {
+    dir: "ltr", flag: "EN", alt: "عربي",
+    tabs: { journey: "Journey", launch: "Launch", operate: "Operate", profile: "Profile" },
+    promise: "We read the regulations so you can build the business.",
+    // onboarding
+    onbKicker: "STEP 1 OF 3",
+    onbTitle: "Where are you on the journey?",
+    onbSub: "Tap the stage that fits today.",
+    onbCards: [
+      { icon: "bulb", title: "I have an idea", sub: "Test it before you spend.", free: true, sel: true },
+      { icon: "home", title: "I'm ready to register", sub: "Five portals, one guided path.", portals: ["MISA", "MoC", "ZATCA"], plus: "+2" },
+      { icon: "chart", title: "I'm already operating", sub: "Invoicing, customers, payroll." },
+    ],
+    // journey
+    welcome: "Welcome back, Nouf",
+    journeyTitle: "Your journey",
+    stages: [
+      { key: "ideate", label: "Ideate", tag: "Free", tagType: "sage", desc: "Validate the idea before you spend a riyal.", status: "Completed · Score 74", state: "done", go: "ideate" },
+      { key: "launch", label: "Launch", tag: "SAR 499–999", tagType: "dark", desc: "Register across MISA, MoC, ZATCA, GOSI and Qiwa.", progress: [2, 5], state: "current", go: "launch" },
+      { key: "operate", label: "Operate", tag: "SAR 149–299/mo", tagType: "sage", desc: "Invoicing, customers and payroll in one place.", state: "next", go: "operate" },
+      { key: "grow", label: "Grow", tag: "Soon", tagType: "gold", desc: "Funding readiness and expansion.", state: "locked", go: null },
+    ],
+    // ideate validation
+    ideateHdr: "Idea validation",
+    scoreVal: "74", scoreOf: "out of 100",
+    scoreVerdict: "PROMISING", scoreLine1: "Worth building.", scoreLine2: "Fix pricing first.",
+    checkedTitle: "What we checked", checkedCount: "6 of 6",
+    checks: [
+      { label: "Problem is real and frequent", score: "18/20", ok: true },
+      { label: "Market size in KSA", score: "15/20", ok: true },
+      { label: "Regulatory path is clear", score: "17/20", ok: true },
+      { label: "Willingness to pay", score: "9/20", ok: false },
+      { label: "Founder–market fit", score: "15/20", ok: true },
+    ],
+    continueToLaunch: "Continue to Launch",
+    downloadReport: "Download the full report",
+    seeMapper: "See Vision 2030 matches",
+    // mapper
+    mapperHdr: "Opportunity mapper",
+    mapperTitle: "Vision 2030 matches",
+    mapperSub: "Your idea mapped to national programs.",
+    mapperIdea: "Idea: On-demand home maintenance marketplace",
+    matches: [
+      { prog: "Monsha'at — SME growth track", sector: "Services", fit: "High", note: "Digitization grants for service SMEs" },
+      { prog: "Quality of Life Program", sector: "Local services", fit: "High", note: "Household services expansion goal" },
+      { prog: "Kafalah loan guarantee", sector: "Financing", fit: "Medium", note: "Backs early-stage working capital" },
+      { prog: "Human Capability Development", sector: "Jobs", fit: "Medium", note: "Saudization of technician roles" },
+    ],
+    fit: "Fit",
+    // launch navigator
+    launchHdr: "Launch navigator",
+    portalsCount: "2 of 5 portals", daysLeft: "~12 days left",
+    steps: [
+      { portal: "MISA", sub: "Investment licence issued", state: "done" },
+      { portal: "Ministry of Commerce", sub: "CR 4030******", state: "done" },
+      { portal: "ZATCA", sub: "VAT registration · in review", state: "current",
+        subtasks: [{ t: "Documents submitted · 14 Aug", done: true }, { t: "Certificate issued", done: false }],
+        action: "Upload bank letter" },
+      { portal: "GOSI", sub: "Social insurance registration", state: "upcoming" },
+      { portal: "Qiwa", sub: "Labour file & Saudization band", state: "upcoming" },
+    ],
+    stDone: "Done", stCurrent: "Current", stUpcoming: "Upcoming",
+    needPro: "Need a licensed professional?", openMarket: "Marketplace",
+    seeConnect: "Funding & accelerator matches",
+    // marketplace
+    marketHdr: "Partner marketplace",
+    marketSub: "Vetted law firms & PROs — used only when the law requires it.",
+    partners: [
+      { name: "Al-Rushd Legal", type: "Law firm", sla: "2-day response", price: "from SAR 350" },
+      { name: "Tamkeen PRO Services", type: "PRO agent", sla: "1-day response", price: "from SAR 200" },
+      { name: "Diwan Corporate", type: "Law firm", sla: "2-day response", price: "from SAR 500" },
+    ],
+    vetted: "Vetted", sla: "SLA", quote: "Request quote",
+    // connect
+    connectHdr: "Intilaqa Connect",
+    connectSub: "Accelerators, funds & competitions matched to your readiness.",
+    connectMatches: [
+      { name: "Monsha'at digitization program", type: "Program", deadline: "12 days", ready: "Ready to apply", hi: true },
+      { name: "Flat6Labs Riyadh — Cycle 9", type: "Accelerator", deadline: "26 days", ready: "1 item missing", hi: false },
+      { name: "SVC-backed seed fund", type: "Fund", deadline: "Rolling", ready: "Needs traction data", hi: false },
+    ],
+    closesIn: "Closes in", readiness: "Readiness", apply: "Start application",
+    // operate
+    opHdr: "Operate",
+    opCompany: "Nafath Studio · CR 4030",
+    opStatus: "Everything is current",
+    tiles: [
+      { t: "E-invoicing", s: "12 sent this month", icon: "receipt", go: "invoice" },
+      { t: "Customers", s: "38 active", icon: "users", go: null },
+      { t: "Team", s: "6 · payroll on 27th", icon: "bag", go: null },
+      { t: "Compliance", s: "VAT due in 9 days", icon: "shield", warn: true, go: null },
+    ],
+    recent: "Recent",
+    recentItems: [
+      { init: "AB", t: "Invoice #0142 paid", s: "Arabian Bites · today", v: "SAR 8,400" },
+      { init: "MK", t: "New customer added", s: "Manara Kitchens · yesterday", v: "CRM" },
+    ],
+    // invoice
+    invHdr: "New e-invoice",
+    invSub: "ZATCA-compliant. Issued in minutes.",
+    invFields: [
+      { k: "Customer", v: "Noura Interiors LLC" },
+      { k: "VAT number", v: "3•• ••• •••••• 003" },
+      { k: "Item", v: "Home maintenance — monthly" },
+      { k: "Amount", v: "SAR 1,200.00" },
+      { k: "VAT (15%)", v: "SAR 180.00" },
+    ],
+    invTotal: "Total due", invTotalV: "SAR 1,380.00",
+    invCompliant: "ZATCA e-invoice · QR + hash included",
+    issue: "Issue invoice",
+    // pricing
+    prHdr: "Plans",
+    prTitle: "Pay for the stage you're in",
+    prSub: "No bundles. Move up when you're ready.",
+    prFree: { name: "Ideate", sub: "Validation score, market brief", price: "Free" },
+    prLaunch: { name: "Launch", sub: "One-time, per company", cur: "SAR", price: "499", range: "–999",
+      badge: "MOST CHOSEN", feats: ["All 5 portals, guided", "Documents prepared for you", "Human review before filing"], cta: "Choose Launch" },
+    prOperate: { name: "Operate", sub: "Invoicing, CRM, HR, compliance", price: "149–299", per: "SAR / month" },
+    prFoot: "Government fees are billed separately at cost.",
+  },
+  ar: {
+    dir: "rtl", flag: "عربي", alt: "EN",
+    tabs: { journey: "الرحلة", launch: "التأسيس", operate: "التشغيل", profile: "الحساب" },
+    promise: "نقرأ الأنظمة لتبني أنت العمل.",
+    onbKicker: "الخطوة ١ من ٣",
+    onbTitle: "أين أنت في الرحلة؟",
+    onbSub: "اختر المرحلة التي تناسبك اليوم.",
+    onbCards: [
+      { icon: "bulb", title: "لديّ فكرة", sub: "تحقّق منها قبل أن تنفق.", free: true, sel: true },
+      { icon: "home", title: "جاهز للتسجيل", sub: "خمس بوابات، مسار واحد موجّه.", portals: ["مِيسا", "التجارة", "زاتكا"], plus: "+٢" },
+      { icon: "chart", title: "أُدير عملي فعلاً", sub: "الفوترة والعملاء والرواتب." },
+    ],
+    welcome: "أهلاً بعودتك، نوف",
+    journeyTitle: "رحلتك",
+    stages: [
+      { key: "ideate", label: "الفكرة", tag: "مجاني", tagType: "sage", desc: "تحقّق من الفكرة قبل أن تنفق ريالاً.", status: "مكتمل · الدرجة ٧٤", state: "done", go: "ideate" },
+      { key: "launch", label: "التأسيس", tag: "٤٩٩–٩٩٩ ريال", tagType: "dark", desc: "سجّل عبر مِيسا والتجارة وزاتكا والتأمينات وقوى.", progress: [2, 5], state: "current", go: "launch" },
+      { key: "operate", label: "التشغيل", tag: "١٤٩–٢٩٩ ريال/شهر", tagType: "sage", desc: "الفوترة والعملاء والرواتب في مكان واحد.", state: "next", go: "operate" },
+      { key: "grow", label: "النمو", tag: "قريباً", tagType: "gold", desc: "جاهزية التمويل والتوسّع.", state: "locked", go: null },
+    ],
+    ideateHdr: "تحقّق الفكرة",
+    scoreVal: "٧٤", scoreOf: "من ١٠٠",
+    scoreVerdict: "واعدة", scoreLine1: "تستحق البناء.", scoreLine2: "اضبط التسعير أولاً.",
+    checkedTitle: "ما تحقّقنا منه", checkedCount: "٦ من ٦",
+    checks: [
+      { label: "المشكلة حقيقية ومتكررة", score: "١٨/٢٠", ok: true },
+      { label: "حجم السوق في السعودية", score: "١٥/٢٠", ok: true },
+      { label: "المسار التنظيمي واضح", score: "١٧/٢٠", ok: true },
+      { label: "الاستعداد للدفع", score: "٩/٢٠", ok: false },
+      { label: "ملاءمة المؤسس للسوق", score: "١٥/٢٠", ok: true },
+    ],
+    continueToLaunch: "المتابعة إلى التأسيس",
+    downloadReport: "تحميل التقرير الكامل",
+    seeMapper: "شاهد تطابقات رؤية ٢٠٣٠",
+    mapperHdr: "مُخطِّط الفرص",
+    mapperTitle: "تطابقات رؤية ٢٠٣٠",
+    mapperSub: "فكرتك مرتبطة بالبرامج الوطنية.",
+    mapperIdea: "الفكرة: سوق صيانة منزلية عند الطلب",
+    matches: [
+      { prog: "منشآت — مسار نمو المنشآت", sector: "الخدمات", fit: "عالي", note: "منح رقمنة لمنشآت الخدمات" },
+      { prog: "برنامج جودة الحياة", sector: "خدمات محلية", fit: "عالي", note: "توسّع الخدمات المنزلية" },
+      { prog: "ضمان كفالة", sector: "التمويل", fit: "متوسط", note: "يدعم رأس المال العامل المبكر" },
+      { prog: "تنمية القدرات البشرية", sector: "الوظائف", fit: "متوسط", note: "سعودة وظائف الفنيين" },
+    ],
+    fit: "الملاءمة",
+    launchHdr: "مرشد التأسيس",
+    portalsCount: "٢ من ٥ بوابات", daysLeft: "≈١٢ يوماً متبقية",
+    steps: [
+      { portal: "مِيسا", sub: "صدر ترخيص الاستثمار", state: "done" },
+      { portal: "وزارة التجارة", sub: "س.ت ٤٠٣٠******", state: "done" },
+      { portal: "زاتكا", sub: "التسجيل الضريبي · قيد المراجعة", state: "current",
+        subtasks: [{ t: "المستندات مُرسلة · ١٤ أغسطس", done: true }, { t: "صدور الشهادة", done: false }],
+        action: "رفع خطاب البنك" },
+      { portal: "التأمينات", sub: "تسجيل التأمينات الاجتماعية", state: "upcoming" },
+      { portal: "قوى", sub: "ملف العمل ونطاق السعودة", state: "upcoming" },
+    ],
+    stDone: "مكتمل", stCurrent: "الحالي", stUpcoming: "قادم",
+    needPro: "تحتاج مختصاً مرخّصاً؟", openMarket: "السوق",
+    seeConnect: "تطابقات التمويل والمسرّعات",
+    marketHdr: "سوق الشركاء",
+    marketSub: "مكاتب محاماة ومعقّبون موثّقون — تُستخدم فقط عند لزوم النظام.",
+    partners: [
+      { name: "الرشد للمحاماة", type: "مكتب محاماة", sla: "رد خلال يومين", price: "من ٣٥٠ ريال" },
+      { name: "تمكين للتعقيب", type: "معقّب", sla: "رد خلال يوم", price: "من ٢٠٠ ريال" },
+      { name: "ديوان للشركات", type: "مكتب محاماة", sla: "رد خلال يومين", price: "من ٥٠٠ ريال" },
+    ],
+    vetted: "موثّق", sla: "اتفاقية", quote: "اطلب عرض سعر",
+    connectHdr: "إنطلاقة كونكت",
+    connectSub: "مسرّعات وصناديق ومسابقات مطابقة لجاهزيتك.",
+    connectMatches: [
+      { name: "برنامج منشآت للرقمنة", type: "برنامج", deadline: "١٢ يوماً", ready: "جاهز للتقديم", hi: true },
+      { name: "فلات٦لابس الرياض — الدورة ٩", type: "مسرّعة", deadline: "٢٦ يوماً", ready: "ينقص عنصر", hi: false },
+      { name: "صندوق بذرة مدعوم من SVC", type: "صندوق", deadline: "مفتوح", ready: "يحتاج بيانات نمو", hi: false },
+    ],
+    closesIn: "يُغلق خلال", readiness: "الجاهزية", apply: "ابدأ التقديم",
+    opHdr: "التشغيل",
+    opCompany: "استوديو نفاذ · س.ت ٤٠٣٠",
+    opStatus: "كل شيء محدّث",
+    tiles: [
+      { t: "الفوترة", s: "١٢ فاتورة هذا الشهر", icon: "receipt", go: "invoice" },
+      { t: "العملاء", s: "٣٨ نشِط", icon: "users", go: null },
+      { t: "الفريق", s: "٦ · الرواتب يوم ٢٧", icon: "bag", go: null },
+      { t: "الالتزام", s: "الضريبة خلال ٩ أيام", icon: "shield", warn: true, go: null },
+    ],
+    recent: "الأحدث",
+    recentItems: [
+      { init: "AB", t: "دُفعت الفاتورة ٠١٤٢#", s: "أربيان بايتس · اليوم", v: "٨٬٤٠٠ ريال" },
+      { init: "MK", t: "أُضيف عميل جديد", s: "مطابخ منارة · أمس", v: "العملاء" },
+    ],
+    invHdr: "فاتورة إلكترونية جديدة",
+    invSub: "متوافقة مع زاتكا. تُصدر في دقائق.",
+    invFields: [
+      { k: "العميل", v: "نورة للديكور" },
+      { k: "الرقم الضريبي", v: "٣•• ••• •••••• ٠٠٣" },
+      { k: "البند", v: "صيانة منزلية — شهري" },
+      { k: "المبلغ", v: "١٬٢٠٠٫٠٠ ريال" },
+      { k: "الضريبة (١٥٪)", v: "١٨٠٫٠٠ ريال" },
+    ],
+    invTotal: "الإجمالي المستحق", invTotalV: "١٬٣٨٠٫٠٠ ريال",
+    invCompliant: "فاتورة زاتكا · تتضمن رمز QR والبصمة",
+    issue: "إصدار الفاتورة",
+    prHdr: "الخطط",
+    prTitle: "ادفع للمرحلة التي أنت فيها",
+    prSub: "بلا باقات. ارتقِ عندما تكون جاهزاً.",
+    prFree: { name: "الفكرة", sub: "درجة التحقق، موجز السوق", price: "مجاني" },
+    prLaunch: { name: "التأسيس", sub: "مرة واحدة، لكل شركة", cur: "ريال", price: "٤٩٩", range: "–٩٩٩",
+      badge: "الأكثر اختياراً", feats: ["كل البوابات الخمس، موجّهة", "المستندات مُجهّزة لك", "مراجعة بشرية قبل التقديم"], cta: "اختر التأسيس" },
+    prOperate: { name: "التشغيل", sub: "الفوترة والعملاء والموارد والالتزام", price: "١٤٩–٢٩٩", per: "ريال / شهر" },
+    prFoot: "تُحتسب الرسوم الحكومية بشكل منفصل بسعر التكلفة.",
+  },
+};
+
+// ---- icons (simple stroke set) ----
+function Icon({ name, size = 22, color = C.forest, stroke = 2 }) {
+  const p = { fill: "none", stroke: color, strokeWidth: stroke, strokeLinecap: "round", strokeLinejoin: "round" };
+  const paths = {
+    bulb: <><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10c.7.7 1 1.3 1 2h6c0-.7.3-1.3 1-2a6 6 0 0 0-4-10Z" {...p} /></>,
+    home: <><path d="M4 11l8-6 8 6M6 10v9h12v-9" {...p} /></>,
+    chart: <><path d="M5 20V9M12 20V4M19 20v-7" {...p} /></>,
+    receipt: <><path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z M9 8h6M9 12h6" {...p} /></>,
+    users: <><circle cx="9" cy="8" r="3" {...p} /><path d="M4 20a5 5 0 0 1 10 0M16 6a3 3 0 0 1 0 6M15 20a5 5 0 0 0-1-3" {...p} /></>,
+    bag: <><path d="M6 8h12l-1 12H7L6 8Z M9 8V6a3 3 0 0 1 6 0v2" {...p} /></>,
+    shield: <><path d="M12 3l7 3v5c0 4-3 7-7 8-4-1-7-4-7-8V6l7-3Z" {...p} /><path d="M9 12l2 2 4-4" {...p} /></>,
+    journey: <><path d="M6 20c4 0 5-9 11-13" {...p} stroke={color} /><circle cx="18" cy="6" r="1.6" fill={color} stroke="none" /></>,
+    launchNav: <><path d="M5 11l7-6 7 6M7 10v9h10v-9" {...p} /></>,
+    grid: <><rect x="4" y="4" width="7" height="7" rx="1.5" {...p} /><rect x="13" y="4" width="7" height="7" rx="1.5" {...p} /><rect x="4" y="13" width="7" height="7" rx="1.5" {...p} /><rect x="13" y="13" width="7" height="7" rx="1.5" {...p} /></>,
+    profile: <><circle cx="12" cy="8" r="3.5" {...p} /><path d="M5 20a7 7 0 0 1 14 0" {...p} /></>,
+    check: <><path d="M5 12l4 4 10-10" {...p} stroke="#fff" strokeWidth="2.4" /></>,
+    bang: <><path d="M12 7v6M12 16v.5" {...p} stroke={C.goldText} /></>,
+  };
+  return <svg width={size} height={size} viewBox="0 0 24 24">{paths[name]}</svg>;
+}
+
+function Logo({ light }) {
+  return (
+    <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+      <path d="M7 24 C 12 24, 13 11, 25 8" stroke={C.gold} strokeWidth="2.6" strokeLinecap="round" fill="none" />
+      <circle cx="24" cy="8" r="2.4" fill={light ? "#fff" : C.forest} />
+    </svg>
+  );
+}
+
+function LangToggle({ t, lang, setLang, light }) {
+  return (
+    <div onClick={() => setLang(lang === "en" ? "ar" : "en")}
+      style={{ display: "flex", alignItems: "center", background: light ? "rgba(255,255,255,.12)" : C.card,
+        border: `1px solid ${light ? "rgba(255,255,255,.25)" : C.line}`, borderRadius: 22, padding: 3, cursor: "pointer", userSelect: "none" }}>
+      <span style={{ background: "#fff", color: C.ink, borderRadius: 18, padding: "5px 12px", fontSize: 12.5, fontWeight: 700 }}>{lang === "en" ? "EN" : "عربي"}</span>
+      <span style={{ color: light ? "rgba(255,255,255,.7)" : C.mute, padding: "5px 12px", fontSize: 12.5, fontWeight: 600 }}>{lang === "en" ? "عربي" : "EN"}</span>
+    </div>
+  );
+}
+
+function StatusBar({ light }) {
+  const col = light ? "#fff" : C.ink;
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 22px 0" }}>
+      <span style={{ fontSize: 15, fontWeight: 700, color: col }}>9:41</span>
+      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+        <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill={col}/><rect x="5" y="4" width="3" height="8" rx="1" fill={col}/><rect x="10" y="1" width="3" height="11" rx="1" fill={col}/></svg>
+        <svg width="26" height="13" viewBox="0 0 26 13"><rect x="1" y="1" width="21" height="11" rx="3" fill="none" stroke={col} strokeWidth="1.4"/><rect x="3" y="3" width="16" height="7" rx="1.5" fill={col}/><rect x="23" y="4" width="2" height="5" rx="1" fill={col}/></svg>
+      </div>
+    </div>
+  );
+}
+
+function Phone({ children, dir, dark }) {
+  return (
+    <div className="intilaqa-phone" style={{ background: dark ? C.forest : C.paper,
+      boxShadow: "0 30px 70px rgba(20,40,30,.30)", overflow: "hidden", position: "relative",
+      direction: dir, fontFamily: dir === "rtl" ? "'Noto Kufi Arabic', system-ui, sans-serif" : "'Poppins','Segoe UI',system-ui,sans-serif" }}>
+      {children}
+    </div>
+  );
+}
+
+// ---------- top header (light screens) ----------
+function Header({ t, lang, setLang, title, onBack }) {
+  return (
+    <div style={{ background: C.paper, flexShrink: 0 }}>
+      <StatusBar />
+      <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 20px 14px", borderBottom: `1px solid ${C.lineSoft}` }}>
+        {onBack ? (
+          <button onClick={onBack} style={{ width: 40, height: 40, borderRadius: 13, background: C.sageLt, border: "none", cursor: "pointer", display: "grid", placeItems: "center" }}>
+            <span style={{ fontSize: 18, color: C.ink }}>{t.dir === "rtl" ? "›" : "‹"}</span>
+          </button>
+        ) : <Logo />}
+        <div style={{ flex: 1, fontSize: 18, fontWeight: 700, color: C.ink }}>{title}</div>
+        <LangToggle t={t} lang={lang} setLang={setLang} />
+      </div>
+    </div>
+  );
+}
+
+const Scroll = ({ children }) => <div style={{ flex: 1, minHeight: 0, overflowY: "auto", overflowX: "hidden", padding: "18px 20px 24px" }}>{children}</div>;
+const ScrollDark = ({ children }) => <div style={{ flex: 1, minHeight: 0, overflowY: "auto", overflowX: "hidden" }}>{children}</div>;
+
+// ---------- 01 Onboarding (dark hero) ----------
+function Onboarding({ t, lang, setLang, go }) {
+  return (
+    <ScrollDark>
+      <div style={{ background: C.forest, position: "relative", paddingBottom: 26, overflow: "hidden" }}>
+        {/* concentric arcs */}
+        <svg style={{ position: "absolute", top: -30, right: -60, opacity: .5 }} width="230" height="230" viewBox="0 0 260 260" fill="none">
+          <circle cx="200" cy="60" r="120" stroke={C.gold} strokeWidth="1" opacity=".35" />
+          <circle cx="200" cy="60" r="80" stroke={C.gold} strokeWidth="1" opacity=".3" />
+        </svg>
+        <StatusBar light />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 22px 0" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+            <Logo light /><span style={{ color: "#fff", fontWeight: 700, fontSize: 18 }}>{lang === "ar" ? "إنطلاقة" : "Intilaqa"}</span>
+          </div>
+          <LangToggle t={t} lang={lang} setLang={setLang} light />
+        </div>
+        <div style={{ padding: "20px 22px 0" }}>
+          <div style={{ color: C.gold, fontWeight: 700, fontSize: 12, letterSpacing: 1.5 }}>{t.onbKicker}</div>
+          <h1 style={{ color: "#fff", fontSize: 26, lineHeight: 1.15, margin: "8px 0 8px", fontWeight: 700 }}>{t.onbTitle}</h1>
+          <p style={{ color: "rgba(255,255,255,.72)", fontSize: 14.5, lineHeight: 1.4, margin: 0 }}>{t.onbSub}</p>
+        </div>
+      </div>
+      <div style={{ background: C.paper, borderRadius: "24px 24px 0 0", marginTop: -18, padding: "18px 16px 16px" }}>
+        {t.onbCards.map((c, i) => (
+          <button key={i} onClick={() => go("journey")}
+            style={{ width: "100%", textAlign: t.dir === "rtl" ? "right" : "left", background: C.card, border: `1.5px solid ${c.sel ? C.forest : "transparent"}`,
+              borderRadius: 18, padding: 15, marginBottom: 11, cursor: "pointer", boxShadow: "0 4px 16px rgba(30,50,40,.06)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
+              <div style={{ width: 46, height: 46, borderRadius: 13, background: c.sel ? C.forest : C.sageLt, display: "grid", placeItems: "center", flexShrink: 0 }}>
+                <Icon name={c.icon} size={20} color={c.sel ? C.gold : C.pine} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 16.5, fontWeight: 700, color: C.ink }}>{c.title}</span>
+                  {c.free && <span style={{ background: C.goldSoft, color: C.goldText, fontSize: 11, fontWeight: 700, padding: "3px 9px", borderRadius: 20 }}>{lang === "ar" ? "مجاني" : "Free"}</span>}
+                </div>
+                <div style={{ fontSize: 13.5, color: C.mute, marginTop: 2, lineHeight: 1.35 }}>{c.sub}</div>
+                {c.portals && (
+                  <div style={{ display: "flex", gap: 6, marginTop: 8, alignItems: "center", flexWrap: "wrap" }}>
+                    {c.portals.map(p => <span key={p} style={{ background: C.sageLt, color: C.pine, fontSize: 11.5, fontWeight: 600, padding: "3px 9px", borderRadius: 7 }}>{p}</span>)}
+                    <span style={{ color: C.mute, fontSize: 12 }}>{c.plus}</span>
+                  </div>
+                )}
+              </div>
+              <div style={{ width: 26, height: 26, borderRadius: "50%", background: c.sel ? C.forest : "transparent", border: c.sel ? "none" : `2px solid ${C.line}`, display: "grid", placeItems: "center", flexShrink: 0 }}>
+                {c.sel && <Icon name="check" size={15} />}
+              </div>
+            </div>
+          </button>
+        ))}
+        <div style={{ display: "flex", alignItems: "center", gap: 11, background: C.sageLt, borderRadius: 15, padding: "12px 14px", marginTop: 2 }}>
+          <Icon name="shield" size={19} color={C.pine} />
+          <span style={{ fontSize: 13, color: C.pine, lineHeight: 1.35 }}>{t.promise}</span>
+        </div>
+      </div>
+    </ScrollDark>
+  );
+}
+
+// ---------- tab-based screens ----------
+function TabScreen({ t, lang, setLang, title, onBack, tab, setTab, go, children }) {
+  return (
+    <>
+      <Header t={t} lang={lang} setLang={setLang} title={title} onBack={onBack} />
+      <Scroll>{children}</Scroll>
+      <TabBar t={t} tab={tab} setTab={setTab} go={go} />
+    </>
+  );
+}
+
+function TabBar({ t, tab, setTab, go }) {
+  const items = [
+    { key: "journey", icon: "journey", label: t.tabs.journey, screen: "journey" },
+    { key: "launch", icon: "launchNav", label: t.tabs.launch, screen: "launch" },
+    { key: "operate", icon: "grid", label: t.tabs.operate, screen: "operate" },
+    { key: "profile", icon: "profile", label: t.tabs.profile, screen: "profile" },
+  ];
+  return (
+    <div style={{ flexShrink: 0, height: 74, background: C.card, borderTop: `1px solid ${C.lineSoft}`,
+      display: "flex", justifyContent: "space-around", alignItems: "center", paddingBottom: 6 }}>
+      {items.map(it => {
+        const active = tab === it.key;
+        return (
+          <button key={it.key} onClick={() => go(it.screen)} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: 70 }}>
+            <Icon name={it.icon} size={23} color={active ? C.forest : C.mute} stroke={active ? 2.2 : 1.8} />
+            <span style={{ fontSize: 11.5, fontWeight: active ? 700 : 500, color: active ? C.ink : C.mute }}>{it.label}</span>
+            {active && <div style={{ width: 18, height: 3, borderRadius: 2, background: C.forest, marginTop: -1 }} />}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ---------- 02 Journey ----------
+function Journey({ t, go }) {
+  return (
+    <>
+      <div style={{ color: C.mute, fontSize: 15, marginBottom: 2 }}>{t.welcome}</div>
+      <h1 style={{ fontSize: 28, fontWeight: 700, color: C.ink, margin: "0 0 20px" }}>{t.journeyTitle}</h1>
+      <div style={{ position: "relative" }}>
+        <div style={{ position: "absolute", [t.dir === "rtl" ? "right" : "left"]: 21, top: 24, bottom: 24, width: 2.5, background: C.line }} />
+        {t.stages.map((s, i) => {
+          const dotFill = s.state === "done" ? C.forest : s.state === "current" ? "#fff" : "#fff";
+          const dotBorder = s.state === "locked" ? `2px dashed ${C.line}` : s.state === "next" ? `2px solid ${C.line}` : `2.5px solid ${C.forest}`;
+          return (
+            <div key={s.key} style={{ display: "flex", gap: 16, marginBottom: 16, position: "relative" }}>
+              <div style={{ width: 44, flexShrink: 0, display: "flex", justifyContent: "center", paddingTop: 22 }}>
+                <div style={{ width: 30, height: 30, borderRadius: "50%", background: dotFill, border: dotBorder, display: "grid", placeItems: "center", zIndex: 2 }}>
+                  {s.state === "done" && <Icon name="check" size={15} />}
+                  {s.state === "current" && <div style={{ width: 10, height: 10, borderRadius: "50%", background: C.forest }} />}
+                </div>
+              </div>
+              <button onClick={() => s.go && go(s.go)} disabled={!s.go}
+                style={{ flex: 1, textAlign: t.dir === "rtl" ? "right" : "left", background: s.state === "locked" ? "rgba(255,255,255,.5)" : C.card,
+                  border: `1.5px solid ${s.state === "current" ? C.forest : "transparent"}`, borderRadius: 20, padding: 18, cursor: s.go ? "pointer" : "default",
+                  boxShadow: s.state === "locked" ? "none" : "0 6px 18px rgba(30,50,40,.06)", opacity: s.state === "locked" ? .7 : 1 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 7 }}>
+                  <span style={{ fontSize: 20, fontWeight: 700, color: s.state === "locked" ? C.mute : C.ink }}>{s.label}</span>
+                  <Tag type={s.tagType} text={s.tag} />
+                </div>
+                <div style={{ fontSize: 14, color: C.mute, lineHeight: 1.45 }}>{s.desc}</div>
+                {s.status && <div style={{ fontSize: 14, fontWeight: 700, color: C.ink, marginTop: 10 }}>{s.status}</div>}
+                {s.progress && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 14 }}>
+                    <div style={{ flex: 1, height: 8, background: C.lineSoft, borderRadius: 5, overflow: "hidden" }}>
+                      <div style={{ width: `${(s.progress[0] / s.progress[1]) * 100}%`, height: "100%", background: C.forest, borderRadius: 5 }} />
+                    </div>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: C.ink }}>{s.progress[0]} / {s.progress[1]}</span>
+                  </div>
+                )}
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
+function Tag({ type, text }) {
+  const styles = {
+    sage: { background: C.sageLt, color: C.pine },
+    dark: { background: C.forest, color: "#fff" },
+    gold: { background: C.goldSoft, color: C.goldText },
+  }[type] || { background: C.sageLt, color: C.pine };
+  return <span style={{ ...styles, fontSize: 12.5, fontWeight: 700, padding: "5px 12px", borderRadius: 20, whiteSpace: "nowrap" }}>{text}</span>;
+}
+
+// ---------- 03 Ideate validation ----------
+function Ideate({ t, go }) {
+  const val = 74, r = 52, circ = 2 * Math.PI * r;
+  return (
+    <>
+      <div style={{ background: C.forest, borderRadius: 24, padding: 22, display: "flex", alignItems: "center", gap: 20, marginBottom: 22 }}>
+        <div style={{ position: "relative", width: 120, height: 120, flexShrink: 0 }}>
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r={r} fill="none" stroke="rgba(255,255,255,.15)" strokeWidth="9" />
+            <circle cx="60" cy="60" r={r} fill="none" stroke={C.gold} strokeWidth="9" strokeLinecap="round"
+              strokeDasharray={circ} strokeDashoffset={circ * (1 - val / 100)} transform="rotate(-90 60 60)" />
+          </svg>
+          <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ fontSize: 34, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{t.scoreVal}</span>
+            <span style={{ fontSize: 11.5, color: "rgba(255,255,255,.6)", marginTop: 2 }}>{t.scoreOf}</span>
+          </div>
+        </div>
+        <div>
+          <div style={{ color: C.gold, fontWeight: 700, fontSize: 13, letterSpacing: 1 }}>{t.scoreVerdict}</div>
+          <div style={{ color: "#fff", fontSize: 21, fontWeight: 700, lineHeight: 1.25, marginTop: 6 }}>{t.scoreLine1}<br />{t.scoreLine2}</div>
+        </div>
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 12 }}>
+        <span style={{ fontSize: 19, fontWeight: 700, color: C.ink }}>{t.checkedTitle}</span>
+        <span style={{ fontSize: 13.5, color: C.mute }}>{t.checkedCount}</span>
+      </div>
+      <div style={{ background: C.card, borderRadius: 20, padding: "4px 16px", boxShadow: "0 6px 18px rgba(30,50,40,.05)", marginBottom: 20 }}>
+        {t.checks.map((c, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 13, padding: "15px 0", borderBottom: i < t.checks.length - 1 ? `1px solid ${C.lineSoft}` : "none" }}>
+            <div style={{ width: 26, height: 26, borderRadius: "50%", background: c.ok ? C.forest : C.goldSoft, display: "grid", placeItems: "center", flexShrink: 0 }}>
+              {c.ok ? <Icon name="check" size={14} /> : <Icon name="bang" size={16} />}
+            </div>
+            <span style={{ flex: 1, fontSize: 15.5, color: C.ink }}>{c.label}</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: c.ok ? C.pine : C.goldText }}>{c.score}</span>
+          </div>
+        ))}
+      </div>
+      <button onClick={() => go("launch")} style={{ width: "100%", background: C.forest, color: "#fff", border: "none", borderRadius: 18, padding: 17, fontSize: 16.5, fontWeight: 700, cursor: "pointer" }}>{t.continueToLaunch}</button>
+      <button onClick={() => go("mapper")} style={{ width: "100%", background: "none", color: C.mute, border: "none", padding: "16px 0 6px", fontSize: 14.5, fontWeight: 600, cursor: "pointer" }}>{t.seeMapper}</button>
+      <div style={{ textAlign: "center", color: C.mute, fontSize: 14, opacity: .8 }}>{t.downloadReport}</div>
+    </>
+  );
+}
+
+// ---------- Vision 2030 mapper ----------
+function Mapper({ t }) {
+  const isHigh = (f) => f === "High" || f === "عالي";
+  return (
+    <>
+      <h1 style={{ fontSize: 25, fontWeight: 700, color: C.ink, margin: "0 0 6px" }}>{t.mapperTitle}</h1>
+      <p style={{ color: C.mute, fontSize: 14.5, margin: "0 0 16px" }}>{t.mapperSub}</p>
+      <div style={{ background: C.forest, borderRadius: 16, padding: 15, color: "#fff", fontSize: 14, fontWeight: 600, marginBottom: 18 }}>{t.mapperIdea}</div>
+      {t.matches.map((m, i) => (
+        <div key={i} style={{ background: C.card, borderRadius: 18, padding: 17, marginBottom: 12, boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10, marginBottom: 8 }}>
+            <span style={{ fontSize: 16, fontWeight: 700, color: C.ink, flex: 1 }}>{m.prog}</span>
+            <span style={{ fontSize: 12, fontWeight: 700, padding: "4px 11px", borderRadius: 20, whiteSpace: "nowrap",
+              background: isHigh(m.fit) ? C.sageLt : C.goldSoft, color: isHigh(m.fit) ? C.pine : C.goldText }}>{t.fit}: {m.fit}</span>
+          </div>
+          <div style={{ color: C.mute, fontSize: 14, marginBottom: 11 }}>{m.note}</div>
+          <span style={{ fontSize: 12.5, color: C.pine, background: C.sageLt, padding: "5px 12px", borderRadius: 9, fontWeight: 600 }}>{m.sector}</span>
+        </div>
+      ))}
+    </>
+  );
+}
+
+// ---------- 04 Launch navigator ----------
+function Launch({ t, go }) {
+  return (
+    <>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 12 }}>
+        <span style={{ fontSize: 26, fontWeight: 700, color: C.ink }}>{t.portalsCount}</span>
+        <span style={{ fontSize: 14.5, color: C.mute }}>{t.daysLeft}</span>
+      </div>
+      <div style={{ height: 9, background: C.lineSoft, borderRadius: 6, overflow: "hidden", marginBottom: 22 }}>
+        <div style={{ width: "40%", height: "100%", background: C.forest, borderRadius: 6 }} />
+      </div>
+      {t.steps.map((s, i) => {
+        const cur = s.state === "current", done = s.state === "done";
+        return (
+          <div key={i} style={{ background: s.state === "upcoming" ? "rgba(255,255,255,.55)" : C.card,
+            border: `1.5px solid ${cur ? C.forest : "transparent"}`, borderRadius: 20, padding: 17, marginBottom: 12,
+            boxShadow: s.state === "upcoming" ? "none" : "0 6px 18px rgba(30,50,40,.05)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <div style={{ width: 34, height: 34, borderRadius: "50%", flexShrink: 0, display: "grid", placeItems: "center",
+                background: done ? C.forest : "transparent", border: done ? "none" : cur ? `2.5px solid ${C.forest}` : `2px solid ${C.line}` }}>
+                {done && <Icon name="check" size={16} />}
+                {cur && <div style={{ width: 11, height: 11, borderRadius: "50%", background: C.forest }} />}
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 16.5, fontWeight: 700, color: s.state === "upcoming" ? C.mute : C.ink }}>{s.portal}</div>
+                <div style={{ fontSize: 13.5, color: C.mute, marginTop: 1 }}>{s.sub}</div>
+              </div>
+              <span style={{ fontSize: 14, fontWeight: 700, color: done ? C.pine : cur ? "#fff" : C.mute,
+                background: cur ? C.forest : "transparent", padding: cur ? "5px 13px" : 0, borderRadius: 20 }}>
+                {done ? t.stDone : cur ? t.stCurrent : t.stUpcoming}
+              </span>
+            </div>
+            {cur && s.subtasks && (
+              <div style={{ marginTop: 14, paddingLeft: t.dir === "rtl" ? 0 : 48, paddingRight: t.dir === "rtl" ? 48 : 0 }}>
+                {s.subtasks.map((st, j) => (
+                  <div key={j} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: st.done ? C.forest : C.line }} />
+                    <span style={{ fontSize: 14.5, color: st.done ? C.ink : C.mute }}>{st.t}</span>
+                  </div>
+                ))}
+                <button style={{ width: "100%", background: C.forest, color: "#fff", border: "none", borderRadius: 15, padding: 15, fontSize: 16, fontWeight: 700, cursor: "pointer", marginTop: 10 }}>{s.action}</button>
+              </div>
+            )}
+          </div>
+        );
+      })}
+      <div style={{ background: C.card, border: `1.5px dashed ${C.sage}`, borderRadius: 18, padding: 15, marginTop: 6, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
+        <span style={{ fontSize: 14.5, fontWeight: 600, color: C.ink }}>{t.needPro}</span>
+        <button onClick={() => go("market")} style={{ background: C.sageLt, color: C.pine, border: "none", borderRadius: 11, padding: "9px 14px", fontSize: 13.5, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>{t.openMarket}</button>
+      </div>
+      <button onClick={() => go("connect")} style={{ width: "100%", background: C.sageLt, color: C.pine, border: "none", borderRadius: 15, padding: 15, fontSize: 15, fontWeight: 700, cursor: "pointer", marginTop: 12 }}>{t.seeConnect}</button>
+    </>
+  );
+}
+
+// ---------- Partner marketplace ----------
+function Market({ t }) {
+  return (
+    <>
+      <h1 style={{ fontSize: 25, fontWeight: 700, color: C.ink, margin: "0 0 6px" }}>{t.marketHdr}</h1>
+      <p style={{ color: C.mute, fontSize: 14.5, margin: "0 0 18px", lineHeight: 1.5 }}>{t.marketSub}</p>
+      {t.partners.map((p, i) => (
+        <div key={i} style={{ background: C.card, borderRadius: 20, padding: 18, marginBottom: 13, boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <div style={{ fontSize: 17, fontWeight: 700, color: C.ink }}>{p.name}</div>
+              <div style={{ fontSize: 13.5, color: C.mute, marginTop: 2 }}>{p.type}</div>
+            </div>
+            <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12.5, fontWeight: 700, color: C.pine, background: C.sageLt, padding: "5px 11px", borderRadius: 20 }}>
+              <Icon name="check" size={13} color="#fff" /> {t.vetted}</span>
+          </div>
+          <div style={{ display: "flex", gap: 9, margin: "13px 0", flexWrap: "wrap" }}>
+            <span style={{ fontSize: 13, color: C.ink, background: C.paper, border: `1px solid ${C.line}`, padding: "6px 12px", borderRadius: 10 }}>{t.sla}: {p.sla}</span>
+            <span style={{ fontSize: 13, color: C.goldText, background: C.goldSoft, padding: "6px 12px", borderRadius: 10, fontWeight: 700 }}>{p.price}</span>
+          </div>
+          <button style={{ width: "100%", background: C.sageLt, color: C.pine, border: "none", borderRadius: 13, padding: 13, fontSize: 14.5, fontWeight: 700, cursor: "pointer" }}>{t.quote}</button>
+        </div>
+      ))}
+    </>
+  );
+}
+
+// ---------- Connect ----------
+function Connect({ t }) {
+  return (
+    <>
+      <h1 style={{ fontSize: 25, fontWeight: 700, color: C.ink, margin: "0 0 6px" }}>{t.connectHdr}</h1>
+      <p style={{ color: C.mute, fontSize: 14.5, margin: "0 0 18px", lineHeight: 1.5 }}>{t.connectSub}</p>
+      {t.connectMatches.map((m, i) => (
+        <div key={i} style={{ background: m.hi ? C.forest : C.card, borderRadius: 20, padding: 18, marginBottom: 13, boxShadow: "0 6px 18px rgba(30,50,40,.06)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
+            <span style={{ fontSize: 16.5, fontWeight: 700, color: m.hi ? "#fff" : C.ink, flex: 1 }}>{m.name}</span>
+            <span style={{ fontSize: 12, fontWeight: 700, padding: "4px 11px", borderRadius: 20, whiteSpace: "nowrap",
+              background: m.hi ? "rgba(255,255,255,.15)" : C.sageLt, color: m.hi ? "#fff" : C.pine }}>{m.type}</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "16px 0" }}>
+            <div>
+              <div style={{ fontSize: 12, color: m.hi ? "rgba(255,255,255,.6)" : C.mute }}>{t.closesIn}</div>
+              <div style={{ fontSize: 17, fontWeight: 700, color: m.hi ? C.gold : C.ink }}>{m.deadline}</div>
+            </div>
+            <div style={{ textAlign: t.dir === "rtl" ? "left" : "right" }}>
+              <div style={{ fontSize: 12, color: m.hi ? "rgba(255,255,255,.6)" : C.mute }}>{t.readiness}</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: m.hi ? "rgba(255,255,255,.9)" : C.mute }}>{m.ready}</div>
+            </div>
+          </div>
+          <button style={{ width: "100%", background: m.hi ? C.gold : C.sageLt, color: m.hi ? C.forestDk : C.pine, border: "none", borderRadius: 13, padding: 14, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>{t.apply}</button>
+        </div>
+      ))}
+    </>
+  );
+}
+
+// ---------- 05 Operate ----------
+function Operate({ t, go }) {
+  return (
+    <>
+      <div style={{ color: C.mute, fontSize: 14.5, marginBottom: 3 }}>{t.opCompany}</div>
+      <h1 style={{ fontSize: 27, fontWeight: 700, color: C.ink, margin: "0 0 20px" }}>{t.opStatus}</h1>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 24 }}>
+        {t.tiles.map((tile, i) => (
+          <button key={i} onClick={() => tile.go && go(tile.go)}
+            style={{ textAlign: t.dir === "rtl" ? "right" : "left", background: C.card, border: "none", borderRadius: 20, padding: 17, height: 150,
+              display: "flex", flexDirection: "column", justifyContent: "space-between", cursor: tile.go ? "pointer" : "default", boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
+            <div style={{ width: 44, height: 44, borderRadius: 13, background: tile.warn ? C.goldSoft : C.sageLt, display: "grid", placeItems: "center" }}>
+              <Icon name={tile.icon} size={22} color={tile.warn ? C.goldText : C.pine} />
+            </div>
+            <div>
+              <div style={{ fontSize: 17, fontWeight: 700, color: C.ink }}>{tile.t}</div>
+              <div style={{ fontSize: 13.5, color: tile.warn ? C.goldText : C.mute, marginTop: 3, fontWeight: tile.warn ? 700 : 400 }}>{tile.s}</div>
+            </div>
+          </button>
+        ))}
+      </div>
+      <div style={{ fontSize: 19, fontWeight: 700, color: C.ink, marginBottom: 12 }}>{t.recent}</div>
+      <div style={{ background: C.card, borderRadius: 20, padding: "4px 16px", boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
+        {t.recentItems.map((r, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 13, padding: "15px 0", borderBottom: i < t.recentItems.length - 1 ? `1px solid ${C.lineSoft}` : "none" }}>
+            <div style={{ width: 40, height: 40, borderRadius: 11, background: C.sageLt, display: "grid", placeItems: "center", fontSize: 13, fontWeight: 700, color: C.pine, flexShrink: 0 }}>{r.init}</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 15.5, fontWeight: 600, color: C.ink }}>{r.t}</div>
+              <div style={{ fontSize: 13, color: C.mute, marginTop: 1 }}>{r.s}</div>
+            </div>
+            <span style={{ fontSize: 15, fontWeight: 700, color: C.ink }}>{r.v}</span>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+// ---------- E-invoice ----------
+function Invoice({ t }) {
+  return (
+    <>
+      <h1 style={{ fontSize: 24, fontWeight: 700, color: C.ink, margin: "0 0 6px" }}>{t.invHdr}</h1>
+      <p style={{ color: C.mute, fontSize: 14.5, margin: "0 0 18px" }}>{t.invSub}</p>
+      <div style={{ background: C.card, borderRadius: 20, padding: "6px 18px", boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
+        {t.invFields.map((f, i) => (
+          <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "14px 0", borderBottom: `1px solid ${C.lineSoft}` }}>
+            <span style={{ color: C.mute, fontSize: 14.5 }}>{f.k}</span>
+            <span style={{ color: C.ink, fontSize: 14.5, fontWeight: 600 }}>{f.v}</span>
+          </div>
+        ))}
+        <div style={{ display: "flex", justifyContent: "space-between", padding: "16px 0" }}>
+          <span style={{ color: C.ink, fontSize: 16.5, fontWeight: 700 }}>{t.invTotal}</span>
+          <span style={{ color: C.forest, fontSize: 20, fontWeight: 700 }}>{t.invTotalV}</span>
+        </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 13, background: C.sageLt, borderRadius: 16, padding: 15, marginTop: 14 }}>
+        <div style={{ width: 46, height: 46, borderRadius: 10, background: "#fff", display: "grid", placeItems: "center", flexShrink: 0 }}>
+          <svg width="30" height="30" viewBox="0 0 30 30">
+            {[...Array(49)].map((_, i) => { const x = i % 7, y = Math.floor(i / 7); return ((x * y + x + y) % 3 === 0) ? <rect key={i} x={x * 4 + 1} y={y * 4 + 1} width="3.4" height="3.4" fill={C.ink} /> : null; })}
+          </svg>
+        </div>
+        <span style={{ fontSize: 14, color: C.pine, fontWeight: 600, lineHeight: 1.4 }}>{t.invCompliant}</span>
+      </div>
+      <button style={{ width: "100%", background: C.forest, color: "#fff", border: "none", borderRadius: 18, padding: 17, fontSize: 16.5, fontWeight: 700, cursor: "pointer", marginTop: 18 }}>{t.issue}</button>
+    </>
+  );
+}
+
+// ---------- 06 Pricing ----------
+function Pricing({ t }) {
+  const L = t.prLaunch;
+  return (
+    <>
+      <h1 style={{ fontSize: 29, fontWeight: 700, color: C.ink, margin: "0 0 8px", lineHeight: 1.15 }}>{t.prTitle}</h1>
+      <p style={{ color: C.mute, fontSize: 15, margin: "0 0 20px" }}>{t.prSub}</p>
+      {/* Ideate */}
+      <div style={{ background: C.card, borderRadius: 20, padding: 18, marginBottom: 14, display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
+        <div>
+          <div style={{ fontSize: 19, fontWeight: 700, color: C.ink }}>{t.prFree.name}</div>
+          <div style={{ fontSize: 14, color: C.mute, marginTop: 2 }}>{t.prFree.sub}</div>
+        </div>
+        <span style={{ fontSize: 20, fontWeight: 700, color: C.forest }}>{t.prFree.price}</span>
+      </div>
+      {/* Launch highlighted */}
+      <div style={{ background: C.forest, borderRadius: 24, padding: 22, marginBottom: 14 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <div style={{ fontSize: 22, fontWeight: 700, color: "#fff" }}>{L.name}</div>
+            <div style={{ fontSize: 14, color: "rgba(255,255,255,.65)", marginTop: 3 }}>{L.sub}</div>
+          </div>
+          <span style={{ background: C.gold, color: C.forestDk, fontSize: 11.5, fontWeight: 700, padding: "6px 12px", borderRadius: 20, letterSpacing: .5 }}>{L.badge}</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 8, margin: "18px 0" }}>
+          <span style={{ fontSize: 16, fontWeight: 700, color: "rgba(255,255,255,.8)" }}>{L.cur}</span>
+          <span style={{ fontSize: 46, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{L.price}</span>
+          <span style={{ fontSize: 18, color: "rgba(255,255,255,.6)" }}>{L.range}</span>
+        </div>
+        <div style={{ borderTop: "1px solid rgba(255,255,255,.15)", paddingTop: 16 }}>
+          {L.feats.map((f, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 13 }}>
+              <Icon name="check" size={16} color={C.gold} />
+              <span style={{ fontSize: 15.5, color: "#fff" }}>{f}</span>
+            </div>
+          ))}
+        </div>
+        <button style={{ width: "100%", background: "#fff", color: C.forest, border: "none", borderRadius: 15, padding: 16, fontSize: 16.5, fontWeight: 700, cursor: "pointer", marginTop: 8 }}>{L.cta}</button>
+      </div>
+      {/* Operate */}
+      <div style={{ background: C.card, borderRadius: 20, padding: 18, marginBottom: 16, display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 19, fontWeight: 700, color: C.ink }}>{t.prOperate.name}</div>
+          <div style={{ fontSize: 13.5, color: C.mute, marginTop: 2 }}>{t.prOperate.sub}</div>
+        </div>
+        <div style={{ textAlign: t.dir === "rtl" ? "left" : "right" }}>
+          <div style={{ fontSize: 19, fontWeight: 700, color: C.ink }}>{t.prOperate.price}</div>
+          <div style={{ fontSize: 12.5, color: C.mute }}>{t.prOperate.per}</div>
+        </div>
+      </div>
+      <div style={{ textAlign: "center", color: C.mute, fontSize: 13.5, opacity: .85 }}>{t.prFoot}</div>
+    </>
+  );
+}
+
+// ---------- Profile (simple) ----------
+function Profile({ t, lang }) {
+  return (
+    <>
+      <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
+        <div style={{ width: 64, height: 64, borderRadius: 20, background: C.forest, display: "grid", placeItems: "center", color: C.gold, fontSize: 24, fontWeight: 700 }}>{lang === "ar" ? "ن" : "N"}</div>
+        <div>
+          <div style={{ fontSize: 21, fontWeight: 700, color: C.ink }}>{lang === "ar" ? "نوف العتيبي" : "Nouf Al-Otaibi"}</div>
+          <div style={{ fontSize: 14, color: C.mute }}>{lang === "ar" ? "استوديو نفاذ" : "Nafath Studio"}</div>
+        </div>
+      </div>
+      {[
+        lang === "ar" ? "بيانات الشركة" : "Company details",
+        lang === "ar" ? "الفواتير والاشتراك" : "Billing & subscription",
+        lang === "ar" ? "المستندات" : "Documents",
+        lang === "ar" ? "الإشعارات" : "Notifications",
+        lang === "ar" ? "المساعدة والدعم" : "Help & support",
+      ].map((it, i) => (
+        <div key={i} style={{ background: C.card, borderRadius: 16, padding: 17, marginBottom: 11, display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 4px 14px rgba(30,50,40,.04)" }}>
+          <span style={{ fontSize: 15.5, color: C.ink, fontWeight: 500 }}>{it}</span>
+          <span style={{ color: C.mute, fontSize: 18 }}>{t.dir === "rtl" ? "‹" : "›"}</span>
+        </div>
+      ))}
+    </>
+  );
+}
+
+function App() {
+  const [lang, setLang] = useState("en");
+  const [screen, setScreen] = useState("onboarding");
+  const t = T[lang];
+
+  // which bottom tab is active for a given screen
+  const tabForScreen = {
+    journey: "journey", ideate: "journey", mapper: "journey",
+    launch: "launch", market: "launch", connect: "launch",
+    operate: "operate", invoice: "operate",
+    profile: "profile",
+  };
+  const backMap = {
+    ideate: "journey", mapper: "ideate", market: "launch", connect: "launch", invoice: "operate",
+    pricing: "journey",
+  };
+
+  const go = (s) => setScreen(s);
+  const tab = tabForScreen[screen] || "journey";
+  const hdr = {
+    journey: null, ideate: t.ideateHdr, mapper: t.mapperHdr, launch: t.launchHdr,
+    market: t.marketHdr, connect: t.connectHdr, operate: t.opHdr, invoice: t.invHdr,
+    profile: t.tabs.profile, pricing: t.prHdr,
+  };
+  const showBack = ["ideate", "mapper", "market", "connect", "invoice", "pricing"].includes(screen);
+
+  const body = () => {
+    switch (screen) {
+      case "onboarding": return <Onboarding t={t} lang={lang} setLang={setLang} go={go} />;
+      case "journey": return <Journey t={t} go={go} />;
+      case "ideate": return <Ideate t={t} go={go} />;
+      case "mapper": return <Mapper t={t} />;
+      case "launch": return <Launch t={t} go={go} />;
+      case "market": return <Market t={t} />;
+      case "connect": return <Connect t={t} />;
+      case "operate": return <Operate t={t} go={go} />;
+      case "invoice": return <Invoice t={t} />;
+      case "profile": return <Profile t={t} lang={lang} />;
+      case "pricing": return <Pricing t={t} />;
+      default: return null;
+    }
+  };
+
+  return (
+    <div className="intilaqa-stage" style={{ background: "#E8ECE6" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap');
+        .intilaqa-stage{
+          min-height:100vh; min-height:100dvh;
+          display:flex; flex-direction:column; align-items:center;
+          padding:24px 14px; gap:14px;
+        }
+        .intilaqa-phone{
+          width:380px; max-width:100%;
+          height:800px; max-height:calc(100dvh - 120px);
+          border-radius:44px; border:11px solid #12201B;
+          flex-shrink:0;
+          overflow:hidden;
+        }
+        /* clean, thin scrollbars inside the phone */
+        .intilaqa-phone *::-webkit-scrollbar{ width:0px; height:0px; }
+        .intilaqa-phone *{ scrollbar-width:none; -ms-overflow-style:none; }
+        /* On real phones: fill the screen, hide the demo chrome */
+        @media (max-width:640px){
+          .intilaqa-stage{ padding:0; gap:0; background:#12201B; }
+          .intilaqa-phone{
+            width:100%; height:100dvh; max-height:100dvh;
+            border-radius:0; border:0;
+          }
+          .intilaqa-pills{ display:none !important; }
+        }
+      `}</style>
+
+      <Phone dir={t.dir} dark={screen === "onboarding"}>
+        <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+          {screen === "onboarding"
+            ? <Onboarding t={t} lang={lang} setLang={setLang} go={go} />
+            : (
+              <>
+                <Header t={t} lang={lang} setLang={setLang} title={hdr[screen] ?? ""} onBack={showBack ? () => go(backMap[screen] || "journey") : null} />
+                <Scroll>{body()}</Scroll>
+                <TabBar t={t} tab={tab} setTab={setScreen} go={go} />
+              </>
+            )}
+        </div>
+      </Phone>
+
+      {/* demo jump pills */}
+      <div className="intilaqa-pills" style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", maxWidth: 430, marginTop: 4 }}>
+        {[
+          ["onboarding", lang === "ar" ? "البداية" : "Start"],
+          ["journey", t.tabs.journey],
+          ["ideate", lang === "ar" ? "التحقق" : "Validate"],
+          ["mapper", lang === "ar" ? "المُخطِّط" : "Mapper"],
+          ["launch", t.tabs.launch],
+          ["market", lang === "ar" ? "السوق" : "Market"],
+          ["connect", "Connect"],
+          ["operate", t.tabs.operate],
+          ["invoice", lang === "ar" ? "الفوترة" : "Invoice"],
+          ["pricing", lang === "ar" ? "الأسعار" : "Pricing"],
+          ["profile", t.tabs.profile],
+        ].map(([k, label]) => (
+          <button key={k} onClick={() => setScreen(k)}
+            style={{ background: screen === k ? C.forest : "#fff", color: screen === k ? "#fff" : C.mute,
+              border: `1px solid ${screen === k ? C.forest : C.line}`, borderRadius: 20, padding: "7px 12px", fontSize: 11.5, fontWeight: 600, cursor: "pointer" }}>
+            {label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
+  const le=document.getElementById("loading"); if(le) le.style.display="none";
+  ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+} catch(e){ window.__err(e && e.stack ? e.stack : String(e)); }
+</script>
+<script>
+  setTimeout(function(){var r=document.getElementById('root');if(r&&r.children.length===0){var l=document.getElementById('loading');if(l&&l.style.display!=='none')window.__err('Scripts did not finish loading (CDN may be blocked).');}},6000);
+</script>
+</body>
+</html>
