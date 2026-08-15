@@ -34,55 +34,67 @@ try {
 
 
 // ============================================================
-// INTILAQA — إنطلاقة | Prototype v3
-// Redesigned to match the new visual language:
-// warm off-white ground, deep forest greens, sand-gold accent,
-// bottom tab bar navigation, bilingual EN/AR (RTL).
+// INTILAQA — إنطلاقة | Prototype v4 (fully interactive)
+// Fixed 460x960 canvas, uniform scaling. Session state:
+// persona routing, quiz→score, ZATCA completes, invoices increment,
+// quotes/applications/waitlist/VAT filing all respond.
 // ============================================================
 
 const C = {
-  forest: "#26443A",     // deep forest — hero panels, filled dots, highlight card
-  forestDk: "#1E3730",
-  pine: "#3A5A4E",
-  sage: "#8AA398",
-  sageLt: "#E7EDE8",     // sage chip bg
-  ink: "#1B241F",        // near-black text
-  mute: "#7C8A82",       // muted grey-green text
-  gold: "#C7A24C",       // sand-gold accent
-  goldSoft: "#F1E4C6",   // soft gold tag bg
-  goldText: "#B08A2E",
-  paper: "#F5F3EC",      // warm off-white app ground
-  card: "#FFFFFF",
-  line: "#E7E4DA",
-  lineSoft: "#EFEDE4",
+  forest: "#26443A", forestDk: "#1E3730", pine: "#3A5A4E", sage: "#8AA398",
+  sageLt: "#E7EDE8", ink: "#1B241F", mute: "#7C8A82",
+  gold: "#C7A24C", goldSoft: "#F1E4C6", goldText: "#B08A2E",
+  paper: "#F5F3EC", card: "#FFFFFF", line: "#E7E4DA", lineSoft: "#EFEDE4",
 };
+
+const AR_D = { "0": "٠", "1": "١", "2": "٢", "3": "٣", "4": "٤", "5": "٥", "6": "٦", "7": "٧", "8": "٨", "9": "٩" };
+const num = (n, lang) => lang === "ar" ? String(n).replace(/[0-9]/g, d => AR_D[d]) : String(n);
 
 const T = {
   en: {
-    dir: "ltr", flag: "EN", alt: "عربي",
+    dir: "ltr",
     tabs: { journey: "Journey", launch: "Launch", operate: "Operate", profile: "Profile" },
+    splash: [
+      { icon: "bulb", kicker: "IDEATE", title: "Welcome to Intilaqa", sub: "Validate your idea — free." },
+      { icon: "home", kicker: "LAUNCH", title: "Register in days, not months", sub: "Five portals, one guided path." },
+      { icon: "chart", kicker: "OPERATE & GROW", title: "Run it, compliant", sub: "Invoicing, payroll — then funding." },
+    ],
+    skip: "Skip", next: "Next", getStarted: "Get started",
     promise: "We read the regulations so you can build.",
-    // onboarding
     onbKicker: "STEP 1 OF 3",
     onbTitle: "Where are you on the journey?",
     onbSub: "Tap the stage that fits today.",
     onbCards: [
-      { icon: "bulb", title: "I have an idea", sub: "Test it before you spend.", free: true, sel: true },
-      { icon: "home", title: "I'm ready to register", sub: "Five portals, one guided path.", portals: ["MISA", "MoC", "ZATCA"], plus: "+2" },
-      { icon: "chart", title: "I'm already operating", sub: "Invoicing, customers, payroll." },
+      { id: "amal", icon: "bulb", title: "I have an idea", sub: "Test it before you spend.", free: true },
+      { id: "fahad", icon: "home", title: "I'm ready to register", sub: "Five portals, one guided path.", portals: ["MISA", "MoC", "ZATCA"], plus: "+2" },
+      { id: "ohoud", icon: "chart", title: "I'm already operating", sub: "Invoicing, customers, payroll." },
     ],
-    // journey
-    welcome: "Welcome back, Nouf",
+    welcome: { amal: "Welcome, Amal", fahad: "Welcome back, Fahad", ohoud: "Welcome back, Ohoud" },
     journeyTitle: "Your journey",
-    stages: [
-      { key: "ideate", label: "Ideate", tag: "Free", tagType: "sage", desc: "Validate before you spend.", status: "Completed · Score 74", state: "done", go: "ideate" },
-      { key: "launch", label: "Launch", tag: "SAR 499–999", tagType: "dark", desc: "Register across all 5 portals.", progress: [2, 5], state: "current", go: "launch" },
-      { key: "operate", label: "Operate", tag: "SAR 149–299/mo", tagType: "sage", desc: "Invoicing, customers, payroll.", state: "next", go: "operate" },
-      { key: "grow", label: "Grow", tag: "Soon", tagType: "gold", desc: "Funding and expansion.", state: "locked", go: null },
+    stageMeta: {
+      ideate: { label: "Ideate", tag: "Free", tagType: "sage", desc: "Validate before you spend." },
+      launch: { label: "Launch", tag: "SAR 499–999", tagType: "dark", desc: "Register across all 5 portals." },
+      operate: { label: "Operate", tag: "SAR 149–299/mo", tagType: "sage", desc: "Invoicing, customers, payroll." },
+      grow: { label: "Grow", tag: "Soon", tagType: "gold", desc: "Funding and expansion." },
+    },
+    ideateStatus: "Completed · Score 74",
+    startQuiz: "Start validation",
+    // quiz
+    quizHdr: "Quick validation",
+    quizQs: [
+      { q: "How often do people hit this problem?", opts: ["Rarely", "Monthly", "Weekly", "Daily"] },
+      { q: "How many customer interviews so far?", opts: ["None", "1–5", "6–15", "15+"] },
+      { q: "How big is the market in KSA?", opts: ["Niche", "One city", "National", "GCC-wide"] },
+      { q: "Would customers pay today?", opts: ["No", "Maybe", "Some said yes", "Pre-orders"] },
+      { q: "Vision 2030 alignment?", opts: ["Not sure", "Loosely", "Directly"] },
+      { q: "Your edge in this field?", opts: ["New to it", "Some experience", "Deep expertise"] },
     ],
-    // ideate validation
+    qOf: "of",
+    revealTitle: "Calculating your score…",
+    seeResults: "See results",
+    // ideate results
     ideateHdr: "Idea validation",
-    scoreVal: "74", scoreOf: "out of 100",
+    scoreOf: "out of 100",
     scoreVerdict: "PROMISING", scoreLine1: "Worth building.", scoreLine2: "Fix pricing first.",
     checkedTitle: "What we checked", checkedCount: "6 of 6",
     checks: [
@@ -97,40 +109,38 @@ const T = {
     seeMapper: "See Vision 2030 matches",
     // mapper
     mapperHdr: "Opportunity mapper",
-    mapperTitle: "Vision 2030 matches",
     mapperSub: "Your idea, mapped to programs.",
     mapperIdea: "On-demand home maintenance",
     matches: [
       { prog: "Monsha'at — SME growth track", sector: "Services", fit: "High", note: "Digitization grants for service SMEs" },
       { prog: "Quality of Life Program", sector: "Local services", fit: "High", note: "Household services expansion goal" },
-      { prog: "Kafalah loan guarantee", sector: "Financing", fit: "Medium", note: "Backs early-stage working capital" },
-      { prog: "Human Capability Development", sector: "Jobs", fit: "Medium", note: "Saudization of technician roles" },
+      { prog: "Kafalah loan guarantee", sector: "Financing", fit: "Medium", note: "Backs early working capital" },
+      { prog: "Human Capability Dev.", sector: "Jobs", fit: "Medium", note: "Saudization of technician roles" },
     ],
     fit: "Fit",
-    // launch navigator
+    // launch
     launchHdr: "Launch navigator",
-    portalsCount: "2 of 5 portals", daysLeft: "~12 days left",
+    portalsOf: "of 5 portals", daysLeft: "~12 days left", complete: "Complete ✓",
     steps: [
-      { portal: "MISA", sub: "Investment licence issued", state: "done" },
-      { portal: "Ministry of Commerce", sub: "CR 4030******", state: "done" },
-      { portal: "ZATCA", sub: "VAT registration · in review", state: "current",
+      { portal: "MISA", sub: "Investment licence issued" },
+      { portal: "Ministry of Commerce", sub: "CR 4030******" },
+      { portal: "ZATCA", sub: "VAT registration · in review", subDone: "VAT certificate issued",
         subtasks: [{ t: "Documents submitted · 14 Aug", done: true }, { t: "Certificate issued", done: false }],
         action: "Upload bank letter" },
-      { portal: "GOSI", sub: "Social insurance registration", state: "upcoming" },
-      { portal: "Qiwa", sub: "Labour file & Saudization band", state: "upcoming" },
+      { portal: "GOSI", sub: "Social insurance registration" },
+      { portal: "Qiwa", sub: "Labour file & Saudization band" },
     ],
     stDone: "Done", stCurrent: "Current", stUpcoming: "Upcoming",
     needPro: "Need a licensed professional?", openMarket: "Marketplace",
     seeConnect: "Funding & accelerator matches",
-    // marketplace
-    marketHdr: "Partner marketplace",
+    // market
     marketSub: "Vetted firms — only when required.",
     partners: [
       { name: "Al-Rushd Legal", type: "Law firm", sla: "2-day response", price: "from SAR 350" },
       { name: "Tamkeen PRO Services", type: "PRO agent", sla: "1-day response", price: "from SAR 200" },
       { name: "Diwan Corporate", type: "Law firm", sla: "2-day response", price: "from SAR 500" },
     ],
-    vetted: "Vetted", sla: "SLA", quote: "Request quote",
+    vetted: "Vetted", sla: "SLA", quote: "Request quote", quoteSent: "Request sent ✓",
     // connect
     connectHdr: "Intilaqa Connect",
     connectSub: "Matched to your readiness.",
@@ -139,21 +149,45 @@ const T = {
       { name: "Flat6Labs Riyadh — Cycle 9", type: "Accelerator", deadline: "26 days", ready: "1 item missing", hi: false },
       { name: "SVC-backed seed fund", type: "Fund", deadline: "Rolling", ready: "Needs traction data", hi: false },
     ],
-    closesIn: "Closes in", readiness: "Readiness", apply: "Start application",
+    closesIn: "Closes in", readiness: "Readiness", apply: "Start application", applied: "Application started ✓", inProgress: "In progress",
     // operate
     opHdr: "Operate",
     opCompany: "Nafath Studio · CR 4030",
     opStatus: "Everything is current",
-    tiles: [
-      { t: "E-invoicing", s: "12 sent this month", icon: "receipt", go: "invoice" },
-      { t: "Customers", s: "38 active", icon: "users", go: null },
-      { t: "Team", s: "6 · payroll on 27th", icon: "bag", go: null },
-      { t: "Compliance", s: "VAT due in 9 days", icon: "shield", warn: true, go: null },
-    ],
+    tileInv: "E-invoicing", tileInvS: "sent this month",
+    tileCust: "Customers", tileCustS: "38 active",
+    tileTeam: "Team", tileTeamS: "6 · payroll on 27th",
+    tileComp: "Compliance", tileCompWarn: "VAT due in 9 days", tileCompOk: "All clear",
     recent: "Recent",
     recentItems: [
       { init: "AB", t: "Invoice #0142 paid", s: "Arabian Bites · today", v: "SAR 8,400" },
       { init: "MK", t: "New customer added", s: "Manara Kitchens · yesterday", v: "CRM" },
+    ],
+    // customers
+    custHdr: "Customers", custSearch: "Search customers",
+    custRows: [
+      { init: "AB", name: "Arabian Bites", chip: "Active", amt: "SAR 8,400" },
+      { init: "MK", name: "Manara Kitchens", chip: "New", amt: "—" },
+      { init: "NI", name: "Noura Interiors", chip: "Active", amt: "SAR 1,380" },
+      { init: "WC", name: "Wafi Cafe", chip: "Overdue", amt: "SAR 2,150" },
+      { init: "SC", name: "Sadu Crafts", chip: "Active", amt: "SAR 640" },
+    ],
+    addCust: "+ Add customer",
+    // team
+    teamHdr: "Team", payrollNote: "Payroll runs on the 27th",
+    employees: [
+      { init: "S", name: "Sara Al-Harbi", role: "Operations", gosi: "GOSI ✓" },
+      { init: "K", name: "Khalid Rahman", role: "Technician", gosi: "GOSI ✓" },
+      { init: "M", name: "Maha Yousef", role: "Accounts · part-time", gosi: "GOSI ✓" },
+    ],
+    // compliance
+    compHdr: "Compliance",
+    badgePdpl: "PDPL by design ✓", badgeZatca: "ZATCA connected ✓",
+    vatCard: "VAT return", vatDue: "Due in 9 days", fileNow: "File now", filed: "Filed ✓",
+    upcoming: "Upcoming",
+    compItems: [
+      { t: "GOSI monthly contribution", d: "27 Aug" },
+      { t: "CR renewal", d: "Mar 2027" },
     ],
     // invoice
     invHdr: "New e-invoice",
@@ -168,6 +202,17 @@ const T = {
     invTotal: "Total due", invTotalV: "SAR 1,380.00",
     invCompliant: "ZATCA e-invoice · QR + hash included",
     issue: "Issue invoice",
+    // invoice success
+    invOkHdr: "Invoice issued",
+    invOkTitle: "Invoice #0143 issued",
+    invOkSub: "Sent to Noura Interiors LLC",
+    invOkDone: "Back to dashboard",
+    // grow
+    growHdr: "Grow",
+    growTitle: "Growing soon",
+    growSub: "The next stage of Intilaqa.",
+    growFeats: ["Funding-readiness score", "Saudization planning", "Growth analytics"],
+    joinWait: "Join the waitlist", onList: "You're on the list ✓",
     // pricing
     prHdr: "Plans",
     prTitle: "Pay for the stage you're in",
@@ -177,29 +222,60 @@ const T = {
       badge: "MOST CHOSEN", feats: ["All 5 portals, guided", "Documents prepared for you", "Human review before filing"], cta: "Choose Launch" },
     prOperate: { name: "Operate", sub: "Invoicing, CRM, HR, compliance", price: "149–299", per: "SAR / month" },
     prFoot: "Government fees are billed separately at cost.",
+    selected: "Selected ✓",
+    // profile
+    profName: "Nouf Al-Otaibi", profCo: "Nafath Studio",
+    profRows: ["Company details", "Billing & subscription", "Documents", "Notifications", "Help & support"],
+    profDetails: [
+      [{ k: "CR number", v: "4030******" }, { k: "Entity type", v: "LLC" }, { k: "City", v: "Riyadh" }, { k: "Activity", v: "Home maintenance" }],
+      [{ k: "Plan", v: "Operate · SAR 199/mo" }, { k: "Next renewal", v: "1 Sep 2026" }, { k: "Payment", v: "mada ••42" }],
+      [{ k: "CR certificate", v: "PDF ›" }, { k: "Articles of Association", v: "PDF ›" }, { k: "VAT certificate", v: "PDF ›" }],
+      [{ k: "VAT reminders", v: "On" }, { k: "Payroll reminders", v: "On" }, { k: "Product news", v: "Off" }],
+      [{ k: "FAQ", v: "›" }, { k: "WhatsApp support", v: "›" }, { k: "Email", v: "support@intilaqa.sa" }],
+    ],
   },
   ar: {
-    dir: "rtl", flag: "عربي", alt: "EN",
+    dir: "rtl",
     tabs: { journey: "الرحلة", launch: "التأسيس", operate: "التشغيل", profile: "الحساب" },
+    splash: [
+      { icon: "bulb", kicker: "الفكرة", title: "مرحباً بك في إنطلاقة", sub: "تحقّق من فكرتك — مجاناً." },
+      { icon: "home", kicker: "التأسيس", title: "سجّل في أيام، لا شهور", sub: "خمس بوابات، مسار واحد موجّه." },
+      { icon: "chart", kicker: "التشغيل والنمو", title: "شغّلها بالتزام", sub: "الفوترة والرواتب — ثم التمويل." },
+    ],
+    skip: "تخطّي", next: "التالي", getStarted: "ابدأ الآن",
     promise: "نقرأ الأنظمة لتبني أنت العمل.",
     onbKicker: "الخطوة ١ من ٣",
     onbTitle: "أين أنت في الرحلة؟",
     onbSub: "اختر المرحلة التي تناسبك اليوم.",
     onbCards: [
-      { icon: "bulb", title: "لديّ فكرة", sub: "تحقّق منها قبل أن تنفق.", free: true, sel: true },
-      { icon: "home", title: "جاهز للتسجيل", sub: "خمس بوابات، مسار واحد موجّه.", portals: ["مِيسا", "التجارة", "زاتكا"], plus: "+٢" },
-      { icon: "chart", title: "أُدير عملي فعلاً", sub: "الفوترة والعملاء والرواتب." },
+      { id: "amal", icon: "bulb", title: "لديّ فكرة", sub: "تحقّق منها قبل أن تنفق.", free: true },
+      { id: "fahad", icon: "home", title: "جاهز للتسجيل", sub: "خمس بوابات، مسار واحد.", portals: ["مِيسا", "التجارة", "زاتكا"], plus: "+٢" },
+      { id: "ohoud", icon: "chart", title: "أُدير عملي فعلاً", sub: "الفوترة والعملاء والرواتب." },
     ],
-    welcome: "أهلاً بعودتك، نوف",
+    welcome: { amal: "أهلاً، أمل", fahad: "أهلاً بعودتك، فهد", ohoud: "أهلاً بعودتك، عهود" },
     journeyTitle: "رحلتك",
-    stages: [
-      { key: "ideate", label: "الفكرة", tag: "مجاني", tagType: "sage", desc: "تحقّق قبل أن تنفق.", status: "مكتمل · الدرجة ٧٤", state: "done", go: "ideate" },
-      { key: "launch", label: "التأسيس", tag: "٤٩٩–٩٩٩ ريال", tagType: "dark", desc: "سجّل عبر البوابات الخمس.", progress: [2, 5], state: "current", go: "launch" },
-      { key: "operate", label: "التشغيل", tag: "١٤٩–٢٩٩ ريال/شهر", tagType: "sage", desc: "الفوترة والعملاء والرواتب.", state: "next", go: "operate" },
-      { key: "grow", label: "النمو", tag: "قريباً", tagType: "gold", desc: "التمويل والتوسّع.", state: "locked", go: null },
+    stageMeta: {
+      ideate: { label: "الفكرة", tag: "مجاني", tagType: "sage", desc: "تحقّق قبل أن تنفق." },
+      launch: { label: "التأسيس", tag: "٤٩٩–٩٩٩ ريال", tagType: "dark", desc: "سجّل عبر البوابات الخمس." },
+      operate: { label: "التشغيل", tag: "١٤٩–٢٩٩ ريال/شهر", tagType: "sage", desc: "الفوترة والعملاء والرواتب." },
+      grow: { label: "النمو", tag: "قريباً", tagType: "gold", desc: "التمويل والتوسّع." },
+    },
+    ideateStatus: "مكتمل · الدرجة ٧٤",
+    startQuiz: "ابدأ التحقق",
+    quizHdr: "تحقق سريع",
+    quizQs: [
+      { q: "كم يتكرر وقوع المشكلة؟", opts: ["نادراً", "شهرياً", "أسبوعياً", "يومياً"] },
+      { q: "كم مقابلة أجريت مع العملاء؟", opts: ["صفر", "١–٥", "٦–١٥", "١٥+"] },
+      { q: "ما حجم السوق في السعودية؟", opts: ["متخصص", "مدينة واحدة", "وطني", "خليجي"] },
+      { q: "هل سيدفع العملاء اليوم؟", opts: ["لا", "ربما", "بعضهم نعم", "طلبات مسبقة"] },
+      { q: "التوافق مع رؤية ٢٠٣٠؟", opts: ["غير متأكد", "جزئياً", "مباشرة"] },
+      { q: "خبرتك في المجال؟", opts: ["جديد", "خبرة متوسطة", "خبرة عميقة"] },
     ],
+    qOf: "من",
+    revealTitle: "نحسب درجتك…",
+    seeResults: "اعرض النتائج",
     ideateHdr: "تحقّق الفكرة",
-    scoreVal: "٧٤", scoreOf: "من ١٠٠",
+    scoreOf: "من ١٠٠",
     scoreVerdict: "واعدة", scoreLine1: "تستحق البناء.", scoreLine2: "اضبط التسعير أولاً.",
     checkedTitle: "ما تحقّقنا منه", checkedCount: "٦ من ٦",
     checks: [
@@ -211,63 +287,82 @@ const T = {
     ],
     continueToLaunch: "المتابعة إلى التأسيس",
     downloadReport: "تحميل التقرير الكامل",
-    seeMapper: "شاهد تطابقات رؤية ٢٠٣٠",
+    seeMapper: "تطابقات رؤية ٢٠٣٠",
     mapperHdr: "مُخطِّط الفرص",
-    mapperTitle: "تطابقات رؤية ٢٠٣٠",
     mapperSub: "فكرتك مرتبطة بالبرامج.",
     mapperIdea: "صيانة منزلية عند الطلب",
     matches: [
-      { prog: "منشآت — مسار نمو المنشآت", sector: "الخدمات", fit: "عالي", note: "منح رقمنة لمنشآت الخدمات" },
+      { prog: "منشآت — مسار النمو", sector: "الخدمات", fit: "عالي", note: "منح رقمنة لمنشآت الخدمات" },
       { prog: "برنامج جودة الحياة", sector: "خدمات محلية", fit: "عالي", note: "توسّع الخدمات المنزلية" },
-      { prog: "ضمان كفالة", sector: "التمويل", fit: "متوسط", note: "يدعم رأس المال العامل المبكر" },
-      { prog: "تنمية القدرات البشرية", sector: "الوظائف", fit: "متوسط", note: "سعودة وظائف الفنيين" },
+      { prog: "ضمان كفالة", sector: "التمويل", fit: "متوسط", note: "يدعم رأس المال المبكر" },
+      { prog: "تنمية القدرات", sector: "الوظائف", fit: "متوسط", note: "سعودة وظائف الفنيين" },
     ],
     fit: "الملاءمة",
     launchHdr: "مرشد التأسيس",
-    portalsCount: "٢ من ٥ بوابات", daysLeft: "≈١٢ يوماً متبقية",
+    portalsOf: "من ٥ بوابات", daysLeft: "≈١٢ يوماً متبقية", complete: "مكتمل ✓",
     steps: [
-      { portal: "مِيسا", sub: "صدر ترخيص الاستثمار", state: "done" },
-      { portal: "وزارة التجارة", sub: "س.ت ٤٠٣٠******", state: "done" },
-      { portal: "زاتكا", sub: "التسجيل الضريبي · قيد المراجعة", state: "current",
+      { portal: "مِيسا", sub: "صدر ترخيص الاستثمار" },
+      { portal: "وزارة التجارة", sub: "س.ت ٤٠٣٠******" },
+      { portal: "زاتكا", sub: "التسجيل الضريبي · قيد المراجعة", subDone: "صدرت شهادة الضريبة",
         subtasks: [{ t: "المستندات مُرسلة · ١٤ أغسطس", done: true }, { t: "صدور الشهادة", done: false }],
         action: "رفع خطاب البنك" },
-      { portal: "التأمينات", sub: "تسجيل التأمينات الاجتماعية", state: "upcoming" },
-      { portal: "قوى", sub: "ملف العمل ونطاق السعودة", state: "upcoming" },
+      { portal: "التأمينات", sub: "تسجيل التأمينات الاجتماعية" },
+      { portal: "قوى", sub: "ملف العمل ونطاق السعودة" },
     ],
     stDone: "مكتمل", stCurrent: "الحالي", stUpcoming: "قادم",
     needPro: "تحتاج مختصاً مرخّصاً؟", openMarket: "السوق",
     seeConnect: "تطابقات التمويل والمسرّعات",
-    marketHdr: "سوق الشركاء",
     marketSub: "شركاء موثّقون — عند اللزوم فقط.",
     partners: [
       { name: "الرشد للمحاماة", type: "مكتب محاماة", sla: "رد خلال يومين", price: "من ٣٥٠ ريال" },
       { name: "تمكين للتعقيب", type: "معقّب", sla: "رد خلال يوم", price: "من ٢٠٠ ريال" },
       { name: "ديوان للشركات", type: "مكتب محاماة", sla: "رد خلال يومين", price: "من ٥٠٠ ريال" },
     ],
-    vetted: "موثّق", sla: "اتفاقية", quote: "اطلب عرض سعر",
+    vetted: "موثّق", sla: "اتفاقية", quote: "اطلب عرض سعر", quoteSent: "أُرسل الطلب ✓",
     connectHdr: "إنطلاقة كونكت",
     connectSub: "مطابقة لجاهزيتك.",
     connectMatches: [
       { name: "منشآت للرقمنة", type: "برنامج", deadline: "١٢ يوماً", ready: "جاهز للتقديم", hi: true },
-      { name: "فلات٦لابس الرياض — الدورة ٩", type: "مسرّعة", deadline: "٢٦ يوماً", ready: "ينقص عنصر", hi: false },
-      { name: "صندوق بذرة مدعوم من SVC", type: "صندوق", deadline: "مفتوح", ready: "يحتاج بيانات نمو", hi: false },
+      { name: "فلات٦لابس — الدورة ٩", type: "مسرّعة", deadline: "٢٦ يوماً", ready: "ينقص عنصر", hi: false },
+      { name: "صندوق بذرة SVC", type: "صندوق", deadline: "مفتوح", ready: "يحتاج بيانات", hi: false },
     ],
-    closesIn: "يُغلق خلال", readiness: "الجاهزية", apply: "ابدأ التقديم",
+    closesIn: "يُغلق خلال", readiness: "الجاهزية", apply: "ابدأ التقديم", applied: "بدأ التقديم ✓", inProgress: "قيد التنفيذ",
     opHdr: "التشغيل",
     opCompany: "استوديو نفاذ · س.ت ٤٠٣٠",
     opStatus: "كل شيء محدّث",
-    tiles: [
-      { t: "الفوترة", s: "١٢ فاتورة هذا الشهر", icon: "receipt", go: "invoice" },
-      { t: "العملاء", s: "٣٨ نشِط", icon: "users", go: null },
-      { t: "الفريق", s: "٦ · الرواتب يوم ٢٧", icon: "bag", go: null },
-      { t: "الالتزام", s: "الضريبة خلال ٩ أيام", icon: "shield", warn: true, go: null },
-    ],
+    tileInv: "الفوترة", tileInvS: "فاتورة هذا الشهر",
+    tileCust: "العملاء", tileCustS: "٣٨ نشِط",
+    tileTeam: "الفريق", tileTeamS: "٦ · الرواتب يوم ٢٧",
+    tileComp: "الالتزام", tileCompWarn: "الضريبة خلال ٩ أيام", tileCompOk: "كل شيء سليم",
     recent: "الأحدث",
     recentItems: [
       { init: "AB", t: "دُفعت الفاتورة ٠١٤٢#", s: "أربيان بايتس · اليوم", v: "٨٬٤٠٠ ريال" },
       { init: "MK", t: "أُضيف عميل جديد", s: "مطابخ منارة · أمس", v: "العملاء" },
     ],
-    invHdr: "فاتورة إلكترونية جديدة",
+    custHdr: "العملاء", custSearch: "ابحث عن عميل",
+    custRows: [
+      { init: "AB", name: "أربيان بايتس", chip: "نشِط", amt: "٨٬٤٠٠ ريال" },
+      { init: "MK", name: "مطابخ منارة", chip: "جديد", amt: "—" },
+      { init: "NI", name: "نورة للديكور", chip: "نشِط", amt: "١٬٣٨٠ ريال" },
+      { init: "WC", name: "مقهى وافي", chip: "متأخر", amt: "٢٬١٥٠ ريال" },
+      { init: "SC", name: "حِرف سدو", chip: "نشِط", amt: "٦٤٠ ريال" },
+    ],
+    addCust: "+ أضف عميلاً",
+    teamHdr: "الفريق", payrollNote: "الرواتب تصرف يوم ٢٧",
+    employees: [
+      { init: "س", name: "سارة الحربي", role: "العمليات", gosi: "التأمينات ✓" },
+      { init: "خ", name: "خالد رحمن", role: "فني", gosi: "التأمينات ✓" },
+      { init: "م", name: "مها يوسف", role: "حسابات · جزئي", gosi: "التأمينات ✓" },
+    ],
+    compHdr: "الالتزام",
+    badgePdpl: "حماية البيانات ✓", badgeZatca: "زاتكا متصلة ✓",
+    vatCard: "إقرار الضريبة", vatDue: "خلال ٩ أيام", fileNow: "قدّم الآن", filed: "قُدّم ✓",
+    upcoming: "القادم",
+    compItems: [
+      { t: "اشتراك التأمينات الشهري", d: "٢٧ أغسطس" },
+      { t: "تجديد السجل التجاري", d: "مارس ٢٠٢٧" },
+    ],
+    invHdr: "فاتورة جديدة",
     invSub: "متوافقة مع زاتكا. تُصدر في دقائق.",
     invFields: [
       { k: "العميل", v: "نورة للديكور" },
@@ -276,21 +371,40 @@ const T = {
       { k: "المبلغ", v: "١٬٢٠٠٫٠٠ ريال" },
       { k: "الضريبة (١٥٪)", v: "١٨٠٫٠٠ ريال" },
     ],
-    invTotal: "الإجمالي المستحق", invTotalV: "١٬٣٨٠٫٠٠ ريال",
-    invCompliant: "فاتورة زاتكا · تتضمن رمز QR والبصمة",
+    invTotal: "الإجمالي", invTotalV: "١٬٣٨٠٫٠٠ ريال",
+    invCompliant: "فاتورة زاتكا · رمز QR والبصمة",
     issue: "إصدار الفاتورة",
+    invOkHdr: "صدرت الفاتورة",
+    invOkTitle: "صدرت الفاتورة ٠١٤٣#",
+    invOkSub: "أُرسلت إلى نورة للديكور",
+    invOkDone: "عودة إلى اللوحة",
+    growHdr: "النمو",
+    growTitle: "قريباً",
+    growSub: "المرحلة التالية من إنطلاقة.",
+    growFeats: ["درجة جاهزية التمويل", "تخطيط السعودة", "تحليلات النمو"],
+    joinWait: "انضم لقائمة الانتظار", onList: "أنت على القائمة ✓",
     prHdr: "الخطط",
     prTitle: "ادفع للمرحلة التي أنت فيها",
     prSub: "بلا باقات. ارتقِ عندما تكون جاهزاً.",
-    prFree: { name: "الفكرة", sub: "درجة التحقق، موجز السوق", price: "مجاني" },
+    prFree: { name: "الفكرة", sub: "درجة التحقق وموجز السوق", price: "مجاني" },
     prLaunch: { name: "التأسيس", sub: "مرة واحدة، لكل شركة", cur: "ريال", price: "٤٩٩", range: "–٩٩٩",
-      badge: "الأكثر اختياراً", feats: ["كل البوابات الخمس، موجّهة", "المستندات مُجهّزة لك", "مراجعة بشرية قبل التقديم"], cta: "اختر التأسيس" },
-    prOperate: { name: "التشغيل", sub: "الفوترة والعملاء والموارد والالتزام", price: "١٤٩–٢٩٩", per: "ريال / شهر" },
-    prFoot: "تُحتسب الرسوم الحكومية بشكل منفصل بسعر التكلفة.",
+      badge: "الأكثر اختياراً", feats: ["كل البوابات الخمس", "المستندات مُجهّزة لك", "مراجعة بشرية قبل التقديم"], cta: "اختر التأسيس" },
+    prOperate: { name: "التشغيل", sub: "الفوترة والعملاء والموارد", price: "١٤٩–٢٩٩", per: "ريال / شهر" },
+    prFoot: "الرسوم الحكومية تُحتسب منفصلة بالتكلفة.",
+    selected: "تم الاختيار ✓",
+    profName: "نوف العتيبي", profCo: "استوديو نفاذ",
+    profRows: ["بيانات الشركة", "الفواتير والاشتراك", "المستندات", "الإشعارات", "المساعدة والدعم"],
+    profDetails: [
+      [{ k: "رقم السجل", v: "٤٠٣٠******" }, { k: "نوع الكيان", v: "ذ.م.م" }, { k: "المدينة", v: "الرياض" }, { k: "النشاط", v: "صيانة منزلية" }],
+      [{ k: "الخطة", v: "التشغيل · ١٩٩ ريال/شهر" }, { k: "التجديد القادم", v: "١ سبتمبر ٢٠٢٦" }, { k: "الدفع", v: "مدى ••٤٢" }],
+      [{ k: "شهادة السجل", v: "‹ PDF" }, { k: "عقد التأسيس", v: "‹ PDF" }, { k: "شهادة الضريبة", v: "‹ PDF" }],
+      [{ k: "تذكيرات الضريبة", v: "مفعّل" }, { k: "تذكيرات الرواتب", v: "مفعّل" }, { k: "أخبار المنتج", v: "متوقف" }],
+      [{ k: "الأسئلة الشائعة", v: "‹" }, { k: "دعم واتساب", v: "‹" }, { k: "البريد", v: "support@intilaqa.sa" }],
+    ],
   },
 };
 
-// ---- icons (simple stroke set) ----
+// ---- icons ----
 function Icon({ name, size = 22, color = C.forest, stroke = 2 }) {
   const p = { fill: "none", stroke: color, strokeWidth: stroke, strokeLinecap: "round", strokeLinejoin: "round" };
   const paths = {
@@ -301,26 +415,33 @@ function Icon({ name, size = 22, color = C.forest, stroke = 2 }) {
     users: <><circle cx="9" cy="8" r="3" {...p} /><path d="M4 20a5 5 0 0 1 10 0M16 6a3 3 0 0 1 0 6M15 20a5 5 0 0 0-1-3" {...p} /></>,
     bag: <><path d="M6 8h12l-1 12H7L6 8Z M9 8V6a3 3 0 0 1 6 0v2" {...p} /></>,
     shield: <><path d="M12 3l7 3v5c0 4-3 7-7 8-4-1-7-4-7-8V6l7-3Z" {...p} /><path d="M9 12l2 2 4-4" {...p} /></>,
-    journey: <><path d="M6 20c4 0 5-9 11-13" {...p} stroke={color} /><circle cx="18" cy="6" r="1.6" fill={color} stroke="none" /></>,
+    journey: <><path d="M7 21 v-9 a5 5 0 0 1 10 0 v9 M5.5 21 h1.5 M17 21 h1.5" {...p} /><path d="M12 19.5 V11 M9.5 13.5 L12 10.8 L14.5 13.5" {...p} stroke={color} /></>,
     launchNav: <><path d="M5 11l7-6 7 6M7 10v9h10v-9" {...p} /></>,
     grid: <><rect x="4" y="4" width="7" height="7" rx="1.5" {...p} /><rect x="13" y="4" width="7" height="7" rx="1.5" {...p} /><rect x="4" y="13" width="7" height="7" rx="1.5" {...p} /><rect x="13" y="13" width="7" height="7" rx="1.5" {...p} /></>,
     profile: <><circle cx="12" cy="8" r="3.5" {...p} /><path d="M5 20a7 7 0 0 1 14 0" {...p} /></>,
     check: <><path d="M5 12l4 4 10-10" {...p} stroke="#fff" strokeWidth="2.4" /></>,
     bang: <><path d="M12 7v6M12 16v.5" {...p} stroke={C.goldText} /></>,
+    search: <><circle cx="11" cy="11" r="6" {...p} /><path d="M20 20l-4-4" {...p} /></>,
+    bigCheck: <><circle cx="12" cy="12" r="10" fill={C.forest} /><path d="M7.5 12.5l3 3 6-7" stroke="#fff" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" /></>,
   };
   return <svg width={size} height={size} viewBox="0 0 24 24">{paths[name]}</svg>;
 }
 
-function Logo({ light }) {
+function Logo({ light, size = 26 }) {
+  const arch = light ? "#fff" : C.forest;
   return (
-    <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
-      <path d="M7 24 C 12 24, 13 11, 25 8" stroke={C.gold} strokeWidth="2.6" strokeLinecap="round" fill="none" />
-      <circle cx="24" cy="8" r="2.4" fill={light ? "#fff" : C.forest} />
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      {/* gateway arch */}
+      <path d="M8.5 26 h2 M21.5 26 h2 M9.5 26 V15 a6.5 6.5 0 0 1 13 0 V26"
+        stroke={arch} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      {/* gold up arrow */}
+      <path d="M16 24 V13.5 M12.5 16.5 L16 12.8 L19.5 16.5"
+        stroke={C.gold} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
     </svg>
   );
 }
 
-function LangToggle({ t, lang, setLang, light }) {
+function LangToggle({ lang, setLang, light }) {
   return (
     <div onClick={() => setLang(lang === "en" ? "ar" : "en")}
       style={{ display: "flex", alignItems: "center", background: light ? "rgba(255,255,255,.12)" : C.card,
@@ -358,7 +479,6 @@ function Phone({ children, dir, dark, w, h, s, mobile }) {
   );
 }
 
-// ---------- top header (light screens) ----------
 function Header({ t, lang, setLang, title, onBack }) {
   return (
     <div style={{ background: C.paper, flexShrink: 0 }}>
@@ -370,7 +490,7 @@ function Header({ t, lang, setLang, title, onBack }) {
           </button>
         ) : <Logo />}
         <div style={{ flex: 1, fontSize: 19, fontWeight: 700, color: C.ink }}>{title}</div>
-        <LangToggle t={t} lang={lang} setLang={setLang} />
+        <LangToggle lang={lang} setLang={setLang} />
       </div>
     </div>
   );
@@ -378,79 +498,16 @@ function Header({ t, lang, setLang, title, onBack }) {
 
 const Scroll = ({ children }) => <div style={{ flex: 1, minHeight: 0, overflowY: "auto", overflowX: "hidden", padding: "22px 22px 28px" }}>{children}</div>;
 const ScrollDark = ({ children }) => <div style={{ flex: 1, minHeight: 0, overflowY: "auto", overflowX: "hidden" }}>{children}</div>;
+const Primary = ({ children, onClick, tone }) => (
+  <button onClick={onClick} style={{ width: "100%", background: tone === "sage" ? C.sageLt : C.forest, color: tone === "sage" ? C.pine : "#fff", border: "none", borderRadius: 18, padding: 18, fontSize: 17, fontWeight: 700, cursor: "pointer" }}>{children}</button>
+);
 
-// ---------- 01 Onboarding (dark hero) ----------
-function Onboarding({ t, lang, setLang, go }) {
-  return (
-    <ScrollDark>
-      <div style={{ background: C.forest, position: "relative", paddingBottom: 30, overflow: "hidden" }}>
-        {/* concentric arcs */}
-        <svg style={{ position: "absolute", top: -30, right: -60, opacity: .5 }} width="250" height="250" viewBox="0 0 260 260" fill="none">
-          <circle cx="200" cy="60" r="120" stroke={C.gold} strokeWidth="1" opacity=".35" />
-          <circle cx="200" cy="60" r="80" stroke={C.gold} strokeWidth="1" opacity=".3" />
-        </svg>
-        <StatusBar light />
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 24px 0" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <Logo light /><span style={{ color: "#fff", fontWeight: 700, fontSize: 19 }}>{lang === "ar" ? "إنطلاقة" : "Intilaqa"}</span>
-          </div>
-          <LangToggle t={t} lang={lang} setLang={setLang} light />
-        </div>
-        <div style={{ padding: "28px 24px 0" }}>
-          <div style={{ color: C.gold, fontWeight: 700, fontSize: 12.5, letterSpacing: 1.5 }}>{t.onbKicker}</div>
-          <h1 style={{ color: "#fff", fontSize: 31, lineHeight: 1.15, margin: "10px 0 10px", fontWeight: 700 }}>{t.onbTitle}</h1>
-          <p style={{ color: "rgba(255,255,255,.72)", fontSize: 15.5, lineHeight: 1.4, margin: 0 }}>{t.onbSub}</p>
-        </div>
-      </div>
-      <div style={{ background: C.paper, borderRadius: "26px 26px 0 0", marginTop: -18, padding: "22px 18px 20px" }}>
-        {t.onbCards.map((c, i) => (
-          <button key={i} onClick={() => go("journey")}
-            style={{ width: "100%", textAlign: t.dir === "rtl" ? "right" : "left", background: C.card, border: `1.5px solid ${c.sel ? C.forest : "transparent"}`,
-              borderRadius: 20, padding: 17, marginBottom: 13, cursor: "pointer", boxShadow: "0 4px 16px rgba(30,50,40,.06)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <div style={{ width: 50, height: 50, borderRadius: 14, background: c.sel ? C.forest : C.sageLt, display: "grid", placeItems: "center", flexShrink: 0 }}>
-                <Icon name={c.icon} size={22} color={c.sel ? C.gold : C.pine} />
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-                  <span style={{ fontSize: 18, fontWeight: 700, color: C.ink }}>{c.title}</span>
-                  {c.free && <span style={{ background: C.goldSoft, color: C.goldText, fontSize: 11.5, fontWeight: 700, padding: "3px 10px", borderRadius: 20 }}>{lang === "ar" ? "مجاني" : "Free"}</span>}
-                </div>
-                <div style={{ fontSize: 14.5, color: C.mute, marginTop: 3, lineHeight: 1.35 }}>{c.sub}</div>
-                {c.portals && (
-                  <div style={{ display: "flex", gap: 7, marginTop: 9, alignItems: "center", flexWrap: "wrap" }}>
-                    {c.portals.map(p => <span key={p} style={{ background: C.sageLt, color: C.pine, fontSize: 12, fontWeight: 600, padding: "4px 10px", borderRadius: 8 }}>{p}</span>)}
-                    <span style={{ color: C.mute, fontSize: 12.5 }}>{c.plus}</span>
-                  </div>
-                )}
-              </div>
-              <div style={{ width: 28, height: 28, borderRadius: "50%", background: c.sel ? C.forest : "transparent", border: c.sel ? "none" : `2px solid ${C.line}`, display: "grid", placeItems: "center", flexShrink: 0 }}>
-                {c.sel && <Icon name="check" size={16} />}
-              </div>
-            </div>
-          </button>
-        ))}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, background: C.sageLt, borderRadius: 16, padding: "14px 16px", marginTop: 3 }}>
-          <Icon name="shield" size={21} color={C.pine} />
-          <span style={{ fontSize: 14, color: C.pine, lineHeight: 1.35 }}>{t.promise}</span>
-        </div>
-      </div>
-    </ScrollDark>
-  );
+function Tag({ type, text }) {
+  const styles = { sage: { background: C.sageLt, color: C.pine }, dark: { background: C.forest, color: "#fff" }, gold: { background: C.goldSoft, color: C.goldText } }[type] || {};
+  return <span style={{ ...styles, fontSize: 13, fontWeight: 700, padding: "6px 13px", borderRadius: 20, whiteSpace: "nowrap" }}>{text}</span>;
 }
 
-// ---------- tab-based screens ----------
-function TabScreen({ t, lang, setLang, title, onBack, tab, setTab, go, children }) {
-  return (
-    <>
-      <Header t={t} lang={lang} setLang={setLang} title={title} onBack={onBack} />
-      <Scroll>{children}</Scroll>
-      <TabBar t={t} tab={tab} setTab={setTab} go={go} />
-    </>
-  );
-}
-
-function TabBar({ t, tab, setTab, go }) {
+function TabBar({ t, tab, go }) {
   const items = [
     { key: "journey", icon: "journey", label: t.tabs.journey, screen: "journey" },
     { key: "launch", icon: "launchNav", label: t.tabs.launch, screen: "launch" },
@@ -474,41 +531,159 @@ function TabBar({ t, tab, setTab, go }) {
   );
 }
 
-// ---------- 02 Journey ----------
-function Journey({ t, go }) {
+// ---------- Splash intro (3 screens) ----------
+function Splash({ t, lang, setLang, go, idx, setIdx }) {
+  const s = t.splash[idx];
+  const last = idx === t.splash.length - 1;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", background: C.forest, position: "relative", overflow: "hidden" }}>
+      <svg style={{ position: "absolute", top: -40, [t.dir === "rtl" ? "left" : "right"]: -70, opacity: .45 }} width="300" height="300" viewBox="0 0 260 260" fill="none">
+        <circle cx="200" cy="60" r="120" stroke={C.gold} strokeWidth="1" opacity=".35" />
+        <circle cx="200" cy="60" r="80" stroke={C.gold} strokeWidth="1" opacity=".3" />
+      </svg>
+      <StatusBar light />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 24px 0" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <Logo light /><span style={{ color: "#fff", fontWeight: 700, fontSize: 19 }}>{lang === "ar" ? "إنطلاقة" : "Intilaqa"}</span>
+        </div>
+        <button onClick={() => go("onboarding")} style={{ background: "none", border: "none", color: "rgba(255,255,255,.65)", fontSize: 15, fontWeight: 600, cursor: "pointer" }}>{t.skip}</button>
+      </div>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0 32px", textAlign: "center" }}>
+        <div style={{ width: 112, height: 112, borderRadius: 32, background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.12)", display: "grid", placeItems: "center", marginBottom: 34 }}>
+          {idx === 0 ? <Logo light size={58} /> : <Icon name={s.icon} size={52} color={C.gold} stroke={1.7} />}
+        </div>
+        <div style={{ color: C.gold, fontWeight: 700, fontSize: 13.5, letterSpacing: 2, marginBottom: 14 }}>{s.kicker}</div>
+        <h1 style={{ color: "#fff", fontSize: 31, fontWeight: 700, lineHeight: 1.2, margin: "0 0 14px" }}>{s.title}</h1>
+        <p style={{ color: "rgba(255,255,255,.72)", fontSize: 16.5, lineHeight: 1.5, margin: 0 }}>{s.sub}</p>
+      </div>
+      <div style={{ padding: "0 28px 44px" }}>
+        <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 26 }}>
+          {t.splash.map((_, i) => (
+            <div key={i} style={{ width: i === idx ? 26 : 8, height: 8, borderRadius: 5, background: i === idx ? C.gold : "rgba(255,255,255,.3)", transition: "width .25s" }} />
+          ))}
+        </div>
+        <button onClick={() => last ? go("onboarding") : setIdx(idx + 1)}
+          style={{ width: "100%", background: C.gold, color: C.forestDk, border: "none", borderRadius: 18, padding: 18, fontSize: 17, fontWeight: 700, cursor: "pointer" }}>
+          {last ? t.getStarted : t.next}
+        </button>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
+          <LangToggle lang={lang} setLang={setLang} light />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------- Onboarding ----------
+function Onboarding({ t, lang, setLang, go, S }) {
+  return (
+    <ScrollDark>
+      <div style={{ background: C.forest, position: "relative", paddingBottom: 30, overflow: "hidden" }}>
+        <svg style={{ position: "absolute", top: -30, right: -60, opacity: .5 }} width="250" height="250" viewBox="0 0 260 260" fill="none">
+          <circle cx="200" cy="60" r="120" stroke={C.gold} strokeWidth="1" opacity=".35" />
+          <circle cx="200" cy="60" r="80" stroke={C.gold} strokeWidth="1" opacity=".3" />
+        </svg>
+        <StatusBar light />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 24px 0" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Logo light /><span style={{ color: "#fff", fontWeight: 700, fontSize: 19 }}>{lang === "ar" ? "إنطلاقة" : "Intilaqa"}</span>
+          </div>
+          <LangToggle lang={lang} setLang={setLang} light />
+        </div>
+        <div style={{ padding: "28px 24px 0" }}>
+          <div style={{ color: C.gold, fontWeight: 700, fontSize: 12.5, letterSpacing: 1.5 }}>{t.onbKicker}</div>
+          <h1 style={{ color: "#fff", fontSize: 31, lineHeight: 1.15, margin: "10px 0 10px", fontWeight: 700 }}>{t.onbTitle}</h1>
+          <p style={{ color: "rgba(255,255,255,.72)", fontSize: 15.5, lineHeight: 1.4, margin: 0 }}>{t.onbSub}</p>
+        </div>
+      </div>
+      <div style={{ background: C.paper, borderRadius: "26px 26px 0 0", marginTop: -18, padding: "22px 18px 20px" }}>
+        {t.onbCards.map((c, i) => {
+          const sel = S.persona === c.id;
+          return (
+            <button key={i} onClick={() => { S.setPersona(c.id); go("journey"); }}
+              style={{ width: "100%", textAlign: t.dir === "rtl" ? "right" : "left", background: C.card, border: `1.5px solid ${sel ? C.forest : "transparent"}`,
+                borderRadius: 20, padding: 17, marginBottom: 13, cursor: "pointer", boxShadow: "0 4px 16px rgba(30,50,40,.06)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                <div style={{ width: 50, height: 50, borderRadius: 14, background: sel ? C.forest : C.sageLt, display: "grid", placeItems: "center", flexShrink: 0 }}>
+                  <Icon name={c.icon} size={22} color={sel ? C.gold : C.pine} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                    <span style={{ fontSize: 18, fontWeight: 700, color: C.ink }}>{c.title}</span>
+                    {c.free && <span style={{ background: C.goldSoft, color: C.goldText, fontSize: 11.5, fontWeight: 700, padding: "3px 10px", borderRadius: 20 }}>{t.dir === "rtl" ? "مجاني" : "Free"}</span>}
+                  </div>
+                  <div style={{ fontSize: 14.5, color: C.mute, marginTop: 3, lineHeight: 1.35 }}>{c.sub}</div>
+                  {c.portals && (
+                    <div style={{ display: "flex", gap: 7, marginTop: 9, alignItems: "center", flexWrap: "wrap" }}>
+                      {c.portals.map(p => <span key={p} style={{ background: C.sageLt, color: C.pine, fontSize: 12, fontWeight: 600, padding: "4px 10px", borderRadius: 8 }}>{p}</span>)}
+                      <span style={{ color: C.mute, fontSize: 12.5 }}>{c.plus}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </button>
+          );
+        })}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, background: C.sageLt, borderRadius: 16, padding: "14px 16px", marginTop: 3 }}>
+          <Icon name="shield" size={21} color={C.pine} />
+          <span style={{ fontSize: 14, color: C.pine, lineHeight: 1.35 }}>{t.promise}</span>
+        </div>
+      </div>
+    </ScrollDark>
+  );
+}
+
+// ---------- Journey (persona-aware) ----------
+function Journey({ t, lang, go, S }) {
+  const p = S.persona;
+  const ideateDone = p !== "amal" || S.quizDone;
+  const launchDone = p === "ohoud";
+  const launchCurrent = !launchDone && ideateDone;
+  const doneCount = launchDone ? 5 : (S.zatcaDone ? 3 : 2);
+  const stageState = {
+    ideate: ideateDone ? "done" : "current",
+    launch: launchDone ? "done" : launchCurrent ? "current" : "next",
+    operate: p === "ohoud" ? "current" : "next",
+    grow: "locked",
+  };
+  const order = ["ideate", "launch", "operate", "grow"];
   return (
     <>
-      <div style={{ color: C.mute, fontSize: 16, marginBottom: 3 }}>{t.welcome}</div>
+      <div style={{ color: C.mute, fontSize: 16, marginBottom: 3 }}>{t.welcome[p]}</div>
       <h1 style={{ fontSize: 28, fontWeight: 700, color: C.ink, margin: "0 0 22px" }}>{t.journeyTitle}</h1>
       <div style={{ position: "relative" }}>
         <div style={{ position: "absolute", [t.dir === "rtl" ? "right" : "left"]: 22, top: 26, bottom: 26, width: 2.5, background: C.line }} />
-        {t.stages.map((s, i) => {
-          const dotFill = s.state === "done" ? C.forest : s.state === "current" ? "#fff" : "#fff";
-          const dotBorder = s.state === "locked" ? `2px dashed ${C.line}` : s.state === "next" ? `2px solid ${C.line}` : `2.5px solid ${C.forest}`;
+        {order.map((key) => {
+          const m = t.stageMeta[key]; const st = stageState[key];
+          const go2 = key === "ideate" ? (p === "amal" && !S.quizDone ? "quiz" : "ideate")
+            : key === "launch" ? "launch" : key === "operate" ? "operate" : "grow";
+          const dotFill = st === "done" ? C.forest : "#fff";
+          const dotBorder = st === "locked" ? `2px dashed ${C.line}` : st === "next" ? `2px solid ${C.line}` : `2.5px solid ${C.forest}`;
           return (
-            <div key={s.key} style={{ display: "flex", gap: 16, marginBottom: 18, position: "relative" }}>
+            <div key={key} style={{ display: "flex", gap: 16, marginBottom: 18, position: "relative" }}>
               <div style={{ width: 46, flexShrink: 0, display: "flex", justifyContent: "center", paddingTop: 24 }}>
                 <div style={{ width: 32, height: 32, borderRadius: "50%", background: dotFill, border: dotBorder, display: "grid", placeItems: "center", zIndex: 2 }}>
-                  {s.state === "done" && <Icon name="check" size={16} />}
-                  {s.state === "current" && <div style={{ width: 11, height: 11, borderRadius: "50%", background: C.forest }} />}
+                  {st === "done" && <Icon name="check" size={16} />}
+                  {st === "current" && <div style={{ width: 11, height: 11, borderRadius: "50%", background: C.forest }} />}
                 </div>
               </div>
-              <button onClick={() => s.go && go(s.go)} disabled={!s.go}
-                style={{ flex: 1, textAlign: t.dir === "rtl" ? "right" : "left", background: s.state === "locked" ? "rgba(255,255,255,.5)" : C.card,
-                  border: `1.5px solid ${s.state === "current" ? C.forest : "transparent"}`, borderRadius: 22, padding: 20, cursor: s.go ? "pointer" : "default",
-                  boxShadow: s.state === "locked" ? "none" : "0 6px 18px rgba(30,50,40,.06)", opacity: s.state === "locked" ? .7 : 1 }}>
+              <button onClick={() => go(go2)}
+                style={{ flex: 1, textAlign: t.dir === "rtl" ? "right" : "left", background: st === "locked" ? "rgba(255,255,255,.5)" : C.card,
+                  border: `1.5px solid ${st === "current" ? C.forest : "transparent"}`, borderRadius: 22, padding: 20, cursor: "pointer",
+                  boxShadow: st === "locked" ? "none" : "0 6px 18px rgba(30,50,40,.06)", opacity: st === "locked" ? .8 : 1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                  <span style={{ fontSize: 21, fontWeight: 700, color: s.state === "locked" ? C.mute : C.ink }}>{s.label}</span>
-                  <Tag type={s.tagType} text={s.tag} />
+                  <span style={{ fontSize: 21, fontWeight: 700, color: st === "locked" ? C.mute : C.ink }}>{m.label}</span>
+                  <Tag type={m.tagType} text={m.tag} />
                 </div>
-                <div style={{ fontSize: 15, color: C.mute, lineHeight: 1.45 }}>{s.desc}</div>
-                {s.status && <div style={{ fontSize: 15, fontWeight: 700, color: C.ink, marginTop: 11 }}>{s.status}</div>}
-                {s.progress && (
+                <div style={{ fontSize: 15, color: C.mute, lineHeight: 1.45 }}>{m.desc}</div>
+                {key === "ideate" && ideateDone && <div style={{ fontSize: 15, fontWeight: 700, color: C.ink, marginTop: 11 }}>{t.ideateStatus}</div>}
+                {key === "ideate" && !ideateDone && <div style={{ fontSize: 15, fontWeight: 700, color: C.gold, marginTop: 11 }}>{t.startQuiz} {t.dir === "rtl" ? "←" : "→"}</div>}
+                {key === "launch" && (launchCurrent || launchDone) && (
                   <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 14 }}>
                     <div style={{ flex: 1, height: 8, background: C.lineSoft, borderRadius: 5, overflow: "hidden" }}>
-                      <div style={{ width: `${(s.progress[0] / s.progress[1]) * 100}%`, height: "100%", background: C.forest, borderRadius: 5 }} />
+                      <div style={{ width: `${(doneCount / 5) * 100}%`, height: "100%", background: C.forest, borderRadius: 5 }} />
                     </div>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: C.ink }}>{s.progress[0]} / {s.progress[1]}</span>
+                    <span style={{ fontSize: 15, fontWeight: 700, color: C.ink }}>{num(doneCount, lang)} / {num(5, lang)}</span>
                   </div>
                 )}
               </button>
@@ -520,16 +695,74 @@ function Journey({ t, go }) {
   );
 }
 
-function Tag({ type, text }) {
-  const styles = {
-    sage: { background: C.sageLt, color: C.pine },
-    dark: { background: C.forest, color: "#fff" },
-    gold: { background: C.goldSoft, color: C.goldText },
-  }[type] || { background: C.sageLt, color: C.pine };
-  return <span style={{ ...styles, fontSize: 13, fontWeight: 700, padding: "6px 13px", borderRadius: 20, whiteSpace: "nowrap" }}>{text}</span>;
+// ---------- Quiz ----------
+function Quiz({ t, lang, go, S }) {
+  const idx = S.quizIdx;
+  const total = t.quizQs.length;
+  const q = t.quizQs[idx];
+  const pick = () => {
+    if (idx + 1 >= total) { S.setQuizDone(true); S.setQuizIdx(0); go("scoreReveal"); }
+    else S.setQuizIdx(idx + 1);
+  };
+  return (
+    <>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+        <span style={{ fontSize: 15, fontWeight: 700, color: C.pine }}>{num(idx + 1, lang)} {t.qOf} {num(total, lang)}</span>
+      </div>
+      <div style={{ height: 8, background: C.lineSoft, borderRadius: 5, overflow: "hidden", marginBottom: 26 }}>
+        <div style={{ width: `${((idx) / total) * 100}%`, height: "100%", background: C.gold, borderRadius: 5, transition: "width .3s" }} />
+      </div>
+      <h1 style={{ fontSize: 25, fontWeight: 700, color: C.ink, margin: "0 0 22px", lineHeight: 1.25 }}>{q.q}</h1>
+      {q.opts.map((o, i) => (
+        <button key={i} onClick={pick}
+          style={{ width: "100%", textAlign: t.dir === "rtl" ? "right" : "left", background: C.card, border: `1.5px solid transparent`,
+            borderRadius: 18, padding: "18px 20px", marginBottom: 12, cursor: "pointer", fontSize: 16.5, fontWeight: 600, color: C.ink,
+            boxShadow: "0 4px 14px rgba(30,50,40,.05)" }}>
+          {o}
+        </button>
+      ))}
+    </>
+  );
 }
 
-// ---------- 03 Ideate validation ----------
+// ---------- Score reveal ----------
+function ScoreReveal({ t, go }) {
+  const [n, setN] = React.useState(0);
+  React.useEffect(() => {
+    let v = 0;
+    const iv = setInterval(() => { v += 2; if (v >= 74) { v = 74; clearInterval(iv); } setN(v); }, 28);
+    return () => clearInterval(iv);
+  }, []);
+  const r = 62, circ = 2 * Math.PI * r;
+  const done = n >= 74;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 40 }}>
+      <div style={{ color: C.mute, fontSize: 16, marginBottom: 26 }}>{done ? "" : t.revealTitle}</div>
+      <div style={{ position: "relative", width: 170, height: 170 }}>
+        <svg width="170" height="170" viewBox="0 0 150 150">
+          <circle cx="75" cy="75" r={r} fill="none" stroke={C.lineSoft} strokeWidth="11" />
+          <circle cx="75" cy="75" r={r} fill="none" stroke={C.gold} strokeWidth="11" strokeLinecap="round"
+            strokeDasharray={circ} strokeDashoffset={circ * (1 - n / 100)} transform="rotate(-90 75 75)" />
+        </svg>
+        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+          <span style={{ fontSize: 48, fontWeight: 700, color: C.ink, lineHeight: 1 }}>{n}</span>
+          <span style={{ fontSize: 13, color: C.mute, marginTop: 4 }}>{t.scoreOf}</span>
+        </div>
+      </div>
+      {done && (
+        <>
+          <div style={{ color: C.gold, fontWeight: 700, fontSize: 14, letterSpacing: 1, marginTop: 26 }}>{t.scoreVerdict}</div>
+          <div style={{ color: C.ink, fontSize: 22, fontWeight: 700, marginTop: 8, textAlign: "center" }}>{t.scoreLine1}</div>
+          <div style={{ width: "100%", marginTop: 30 }}>
+            <Primary onClick={() => go("ideate")}>{t.seeResults}</Primary>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ---------- Ideate results ----------
 function Ideate({ t, go }) {
   const val = 74, r = 52, circ = 2 * Math.PI * r;
   return (
@@ -542,7 +775,7 @@ function Ideate({ t, go }) {
               strokeDasharray={circ} strokeDashoffset={circ * (1 - val / 100)} transform="rotate(-90 60 60)" />
           </svg>
           <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontSize: 37, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{t.scoreVal}</span>
+            <span style={{ fontSize: 37, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{t.dir === "rtl" ? "٧٤" : "74"}</span>
             <span style={{ fontSize: 12, color: "rgba(255,255,255,.6)", marginTop: 3 }}>{t.scoreOf}</span>
           </div>
         </div>
@@ -566,14 +799,14 @@ function Ideate({ t, go }) {
           </div>
         ))}
       </div>
-      <button onClick={() => go("launch")} style={{ width: "100%", background: C.forest, color: "#fff", border: "none", borderRadius: 18, padding: 18, fontSize: 17, fontWeight: 700, cursor: "pointer" }}>{t.continueToLaunch}</button>
+      <Primary onClick={() => go("launch")}>{t.continueToLaunch}</Primary>
       <button onClick={() => go("mapper")} style={{ width: "100%", background: "none", color: C.mute, border: "none", padding: "17px 0 6px", fontSize: 15, fontWeight: 600, cursor: "pointer" }}>{t.seeMapper}</button>
       <div style={{ textAlign: "center", color: C.mute, fontSize: 14.5, opacity: .8 }}>{t.downloadReport}</div>
     </>
   );
 }
 
-// ---------- Vision 2030 mapper ----------
+// ---------- Mapper ----------
 function Mapper({ t }) {
   const isHigh = (f) => f === "High" || f === "عالي";
   return (
@@ -595,23 +828,27 @@ function Mapper({ t }) {
   );
 }
 
-// ---------- 04 Launch navigator ----------
-function Launch({ t, go }) {
+// ---------- Launch ----------
+function Launch({ t, lang, go, S }) {
+  const allDone = S.persona === "ohoud";
+  const doneCount = allDone ? 5 : (S.zatcaDone ? 3 : 2);
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 12 }}>
-        <span style={{ fontSize: 27, fontWeight: 700, color: C.ink }}>{t.portalsCount}</span>
-        <span style={{ fontSize: 15, fontWeight: 600, color: C.mute }}>{t.daysLeft}</span>
+        <span style={{ fontSize: 27, fontWeight: 700, color: C.ink }}>{num(doneCount, lang)} {t.portalsOf}</span>
+        <span style={{ fontSize: 15, fontWeight: 600, color: doneCount === 5 ? C.pine : C.mute }}>{doneCount === 5 ? t.complete : t.daysLeft}</span>
       </div>
       <div style={{ height: 10, background: C.lineSoft, borderRadius: 6, overflow: "hidden", marginBottom: 24 }}>
-        <div style={{ width: "40%", height: "100%", background: C.forest, borderRadius: 6 }} />
+        <div style={{ width: `${(doneCount / 5) * 100}%`, height: "100%", background: C.forest, borderRadius: 6, transition: "width .4s" }} />
       </div>
       {t.steps.map((s, i) => {
-        const cur = s.state === "current", done = s.state === "done";
+        const done = i < doneCount;
+        const cur = i === doneCount && doneCount < 5;
+        const showSubtasks = cur && i === 2 && !S.zatcaDone;
         return (
-          <div key={i} style={{ background: s.state === "upcoming" ? "rgba(255,255,255,.55)" : C.card,
+          <div key={i} style={{ background: !done && !cur ? "rgba(255,255,255,.55)" : C.card,
             border: `1.5px solid ${cur ? C.forest : "transparent"}`, borderRadius: 22, padding: 18, marginBottom: 13,
-            boxShadow: s.state === "upcoming" ? "none" : "0 6px 18px rgba(30,50,40,.05)" }}>
+            boxShadow: !done && !cur ? "none" : "0 6px 18px rgba(30,50,40,.05)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
               <div style={{ width: 36, height: 36, borderRadius: "50%", flexShrink: 0, display: "grid", placeItems: "center",
                 background: done ? C.forest : "transparent", border: done ? "none" : cur ? `2.5px solid ${C.forest}` : `2px solid ${C.line}` }}>
@@ -619,15 +856,15 @@ function Launch({ t, go }) {
                 {cur && <div style={{ width: 12, height: 12, borderRadius: "50%", background: C.forest }} />}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 17.5, fontWeight: 700, color: s.state === "upcoming" ? C.mute : C.ink }}>{s.portal}</div>
-                <div style={{ fontSize: 14, color: C.mute, marginTop: 2 }}>{s.sub}</div>
+                <div style={{ fontSize: 17.5, fontWeight: 700, color: !done && !cur ? C.mute : C.ink }}>{s.portal}</div>
+                <div style={{ fontSize: 14, color: C.mute, marginTop: 2 }}>{i === 2 && S.zatcaDone ? s.subDone : s.sub}</div>
               </div>
               <span style={{ fontSize: 14.5, fontWeight: 700, color: done ? C.pine : cur ? "#fff" : C.mute,
                 background: cur ? C.forest : "transparent", padding: cur ? "6px 14px" : 0, borderRadius: 20 }}>
                 {done ? t.stDone : cur ? t.stCurrent : t.stUpcoming}
               </span>
             </div>
-            {cur && s.subtasks && (
+            {showSubtasks && (
               <div style={{ marginTop: 15, paddingLeft: t.dir === "rtl" ? 0 : 51, paddingRight: t.dir === "rtl" ? 51 : 0 }}>
                 {s.subtasks.map((st, j) => (
                   <div key={j} style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 9 }}>
@@ -635,7 +872,7 @@ function Launch({ t, go }) {
                     <span style={{ fontSize: 15, color: st.done ? C.ink : C.mute }}>{st.t}</span>
                   </div>
                 ))}
-                <button style={{ width: "100%", background: C.forest, color: "#fff", border: "none", borderRadius: 16, padding: 16, fontSize: 16.5, fontWeight: 700, cursor: "pointer", marginTop: 11 }}>{s.action}</button>
+                <button onClick={() => S.setZatcaDone(true)} style={{ width: "100%", background: C.forest, color: "#fff", border: "none", borderRadius: 16, padding: 16, fontSize: 16.5, fontWeight: 700, cursor: "pointer", marginTop: 11 }}>{s.action}</button>
               </div>
             )}
           </div>
@@ -650,72 +887,91 @@ function Launch({ t, go }) {
   );
 }
 
-// ---------- Partner marketplace ----------
-function Market({ t }) {
+// ---------- Market ----------
+function Market({ t, S }) {
   return (
     <>
       <p style={{ color: C.mute, fontSize: 15, margin: "0 0 16px" }}>{t.marketSub}</p>
-      {t.partners.map((p, i) => (
-        <div key={i} style={{ background: C.card, borderRadius: 22, padding: 19, marginBottom: 14, boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div>
-              <div style={{ fontSize: 18, fontWeight: 700, color: C.ink }}>{p.name}</div>
-              <div style={{ fontSize: 14, color: C.mute, marginTop: 2 }}>{p.type}</div>
+      {t.partners.map((p, i) => {
+        const sent = !!S.quotes[i];
+        return (
+          <div key={i} style={{ background: C.card, borderRadius: 22, padding: 19, marginBottom: 14, boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: C.ink }}>{p.name}</div>
+                <div style={{ fontSize: 14, color: C.mute, marginTop: 2 }}>{p.type}</div>
+              </div>
+              <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, fontWeight: 700, color: C.pine, background: C.sageLt, padding: "6px 12px", borderRadius: 20 }}>
+                <Icon name="check" size={14} color="#fff" /> {t.vetted}</span>
             </div>
-            <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, fontWeight: 700, color: C.pine, background: C.sageLt, padding: "6px 12px", borderRadius: 20 }}>
-              <Icon name="check" size={14} color="#fff" /> {t.vetted}</span>
+            <div style={{ display: "flex", gap: 10, margin: "14px 0", flexWrap: "wrap" }}>
+              <span style={{ fontSize: 13.5, color: C.ink, background: C.paper, border: `1px solid ${C.line}`, padding: "7px 13px", borderRadius: 11 }}>{t.sla}: {p.sla}</span>
+              <span style={{ fontSize: 13.5, color: C.goldText, background: C.goldSoft, padding: "7px 13px", borderRadius: 11, fontWeight: 700 }}>{p.price}</span>
+            </div>
+            <button onClick={() => S.setQuotes({ ...S.quotes, [i]: true })}
+              style={{ width: "100%", background: sent ? C.forest : C.sageLt, color: sent ? "#fff" : C.pine, border: "none", borderRadius: 14, padding: 14, fontSize: 15, fontWeight: 700, cursor: "pointer", transition: "background .2s" }}>
+              {sent ? t.quoteSent : t.quote}
+            </button>
           </div>
-          <div style={{ display: "flex", gap: 10, margin: "14px 0", flexWrap: "wrap" }}>
-            <span style={{ fontSize: 13.5, color: C.ink, background: C.paper, border: `1px solid ${C.line}`, padding: "7px 13px", borderRadius: 11 }}>{t.sla}: {p.sla}</span>
-            <span style={{ fontSize: 13.5, color: C.goldText, background: C.goldSoft, padding: "7px 13px", borderRadius: 11, fontWeight: 700 }}>{p.price}</span>
-          </div>
-          <button style={{ width: "100%", background: C.sageLt, color: C.pine, border: "none", borderRadius: 14, padding: 14, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>{t.quote}</button>
-        </div>
-      ))}
+        );
+      })}
     </>
   );
 }
 
 // ---------- Connect ----------
-function Connect({ t }) {
+function Connect({ t, S }) {
   return (
     <>
       <p style={{ color: C.mute, fontSize: 15, margin: "0 0 16px" }}>{t.connectSub}</p>
-      {t.connectMatches.map((m, i) => (
-        <div key={i} style={{ background: m.hi ? C.forest : C.card, borderRadius: 22, padding: 19, marginBottom: 14, boxShadow: "0 6px 18px rgba(30,50,40,.06)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
-            <span style={{ fontSize: 17.5, fontWeight: 700, color: m.hi ? "#fff" : C.ink, flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.name}</span>
-            <span style={{ fontSize: 12.5, fontWeight: 700, padding: "5px 12px", borderRadius: 20, whiteSpace: "nowrap",
-              background: m.hi ? "rgba(255,255,255,.15)" : C.sageLt, color: m.hi ? "#fff" : C.pine }}>{m.type}</span>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "17px 0" }}>
-            <div>
-              <div style={{ fontSize: 12.5, color: m.hi ? "rgba(255,255,255,.6)" : C.mute }}>{t.closesIn}</div>
-              <div style={{ fontSize: 18, fontWeight: 700, color: m.hi ? C.gold : C.ink }}>{m.deadline}</div>
+      {t.connectMatches.map((m, i) => {
+        const ap = !!S.applied[i];
+        return (
+          <div key={i} style={{ background: m.hi ? C.forest : C.card, borderRadius: 22, padding: 19, marginBottom: 14, boxShadow: "0 6px 18px rgba(30,50,40,.06)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
+              <span style={{ fontSize: 17.5, fontWeight: 700, color: m.hi ? "#fff" : C.ink, flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.name}</span>
+              <span style={{ fontSize: 12.5, fontWeight: 700, padding: "5px 12px", borderRadius: 20, whiteSpace: "nowrap",
+                background: m.hi ? "rgba(255,255,255,.15)" : C.sageLt, color: m.hi ? "#fff" : C.pine }}>{m.type}</span>
             </div>
-            <div style={{ textAlign: t.dir === "rtl" ? "left" : "right" }}>
-              <div style={{ fontSize: 12.5, color: m.hi ? "rgba(255,255,255,.6)" : C.mute }}>{t.readiness}</div>
-              <div style={{ fontSize: 14.5, fontWeight: 700, color: m.hi ? "rgba(255,255,255,.9)" : C.mute }}>{m.ready}</div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "17px 0" }}>
+              <div>
+                <div style={{ fontSize: 12.5, color: m.hi ? "rgba(255,255,255,.6)" : C.mute }}>{t.closesIn}</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: m.hi ? C.gold : C.ink }}>{m.deadline}</div>
+              </div>
+              <div style={{ textAlign: t.dir === "rtl" ? "left" : "right" }}>
+                <div style={{ fontSize: 12.5, color: m.hi ? "rgba(255,255,255,.6)" : C.mute }}>{t.readiness}</div>
+                <div style={{ fontSize: 14.5, fontWeight: 700, color: m.hi ? "rgba(255,255,255,.9)" : C.mute }}>{ap ? t.inProgress : m.ready}</div>
+              </div>
             </div>
+            <button onClick={() => S.setApplied({ ...S.applied, [i]: true })}
+              style={{ width: "100%", background: ap ? (m.hi ? "rgba(255,255,255,.2)" : C.forest) : (m.hi ? C.gold : C.sageLt),
+                color: ap ? "#fff" : (m.hi ? C.forestDk : C.pine), border: "none", borderRadius: 14, padding: 15, fontSize: 15.5, fontWeight: 700, cursor: "pointer", transition: "background .2s" }}>
+              {ap ? t.applied : t.apply}
+            </button>
           </div>
-          <button style={{ width: "100%", background: m.hi ? C.gold : C.sageLt, color: m.hi ? C.forestDk : C.pine, border: "none", borderRadius: 14, padding: 15, fontSize: 15.5, fontWeight: 700, cursor: "pointer" }}>{t.apply}</button>
-        </div>
-      ))}
+        );
+      })}
     </>
   );
 }
 
-// ---------- 05 Operate ----------
-function Operate({ t, go }) {
+// ---------- Operate ----------
+function Operate({ t, lang, go, S }) {
+  const tiles = [
+    { t: t.tileInv, s: `${num(S.invoices, lang)} ${t.tileInvS}`, icon: "receipt", go: "invoice" },
+    { t: t.tileCust, s: t.tileCustS, icon: "users", go: "customers" },
+    { t: t.tileTeam, s: t.tileTeamS, icon: "bag", go: "team" },
+    { t: t.tileComp, s: S.vatFiled ? t.tileCompOk : t.tileCompWarn, icon: "shield", warn: !S.vatFiled, go: "compliance" },
+  ];
   return (
     <>
       <div style={{ color: C.mute, fontSize: 15.5, marginBottom: 4 }}>{t.opCompany}</div>
       <h1 style={{ fontSize: 28, fontWeight: 700, color: C.ink, margin: "0 0 22px" }}>{t.opStatus}</h1>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 15, marginBottom: 26 }}>
-        {t.tiles.map((tile, i) => (
-          <button key={i} onClick={() => tile.go && go(tile.go)}
+        {tiles.map((tile, i) => (
+          <button key={i} onClick={() => go(tile.go)}
             style={{ textAlign: t.dir === "rtl" ? "right" : "left", background: C.card, border: "none", borderRadius: 22, padding: 18, height: 162,
-              display: "flex", flexDirection: "column", justifyContent: "space-between", cursor: tile.go ? "pointer" : "default", boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
+              display: "flex", flexDirection: "column", justifyContent: "space-between", cursor: "pointer", boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
             <div style={{ width: 48, height: 48, borderRadius: 14, background: tile.warn ? C.goldSoft : C.sageLt, display: "grid", placeItems: "center" }}>
               <Icon name={tile.icon} size={24} color={tile.warn ? C.goldText : C.pine} />
             </div>
@@ -743,8 +999,93 @@ function Operate({ t, go }) {
   );
 }
 
-// ---------- E-invoice ----------
-function Invoice({ t }) {
+// ---------- Customers ----------
+function Customers({ t }) {
+  const chipStyle = (c) => {
+    if (c === "Overdue" || c === "متأخر") return { background: C.goldSoft, color: C.goldText };
+    if (c === "New" || c === "جديد") return { background: "#EAF0FB", color: "#2F5FA6" };
+    return { background: C.sageLt, color: C.pine };
+  };
+  return (
+    <>
+      <div style={{ display: "flex", alignItems: "center", gap: 11, background: C.card, borderRadius: 16, padding: "13px 16px", marginBottom: 18, boxShadow: "0 4px 14px rgba(30,50,40,.04)" }}>
+        <Icon name="search" size={19} color={C.mute} />
+        <span style={{ color: C.mute, fontSize: 15 }}>{t.custSearch}</span>
+      </div>
+      <div style={{ background: C.card, borderRadius: 22, padding: "6px 18px", boxShadow: "0 6px 18px rgba(30,50,40,.05)", marginBottom: 18 }}>
+        {t.custRows.map((r, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 0", borderBottom: i < t.custRows.length - 1 ? `1px solid ${C.lineSoft}` : "none" }}>
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: C.sageLt, display: "grid", placeItems: "center", fontSize: 14, fontWeight: 700, color: C.pine, flexShrink: 0 }}>{r.init}</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 16, fontWeight: 600, color: C.ink }}>{r.name}</div>
+              <span style={{ ...chipStyle(r.chip), fontSize: 11.5, fontWeight: 700, padding: "3px 10px", borderRadius: 20, display: "inline-block", marginTop: 4 }}>{r.chip}</span>
+            </div>
+            <span style={{ fontSize: 15, fontWeight: 700, color: C.ink }}>{r.amt}</span>
+          </div>
+        ))}
+      </div>
+      <Primary tone="sage">{t.addCust}</Primary>
+    </>
+  );
+}
+
+// ---------- Team ----------
+function Team({ t }) {
+  return (
+    <>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, background: C.goldSoft, borderRadius: 16, padding: "14px 16px", marginBottom: 18 }}>
+        <Icon name="bag" size={20} color={C.goldText} />
+        <span style={{ fontSize: 14.5, color: C.goldText, fontWeight: 700 }}>{t.payrollNote}</span>
+      </div>
+      {t.employees.map((e, i) => (
+        <div key={i} style={{ background: C.card, borderRadius: 20, padding: 17, marginBottom: 12, display: "flex", alignItems: "center", gap: 14, boxShadow: "0 5px 16px rgba(30,50,40,.05)" }}>
+          <div style={{ width: 48, height: 48, borderRadius: 14, background: C.forest, display: "grid", placeItems: "center", fontSize: 17, fontWeight: 700, color: C.gold, flexShrink: 0 }}>{e.init}</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 16.5, fontWeight: 700, color: C.ink }}>{e.name}</div>
+            <div style={{ fontSize: 14, color: C.mute, marginTop: 2 }}>{e.role}</div>
+          </div>
+          <span style={{ fontSize: 12.5, fontWeight: 700, color: C.pine, background: C.sageLt, padding: "6px 11px", borderRadius: 20 }}>{e.gosi}</span>
+        </div>
+      ))}
+    </>
+  );
+}
+
+// ---------- Compliance ----------
+function Compliance({ t, S }) {
+  return (
+    <>
+      <div style={{ display: "flex", gap: 11, marginBottom: 18 }}>
+        <span style={{ flex: 1, textAlign: "center", fontSize: 13.5, fontWeight: 700, color: C.pine, background: C.sageLt, padding: "13px 8px", borderRadius: 15 }}>{t.badgePdpl}</span>
+        <span style={{ flex: 1, textAlign: "center", fontSize: 13.5, fontWeight: 700, color: C.pine, background: C.sageLt, padding: "13px 8px", borderRadius: 15 }}>{t.badgeZatca}</span>
+      </div>
+      <div style={{ background: S.vatFiled ? C.card : C.forest, borderRadius: 22, padding: 20, marginBottom: 18, boxShadow: "0 6px 18px rgba(30,50,40,.08)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: S.vatFiled ? 0 : 16 }}>
+          <div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: S.vatFiled ? C.ink : "#fff" }}>{t.vatCard}</div>
+            <div style={{ fontSize: 14.5, color: S.vatFiled ? C.pine : C.gold, fontWeight: 700, marginTop: 3 }}>{S.vatFiled ? t.filed : t.vatDue}</div>
+          </div>
+          {S.vatFiled && <Icon name="bigCheck" size={34} />}
+        </div>
+        {!S.vatFiled && (
+          <button onClick={() => S.setVatFiled(true)} style={{ width: "100%", background: C.gold, color: C.forestDk, border: "none", borderRadius: 14, padding: 15, fontSize: 15.5, fontWeight: 700, cursor: "pointer" }}>{t.fileNow}</button>
+        )}
+      </div>
+      <div style={{ fontSize: 19, fontWeight: 700, color: C.ink, marginBottom: 12 }}>{t.upcoming}</div>
+      <div style={{ background: C.card, borderRadius: 20, padding: "4px 18px", boxShadow: "0 5px 16px rgba(30,50,40,.05)" }}>
+        {t.compItems.map((c, i) => (
+          <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 0", borderBottom: i < t.compItems.length - 1 ? `1px solid ${C.lineSoft}` : "none" }}>
+            <span style={{ fontSize: 15.5, color: C.ink, fontWeight: 500 }}>{c.t}</span>
+            <span style={{ fontSize: 14.5, fontWeight: 700, color: C.mute }}>{c.d}</span>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+// ---------- Invoice ----------
+function Invoice({ t, go, S }) {
   return (
     <>
       <p style={{ color: C.mute, fontSize: 15, margin: "0 0 16px" }}>{t.invSub}</p>
@@ -768,27 +1109,74 @@ function Invoice({ t }) {
         </div>
         <span style={{ fontSize: 14.5, color: C.pine, fontWeight: 600, lineHeight: 1.4 }}>{t.invCompliant}</span>
       </div>
-      <button style={{ width: "100%", background: C.forest, color: "#fff", border: "none", borderRadius: 18, padding: 18, fontSize: 17, fontWeight: 700, cursor: "pointer", marginTop: 20 }}>{t.issue}</button>
+      <div style={{ marginTop: 20 }}>
+        <Primary onClick={() => { S.setInvoices(v => v + 1); go("invoiceSuccess"); }}>{t.issue}</Primary>
+      </div>
     </>
   );
 }
 
-// ---------- 06 Pricing ----------
-function Pricing({ t }) {
+// ---------- Invoice success ----------
+function InvoiceSuccess({ t, go }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 48 }}>
+      <Icon name="bigCheck" size={92} />
+      <h1 style={{ fontSize: 25, fontWeight: 700, color: C.ink, margin: "26px 0 6px" }}>{t.invOkTitle}</h1>
+      <p style={{ color: C.mute, fontSize: 15.5, margin: "0 0 26px" }}>{t.invOkSub}</p>
+      <div style={{ width: 120, height: 120, borderRadius: 16, background: "#fff", display: "grid", placeItems: "center", boxShadow: "0 6px 18px rgba(30,50,40,.08)", marginBottom: 12 }}>
+        <svg width="88" height="88" viewBox="0 0 30 30">
+          {[...Array(49)].map((_, i) => { const x = i % 7, y = Math.floor(i / 7); return ((x * y + x + y) % 3 === 0) ? <rect key={i} x={x * 4 + 1} y={y * 4 + 1} width="3.4" height="3.4" fill={C.ink} /> : null; })}
+        </svg>
+      </div>
+      <div style={{ fontSize: 13.5, color: C.pine, fontWeight: 600, marginBottom: 30 }}>{t.invCompliant}</div>
+      <div style={{ width: "100%" }}>
+        <Primary onClick={() => go("operate")}>{t.invOkDone}</Primary>
+      </div>
+    </div>
+  );
+}
+
+// ---------- Grow ----------
+function Grow({ t, S }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 26 }}>
+      <div style={{ width: 84, height: 84, borderRadius: 26, background: C.goldSoft, display: "grid", placeItems: "center", marginBottom: 22 }}>
+        <Icon name="chart" size={40} color={C.goldText} />
+      </div>
+      <h1 style={{ fontSize: 26, fontWeight: 700, color: C.ink, margin: "0 0 6px" }}>{t.growTitle}</h1>
+      <p style={{ color: C.mute, fontSize: 15.5, margin: "0 0 26px" }}>{t.growSub}</p>
+      <div style={{ width: "100%", background: C.card, borderRadius: 22, padding: "8px 20px", boxShadow: "0 6px 18px rgba(30,50,40,.05)", marginBottom: 26 }}>
+        {t.growFeats.map((f, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 13, padding: "16px 0", borderBottom: i < t.growFeats.length - 1 ? `1px solid ${C.lineSoft}` : "none" }}>
+            <Icon name="check" size={16} color={C.gold} />
+            <span style={{ fontSize: 16, color: C.ink, fontWeight: 500 }}>{f}</span>
+          </div>
+        ))}
+      </div>
+      <div style={{ width: "100%" }}>
+        <button onClick={() => S.setWaitlist(true)}
+          style={{ width: "100%", background: S.waitlist ? C.sageLt : C.forest, color: S.waitlist ? C.pine : "#fff", border: "none", borderRadius: 18, padding: 18, fontSize: 17, fontWeight: 700, cursor: "pointer", transition: "background .2s" }}>
+          {S.waitlist ? t.onList : t.joinWait}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ---------- Pricing ----------
+function Pricing({ t, S }) {
   const L = t.prLaunch;
   return (
     <>
       <h1 style={{ fontSize: 28, fontWeight: 700, color: C.ink, margin: "0 0 6px", lineHeight: 1.15 }}>{t.prTitle}</h1>
       <p style={{ color: C.mute, fontSize: 15, margin: "0 0 20px" }}>{t.prSub}</p>
-      {/* Ideate */}
-      <div style={{ background: C.card, borderRadius: 22, padding: 20, marginBottom: 15, display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
+      <button onClick={() => S.setTier(0)} style={{ width: "100%", textAlign: t.dir === "rtl" ? "right" : "left", background: C.card, border: `1.5px solid ${S.tier === 0 ? C.forest : "transparent"}`, borderRadius: 22, padding: 20, marginBottom: 15, display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 6px 18px rgba(30,50,40,.05)", cursor: "pointer" }}>
         <div>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.ink }}>{t.prFree.name}</div>
           <div style={{ fontSize: 14.5, color: C.mute, marginTop: 3 }}>{t.prFree.sub}</div>
         </div>
-        <span style={{ fontSize: 21, fontWeight: 700, color: C.forest }}>{t.prFree.price}</span>
-      </div>
-      {/* Launch highlighted */}
+        <span style={{ fontSize: 21, fontWeight: 700, color: C.forest }}>{S.tier === 0 ? t.selected : t.prFree.price}</span>
+      </button>
       <div style={{ background: C.forest, borderRadius: 26, padding: 24, marginBottom: 15 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
@@ -810,58 +1198,83 @@ function Pricing({ t }) {
             </div>
           ))}
         </div>
-        <button style={{ width: "100%", background: "#fff", color: C.forest, border: "none", borderRadius: 16, padding: 17, fontSize: 17, fontWeight: 700, cursor: "pointer", marginTop: 8 }}>{L.cta}</button>
+        <button onClick={() => S.setTier(1)} style={{ width: "100%", background: S.tier === 1 ? C.gold : "#fff", color: C.forest, border: "none", borderRadius: 16, padding: 17, fontSize: 17, fontWeight: 700, cursor: "pointer", marginTop: 8, transition: "background .2s" }}>{S.tier === 1 ? t.selected : L.cta}</button>
       </div>
-      {/* Operate */}
-      <div style={{ background: C.card, borderRadius: 22, padding: 20, marginBottom: 18, display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
+      <button onClick={() => S.setTier(2)} style={{ width: "100%", textAlign: t.dir === "rtl" ? "right" : "left", background: C.card, border: `1.5px solid ${S.tier === 2 ? C.forest : "transparent"}`, borderRadius: 22, padding: 20, marginBottom: 18, display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 6px 18px rgba(30,50,40,.05)", cursor: "pointer" }}>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 20, fontWeight: 700, color: C.ink }}>{t.prOperate.name}</div>
           <div style={{ fontSize: 14, color: C.mute, marginTop: 3 }}>{t.prOperate.sub}</div>
         </div>
         <div style={{ textAlign: t.dir === "rtl" ? "left" : "right" }}>
-          <div style={{ fontSize: 20, fontWeight: 700, color: C.ink }}>{t.prOperate.price}</div>
-          <div style={{ fontSize: 13, color: C.mute }}>{t.prOperate.per}</div>
+          <div style={{ fontSize: 20, fontWeight: 700, color: C.ink }}>{S.tier === 2 ? t.selected : t.prOperate.price}</div>
+          {S.tier !== 2 && <div style={{ fontSize: 13, color: C.mute }}>{t.prOperate.per}</div>}
         </div>
-      </div>
+      </button>
       <div style={{ textAlign: "center", color: C.mute, fontSize: 14, opacity: .85 }}>{t.prFoot}</div>
     </>
   );
 }
 
-// ---------- Profile (simple) ----------
-function Profile({ t, lang }) {
+// ---------- Profile ----------
+function Profile({ t, lang, go, S }) {
   return (
     <>
       <div style={{ display: "flex", alignItems: "center", gap: 17, marginBottom: 26 }}>
         <div style={{ width: 70, height: 70, borderRadius: 22, background: C.forest, display: "grid", placeItems: "center", color: C.gold, fontSize: 26, fontWeight: 700 }}>{lang === "ar" ? "ن" : "N"}</div>
         <div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: C.ink }}>{lang === "ar" ? "نوف العتيبي" : "Nouf Al-Otaibi"}</div>
-          <div style={{ fontSize: 15, color: C.mute, marginTop: 2 }}>{lang === "ar" ? "استوديو نفاذ" : "Nafath Studio"}</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: C.ink }}>{t.profName}</div>
+          <div style={{ fontSize: 15, color: C.mute, marginTop: 2 }}>{t.profCo}</div>
         </div>
       </div>
-      {[
-        lang === "ar" ? "بيانات الشركة" : "Company details",
-        lang === "ar" ? "الفواتير والاشتراك" : "Billing & subscription",
-        lang === "ar" ? "المستندات" : "Documents",
-        lang === "ar" ? "الإشعارات" : "Notifications",
-        lang === "ar" ? "المساعدة والدعم" : "Help & support",
-      ].map((it, i) => (
-        <div key={i} style={{ background: C.card, borderRadius: 18, padding: 19, marginBottom: 12, display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 4px 14px rgba(30,50,40,.04)" }}>
+      {t.profRows.map((it, i) => (
+        <button key={i} onClick={() => { S.setProfileRow(i); go("profileDetail"); }}
+          style={{ width: "100%", textAlign: t.dir === "rtl" ? "right" : "left", background: C.card, border: "none", borderRadius: 18, padding: 19, marginBottom: 12, display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 4px 14px rgba(30,50,40,.04)", cursor: "pointer" }}>
           <span style={{ fontSize: 16.5, color: C.ink, fontWeight: 500 }}>{it}</span>
           <span style={{ color: C.mute, fontSize: 20 }}>{t.dir === "rtl" ? "‹" : "›"}</span>
-        </div>
+        </button>
       ))}
     </>
   );
 }
 
+function ProfileDetail({ t, S }) {
+  const fields = t.profDetails[S.profileRow] || [];
+  return (
+    <div style={{ background: C.card, borderRadius: 22, padding: "8px 20px", boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
+      {fields.map((f, i) => (
+        <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "17px 0", borderBottom: i < fields.length - 1 ? `1px solid ${C.lineSoft}` : "none" }}>
+          <span style={{ color: C.mute, fontSize: 15.5 }}>{f.k}</span>
+          <span style={{ color: C.ink, fontSize: 15.5, fontWeight: 600 }}>{f.v}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ============================================================
 function App() {
   const [lang, setLang] = useState("en");
-  const [screen, setScreen] = useState("onboarding");
+  const [screen, setScreen] = useState("splash");
+  const [splashIdx, setSplashIdx] = useState(0);
   const t = T[lang];
 
-  // ---- uniform canvas scaling: content is authored at 460x960 and the
-  // whole canvas is scaled to fit the window, so proportions never break ----
+  // ---- session state ----
+  const [persona, setPersona] = useState("fahad");
+  const [quizDone, setQuizDone] = useState(false);
+  const [quizIdx, setQuizIdx] = useState(0);
+  const [zatcaDone, setZatcaDone] = useState(false);
+  const [invoices, setInvoices] = useState(12);
+  const [quotes, setQuotes] = useState({});
+  const [applied, setApplied] = useState({});
+  const [vatFiled, setVatFiled] = useState(false);
+  const [waitlist, setWaitlist] = useState(false);
+  const [tier, setTier] = useState(null);
+  const [profileRow, setProfileRow] = useState(0);
+  const S = { persona, setPersona, quizDone, setQuizDone, quizIdx, setQuizIdx, zatcaDone, setZatcaDone,
+    invoices, setInvoices, quotes, setQuotes, applied, setApplied, vatFiled, setVatFiled,
+    waitlist, setWaitlist, tier, setTier, profileRow, setProfileRow };
+
+  // ---- uniform canvas scaling ----
   const CW = 460, CH = 960, BORDER = 12;
   const [fit, setFit] = React.useState({ s: 1, h: CH, mobile: false });
   React.useEffect(() => {
@@ -880,40 +1293,50 @@ function App() {
     return () => window.removeEventListener("resize", calc);
   }, []);
 
-  // which bottom tab is active for a given screen
   const tabForScreen = {
-    journey: "journey", ideate: "journey", mapper: "journey",
+    journey: "journey", ideate: "journey", mapper: "journey", quiz: "journey", scoreReveal: "journey", grow: "journey", pricing: "journey",
     launch: "launch", market: "launch", connect: "launch",
-    operate: "operate", invoice: "operate",
-    profile: "profile",
+    operate: "operate", invoice: "operate", invoiceSuccess: "operate", customers: "operate", team: "operate", compliance: "operate",
+    profile: "profile", profileDetail: "profile",
   };
   const backMap = {
-    ideate: "journey", mapper: "ideate", market: "launch", connect: "launch", invoice: "operate",
-    pricing: "journey",
+    ideate: "journey", mapper: "ideate", quiz: "journey", grow: "journey", pricing: "journey",
+    market: "launch", connect: "launch",
+    invoice: "operate", customers: "operate", team: "operate", compliance: "operate",
+    profileDetail: "profile",
   };
-
   const go = (s) => setScreen(s);
   const tab = tabForScreen[screen] || "journey";
   const hdr = {
-    journey: null, ideate: t.ideateHdr, mapper: t.mapperHdr, launch: t.launchHdr,
-    market: t.marketHdr, connect: t.connectHdr, operate: t.opHdr, invoice: t.invHdr,
-    profile: t.tabs.profile, pricing: t.prHdr,
+    journey: null, ideate: t.ideateHdr, mapper: t.mapperHdr, quiz: t.quizHdr, scoreReveal: t.quizHdr,
+    launch: t.launchHdr, market: t.dir === "rtl" ? "سوق الشركاء" : "Partner marketplace", connect: t.connectHdr,
+    operate: t.opHdr, invoice: t.invHdr, invoiceSuccess: t.invOkHdr,
+    customers: t.custHdr, team: t.teamHdr, compliance: t.compHdr,
+    grow: t.growHdr, pricing: t.prHdr,
+    profile: t.tabs.profile, profileDetail: t.profRows[profileRow],
   };
-  const showBack = ["ideate", "mapper", "market", "connect", "invoice", "pricing"].includes(screen);
+  const showBack = Object.keys(backMap).includes(screen);
 
   const body = () => {
     switch (screen) {
-      case "onboarding": return <Onboarding t={t} lang={lang} setLang={setLang} go={go} />;
-      case "journey": return <Journey t={t} go={go} />;
+      case "journey": return <Journey t={t} lang={lang} go={go} S={S} />;
+      case "quiz": return <Quiz t={t} lang={lang} go={go} S={S} />;
+      case "scoreReveal": return <ScoreReveal t={t} go={go} />;
       case "ideate": return <Ideate t={t} go={go} />;
       case "mapper": return <Mapper t={t} />;
-      case "launch": return <Launch t={t} go={go} />;
-      case "market": return <Market t={t} />;
-      case "connect": return <Connect t={t} />;
-      case "operate": return <Operate t={t} go={go} />;
-      case "invoice": return <Invoice t={t} />;
-      case "profile": return <Profile t={t} lang={lang} />;
-      case "pricing": return <Pricing t={t} />;
+      case "launch": return <Launch t={t} lang={lang} go={go} S={S} />;
+      case "market": return <Market t={t} S={S} />;
+      case "connect": return <Connect t={t} S={S} />;
+      case "operate": return <Operate t={t} lang={lang} go={go} S={S} />;
+      case "invoice": return <Invoice t={t} go={go} S={S} />;
+      case "invoiceSuccess": return <InvoiceSuccess t={t} go={go} />;
+      case "customers": return <Customers t={t} />;
+      case "team": return <Team t={t} />;
+      case "compliance": return <Compliance t={t} S={S} />;
+      case "grow": return <Grow t={t} S={S} />;
+      case "pricing": return <Pricing t={t} S={S} />;
+      case "profile": return <Profile t={t} lang={lang} go={go} S={S} />;
+      case "profileDetail": return <ProfileDetail t={t} S={S} />;
       default: return null;
     }
   };
@@ -931,10 +1354,8 @@ function App() {
           border-radius:56px; border:12px solid #12201B;
           overflow:hidden;
         }
-        /* clean, thin scrollbars inside the phone */
         .intilaqa-phone *::-webkit-scrollbar{ width:0px; height:0px; }
         .intilaqa-phone *{ scrollbar-width:none; -ms-overflow-style:none; }
-        /* On real phones: fill the screen, hide the demo chrome */
         @media (max-width:640px){
           .intilaqa-stage{ padding:0; gap:0; background:#12201B; }
           .intilaqa-phone{ border-radius:0; border:0; }
@@ -942,32 +1363,39 @@ function App() {
         }
       `}</style>
 
-      <Phone dir={t.dir} dark={screen === "onboarding"} w={CW} h={fit.h} s={fit.s} mobile={fit.mobile}>
+      <Phone dir={t.dir} dark={screen === "onboarding" || screen === "splash"} w={CW} h={fit.h} s={fit.s} mobile={fit.mobile}>
         <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-          {screen === "onboarding"
-            ? <Onboarding t={t} lang={lang} setLang={setLang} go={go} />
+          {screen === "splash"
+            ? <Splash t={t} lang={lang} setLang={setLang} go={go} idx={splashIdx} setIdx={setSplashIdx} />
+            : screen === "onboarding"
+            ? <Onboarding t={t} lang={lang} setLang={setLang} go={go} S={S} />
             : (
               <>
                 <Header t={t} lang={lang} setLang={setLang} title={hdr[screen] ?? ""} onBack={showBack ? () => go(backMap[screen] || "journey") : null} />
                 <Scroll>{body()}</Scroll>
-                <TabBar t={t} tab={tab} setTab={setScreen} go={go} />
+                <TabBar t={t} tab={tab} go={go} />
               </>
             )}
         </div>
       </Phone>
 
-      {/* demo jump pills */}
-      <div className="intilaqa-pills" style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", maxWidth: 430, marginTop: 4 }}>
+      <div className="intilaqa-pills" style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", maxWidth: 500, marginTop: 4 }}>
         {[
+          ["splash", lang === "ar" ? "المقدمة" : "Intro"],
           ["onboarding", lang === "ar" ? "البداية" : "Start"],
           ["journey", t.tabs.journey],
-          ["ideate", lang === "ar" ? "التحقق" : "Validate"],
+          ["quiz", lang === "ar" ? "الاختبار" : "Quiz"],
+          ["ideate", lang === "ar" ? "النتائج" : "Results"],
           ["mapper", lang === "ar" ? "المُخطِّط" : "Mapper"],
           ["launch", t.tabs.launch],
           ["market", lang === "ar" ? "السوق" : "Market"],
           ["connect", "Connect"],
           ["operate", t.tabs.operate],
+          ["customers", lang === "ar" ? "العملاء" : "CRM"],
+          ["team", lang === "ar" ? "الفريق" : "Team"],
+          ["compliance", lang === "ar" ? "الالتزام" : "Compliance"],
           ["invoice", lang === "ar" ? "الفوترة" : "Invoice"],
+          ["grow", lang === "ar" ? "النمو" : "Grow"],
           ["pricing", lang === "ar" ? "الأسعار" : "Pricing"],
           ["profile", t.tabs.profile],
         ].map(([k, label]) => (
