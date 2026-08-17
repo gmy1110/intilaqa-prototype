@@ -61,6 +61,20 @@ const T = {
     ],
     skip: "Skip", next: "Next", getStarted: "Get started",
     promise: "We read the regulations so you can build.",
+    // login
+    loginTitle: "Welcome back",
+    loginSub: "Log in to your Intilaqa account.",
+    loginEmail: "Email", loginEmailPh: "you@company.sa",
+    loginPassword: "Password", loginPasswordPh: "••••••••",
+    loginBtn: "Log in", loginForgot: "Forgot password?",
+    loginDivider: "Demo accounts",
+    loginDemoHint: "Tap an account to explore",
+    demoAccounts: [
+      { id: "amal", icon: "bulb", name: "Amal Al-Rashid", role: "Validating an idea", email: "amal@intilaqa.sa", go: "journey" },
+      { id: "fahad", icon: "home", name: "Fahad Al-Otaibi", role: "Registering · foreign founder", email: "fahad@intilaqa.sa", go: "launch" },
+      { id: "ohoud", icon: "chart", name: "Ohoud Al-Ghamdi", role: "Operating · Nafath Studio", email: "ohoud@intilaqa.sa", go: "operate" },
+    ],
+    logout: "Log out",
     onbKicker: "STEP 1 OF 3",
     onbTitle: "Where are you on the journey?",
     onbSub: "Tap the stage that fits today.",
@@ -224,27 +238,58 @@ const T = {
     fit: "Fit",
     // launch
     launchHdr: "Launch navigator",
-    portalsOf: "of 5 portals", daysLeft: "~12 days left", complete: "Complete ✓",
+    launchFramer: "You file on the official portals — we guide you, track it, and connect you to vetted partners so nothing's missed.",
+    portalsOf: "of 5 steps", complete: "Complete ✓",
+    daysEst: (d) => `~${d} days left`, daysCalc: "estimated from remaining steps",
+    foreignNote: "Most activities allow 100% foreign ownership; some need a sector regulator (SAMA, SFDA, CST). Confirm your activity is open before filing.",
+    gccSkip: "Not required — GCC & Saudi nationals register directly with Commerce.",
     steps: [
-      { portal: "MISA", sub: "Investment licence issued" },
-      { portal: "Ministry of Commerce", sub: "CR 4030******" },
-      { portal: "ZATCA", sub: "VAT registration · in review", subDone: "VAT certificate issued",
+      { key: "misa", portal: "MISA", sub: "Investment registration", days: 10,
+        wWhat: "Registers you as a foreign investor with the Ministry of Investment. Since Feb 2025 this is a streamlined registration, not the old license — it's your first step and unlocks everything after it.",
+        wPrep: ["Parent-company registration / home-country extract (attested by Saudi Embassy + MOFA)", "Last fiscal-year financial statements (attested)", "Shareholder IDs / passports", "Chosen business activity (ISIC4 code)", "Board resolution & power of attorney (if corporate shareholder)"],
+        wSteps: ["Choose your activity and legal form (usually LLC)", "Prepare & attest home-country documents", "Submit registration on the MISA portal", "Pay the fee (SAR 2,000 application)", "Receive your MISA investment registration"],
+        wTime: "~3–10 business days once documents are complete", url: "https://investsaudi.sa" },
+      { key: "moc", portal: "Ministry of Commerce", sub: "Commercial Registration (CR)", days: 5,
+        wWhat: "Your company's birth certificate — the CR (Sijil Tijari) gives you a unique 10-digit number. Almost everything downstream (bank, ZATCA, GOSI, Qiwa) attaches to it.",
+        wPrep: ["MISA registration certificate", "Reserved company name", "Articles of Association (AoA)", "Shareholder / manager IDs", "National Address; lease if a physical location is required"],
+        wSteps: ["Reserve your company name", "Draft & attest the Articles of Association", "Issue the CR via the Saudi Business Center", "Register your National Address (SPL)", "Activate Chamber of Commerce membership"],
+        wTime: "Name reservation ~2 days; AoA ~3–5 days; CR shortly after", url: "https://business.sa" },
+      { key: "zatca", portal: "ZATCA", sub: "Tax & VAT registration", days: 4,
+        subDone: "VAT certificate issued",
         subtasks: [{ t: "Documents submitted · 14 Aug", done: true }, { t: "Certificate issued", done: false }],
-        action: "Upload bank letter" },
-      { portal: "GOSI", sub: "Social insurance registration" },
-      { portal: "Qiwa", sub: "Labour file & Saudization band" },
+        action: "Mark bank letter as submitted",
+        wWhat: "Registers your company with the Zakat, Tax and Customs Authority for tax, and for VAT if you cross the threshold. Also where ZATCA e-invoicing (Fatoora) applies.",
+        wPrep: ["CR number & certificate", "Manager's national ID / Iqama", "Active Absher / Nafath login", "Company bank IBAN", "Estimated annual taxable supplies & expenses"],
+        wSteps: ["Log in to ZATCA with Nafath", "Confirm your Zakat / tax registration (much is pulled from your CR)", "Register for VAT if annual taxable revenue exceeds SAR 375,000 (voluntary from SAR 187,500)", "Submit your bank letter", "Receive your VAT certificate"],
+        wTime: "~4 days", url: "https://zatca.gov.sa" },
+      { key: "gosi", portal: "GOSI", sub: "Social insurance", days: 5,
+        wWhat: "Registers your establishment with the General Organization for Social Insurance. Employees register automatically once you hire them via Qiwa.",
+        wPrep: ["CR number", "Manager Nafath login", "Company details"],
+        wSteps: ["Open your GOSI establishment file (linked to your CR)", "Confirm establishment details", "Employees auto-register in GOSI when contracts are issued on Qiwa", "Set up monthly contribution payments"],
+        wTime: "Part of the ~10-day HR-portals block", url: "https://gosi.gov.sa" },
+      { key: "qiwa", portal: "Qiwa", sub: "Labour file & Saudization", days: 5,
+        wWhat: "Your employer file with MHRSD on Qiwa — where employment contracts, work permits, and your Nitaqat (Saudization) band live.",
+        wPrep: ["CR number", "Manager Nafath login", "Planned headcount"],
+        wSteps: ["Open your MHRSD / Qiwa labour file", "Receive your default visa balance (e.g. 3 visas, Small Green band, for setup-phase companies)", "Issue employment contracts through Qiwa (auto-registers staff in GOSI; wages flow to Mudad)", "Your Nitaqat band updates automatically — no separate registration"],
+        wTime: "Part of the ~10-day HR-portals block", url: "https://qiwa.sa" },
     ],
     stDone: "Done", stCurrent: "Current", stUpcoming: "Upcoming",
-    needPro: "Need a licensed professional?", openMarket: "Marketplace",
+    wWhatT: "What it is", wPrepT: "Prepare", wStepsT: "Steps", wTimeT: "Time", wOpen: "Open portal",
+    wMarkDone: "Mark as done", wMarkedDone: "Completed ✓",
+    needPro: "Need a licensed professional?", openMarket: "Our Partners",
     seeConnect: "Funding & accelerator matches",
-    // market
-    marketSub: "Vetted firms — only when required.",
+    // partners
+    marketSub: "Some steps can legally need a licensed professional. Pick a vetted partner — we'll submit your request and track their progress here.",
     partners: [
-      { name: "Al-Rushd Legal", type: "Law firm", sla: "2-day response", price: "from SAR 350" },
-      { name: "Tamkeen PRO Services", type: "PRO agent", sla: "1-day response", price: "from SAR 200" },
-      { name: "Diwan Corporate", type: "Law firm", sla: "2-day response", price: "from SAR 500" },
+      { name: "SARIA", type: "Full setup (done-for-you)", rating: 4.9, note: "End-to-end formation incl. MISA, CR, AoA, PRO." },
+      { name: "Ebda", type: "Foreign-investor soft-landing", rating: 4.8, note: "Since 2005, 200+ ventures; MISA + CR + operations, ~10-day setup." },
+      { name: "Al-Rushd Legal", type: "Law firm", rating: 4.7, note: "AoA drafting, attestations, legal representation." },
+      { name: "Diwan Corporate", type: "Law firm", rating: 4.6, note: "Corporate structuring & contracts." },
+      { name: "Tamkeen PRO Services", type: "PRO agent", rating: 4.5, note: "Government-relations & portal processing." },
     ],
-    vetted: "Vetted", sla: "SLA", quote: "Request quote", quoteSent: "Request sent ✓",
+    vetted: "Vetted", submitReq: "Submit request",
+    refStages: ["Request sent", "Partner reviewing", "In progress", "Contacted you"],
+    refFeedNote: "In production, live updates come from the partner's system.",
     // connect
     connectHdr: "Intilaqa Connect",
     connectSub: "Matched to your readiness.",
@@ -258,25 +303,49 @@ const T = {
     opHdr: "Operate",
     opCompany: "Nafath Studio · CR 4030",
     opStatus: "Everything is current",
+    tileOrders: "Orders", tileOrdersS: "3 active jobs",
     tileInv: "E-invoicing", tileInvS: "sent this month",
     tileCust: "Customers", tileCustS: "38 active",
+    tileSched: "Schedule", tileSchedS: "2 today",
     tileTeam: "Team", tileTeamS: "6 · payroll on 27th",
     tileComp: "Compliance", tileCompWarn: "VAT due in 9 days", tileCompOk: "All clear",
+    retailNod: "For retail & F&B", retailNodS: "Inventory & POS — stock tracking, Mada point of sale", retailNodTag: "Available for retail businesses",
     recent: "Recent",
     recentItems: [
       { init: "AB", t: "Invoice #0142 paid", s: "Arabian Bites · today", v: "SAR 8,400" },
       { init: "MK", t: "New customer added", s: "Manara Kitchens · yesterday", v: "CRM" },
     ],
-    // customers
+    // customers (pipeline)
     custHdr: "Customers", custSearch: "Search customers",
+    pipeStages: ["Lead", "Quoted", "Invoiced", "Paid"],
+    pipeOverdue: "Overdue",
     custRows: [
-      { init: "AB", name: "Arabian Bites", chip: "Active", amt: "SAR 8,400" },
-      { init: "MK", name: "Manara Kitchens", chip: "New", amt: "—" },
-      { init: "NI", name: "Noura Interiors", chip: "Active", amt: "SAR 1,380" },
-      { init: "WC", name: "Wafi Cafe", chip: "Overdue", amt: "SAR 2,150" },
-      { init: "SC", name: "Sadu Crafts", chip: "Active", amt: "SAR 640" },
+      { init: "AB", name: "Arabian Bites", stage: 3, amt: "SAR 8,400", last: "2d ago" },
+      { init: "MK", name: "Manara Kitchens", stage: 0, amt: "—", last: "6d ago", stale: true },
+      { init: "NI", name: "Noura Interiors", stage: 2, amt: "SAR 1,380", last: "today" },
+      { init: "WC", name: "Wafi Cafe", stage: -1, amt: "SAR 2,150", last: "12d ago" },
+      { init: "SC", name: "Sadu Crafts", stage: 1, amt: "SAR 640", last: "1d ago" },
     ],
-    addCust: "+ Add customer",
+    addCust: "+ Add customer", importCust: "Import customers", importFrom: "from WhatsApp, Excel or CSV",
+    importDone: "12 customers imported from Excel ✓",
+    pipeSummary: "Pipeline", followUp: "No follow-up in 5+ days", createInv: "Create invoice", advanceHint: "Tap to advance stage",
+    // orders / jobs
+    ordersHdr: "Orders", ordersSub: "Jobs from request to invoice.",
+    orderStages: ["Requested", "Scheduled", "In progress", "Delivered", "Invoiced"],
+    orderRows: [
+      { cust: "Noura Interiors", desc: "Home maintenance — monthly", amt: "SAR 1,380", stage: 3 },
+      { cust: "Arabian Bites", desc: "Kitchen deep-clean", amt: "SAR 8,400", stage: 4 },
+      { cust: "Sadu Crafts", desc: "Booth setup — expo", amt: "SAR 640", stage: 1 },
+    ],
+    newOrder: "+ New job", orderToInv: "Create invoice", orderDelivered: "Ready to invoice",
+    // schedule
+    schedHdr: "Schedule", schedSub: "Upcoming appointments.",
+    apptRows: [
+      { cust: "Noura Interiors", svc: "Monthly maintenance visit", when: "Today · 2:00 PM", status: "Confirmed" },
+      { cust: "Sadu Crafts", svc: "Expo booth setup", when: "Today · 5:30 PM", status: "Confirmed" },
+      { cust: "Wafi Cafe", svc: "Site assessment", when: "Tomorrow · 10:00 AM", status: "Pending" },
+    ],
+    newAppt: "+ New appointment",
     // team
     teamHdr: "Team", payrollNote: "Payroll runs on the 27th",
     employees: [
@@ -287,6 +356,10 @@ const T = {
     // compliance
     compHdr: "Compliance",
     badgePdpl: "PDPL by design ✓", badgeZatca: "ZATCA connected ✓",
+    alertTitle: "What changed", alertHeadline: "ZATCA e-invoicing (Fatoora) Phase 2 — next wave",
+    alertBody: "Businesses in your revenue range are being onboarded to Phase 2 integration in staged waves. Your invoices already use the compliant format.",
+    alertAction: "What to do: confirm your onboarding window when ZATCA notifies you — no action needed today.",
+    alertUpdated: "Updated 12 Aug 2026", alertSource: "Source: ZATCA", alertReviewed: "Mark as reviewed", alertReviewedOk: "Reviewed ✓",
     vatCard: "VAT return", vatDue: "Due in 9 days", fileNow: "File now", filed: "Filed ✓",
     upcoming: "Upcoming",
     compItems: [
@@ -294,8 +367,16 @@ const T = {
       { t: "CR renewal", d: "Mar 2027" },
     ],
     // invoice
+    invListHdr: "Invoices", invListSub: "ZATCA-compliant format.",
+    invList: [
+      { no: "#0142", cust: "Arabian Bites", amt: "SAR 8,400", status: "Paid" },
+      { no: "#0141", cust: "Wafi Cafe", amt: "SAR 2,150", status: "Overdue" },
+      { no: "#0140", cust: "Sadu Crafts", amt: "SAR 640", status: "Sent" },
+    ],
+    invStatusPaid: "Paid", invStatusSent: "Sent", invStatusOverdue: "Overdue",
+    newInvoice: "+ New invoice",
     invHdr: "New e-invoice",
-    invSub: "ZATCA-compliant. Issued in minutes.",
+    invSub: "ZATCA-compliant format. Issued in minutes.",
     invFields: [
       { k: "Customer", v: "Noura Interiors LLC" },
       { k: "VAT number", v: "3•• ••• •••••• 003" },
@@ -304,7 +385,7 @@ const T = {
       { k: "VAT (15%)", v: "SAR 180.00" },
     ],
     invTotal: "Total due", invTotalV: "SAR 1,380.00",
-    invCompliant: "ZATCA e-invoice · QR + hash included",
+    invCompliant: "ZATCA-compliant format · QR + hash included",
     issue: "Issue invoice",
     // invoice success
     invOkHdr: "Invoice issued",
@@ -314,9 +395,16 @@ const T = {
     // grow
     growHdr: "Grow",
     growTitle: "Growing soon",
-    growSub: "The next stage of Intilaqa.",
-    growFeats: ["Funding-readiness score", "Saudization planning", "Growth analytics"],
-    joinWait: "Join the waitlist", onList: "You're on the list ✓",
+    growSub: "The next stage of Intilaqa — for when you're ready to scale.",
+    growFeats: [
+      { icon: "chart", t: "Funding-readiness score", d: "See how investor-ready you are before you pitch, with a checklist of what to strengthen." },
+      { icon: "users", t: "Saudization (Nitaqat) planner", d: "Track your Nitaqat band and get ahead of Saudization targets before they bite." },
+      { icon: "grid", t: "Growth analytics", d: "Revenue, customers, and cash trends in one view — know what's working." },
+      { icon: "receipt", t: "Grant & funding tracker", d: "Find and track Monsha'at grants, competitions, and funds you qualify for, with deadlines." },
+      { icon: "launchNav", t: "Multi-branch & expansion", d: "Open a second branch or activity and manage them all in one place." },
+    ],
+    growTag: "Year 2–3 roadmap",
+    notifyMe: "Notify me when it's ready", notified: "We'll notify you ✓",
     // pricing
     prHdr: "Plans",
     prTitle: "Pay for the stage you're in",
@@ -348,6 +436,19 @@ const T = {
     ],
     skip: "تخطّي", next: "التالي", getStarted: "ابدأ الآن",
     promise: "نقرأ الأنظمة لتبني أنت العمل.",
+    loginTitle: "مرحباً بعودتك",
+    loginSub: "سجّل الدخول إلى حسابك في إنطلاقة.",
+    loginEmail: "البريد الإلكتروني", loginEmailPh: "you@company.sa",
+    loginPassword: "كلمة المرور", loginPasswordPh: "••••••••",
+    loginBtn: "تسجيل الدخول", loginForgot: "نسيت كلمة المرور؟",
+    loginDivider: "حسابات تجريبية",
+    loginDemoHint: "اضغط على حساب للاستكشاف",
+    demoAccounts: [
+      { id: "amal", icon: "bulb", name: "أمل الراشد", role: "تتحقق من فكرة", email: "amal@intilaqa.sa", go: "journey" },
+      { id: "fahad", icon: "home", name: "فهد العتيبي", role: "يسجّل · مؤسس أجنبي", email: "fahad@intilaqa.sa", go: "launch" },
+      { id: "ohoud", icon: "chart", name: "عهود الغامدي", role: "تشغّل · استوديو نفاذ", email: "ohoud@intilaqa.sa", go: "operate" },
+    ],
+    logout: "تسجيل الخروج",
     onbKicker: "الخطوة ١ من ٣",
     onbTitle: "أين أنت في الرحلة؟",
     onbSub: "اختر المرحلة التي تناسبك اليوم.",
@@ -507,26 +608,57 @@ const T = {
     ],
     fit: "الملاءمة",
     launchHdr: "مرشد التأسيس",
-    portalsOf: "من ٥ بوابات", daysLeft: "≈١٢ يوماً متبقية", complete: "مكتمل ✓",
+    launchFramer: "أنت من يقدّم عبر البوابات الرسمية — نحن نرشدك ونتابع ونصلك بشركاء موثّقين حتى لا تفوتك خطوة.",
+    portalsOf: "من ٥ خطوات", complete: "مكتمل ✓",
+    daysEst: (d) => `≈${num(d,"ar")} يوماً متبقية`, daysCalc: "تقدير من الخطوات المتبقية",
+    foreignNote: "معظم الأنشطة تسمح بملكية أجنبية ١٠٠٪؛ بعضها يحتاج جهة تنظيمية (ساما، الغذاء والدواء، الاتصالات). تأكد أن نشاطك مفتوح قبل التقديم.",
+    gccSkip: "غير مطلوب — مواطنو الخليج والسعودية يسجّلون مباشرة عبر التجارة.",
     steps: [
-      { portal: "مِيسا", sub: "صدر ترخيص الاستثمار" },
-      { portal: "وزارة التجارة", sub: "س.ت ٤٠٣٠******" },
-      { portal: "زاتكا", sub: "التسجيل الضريبي · قيد المراجعة", subDone: "صدرت شهادة الضريبة",
+      { key: "misa", portal: "مِيسا", sub: "تسجيل الاستثمار", days: 10,
+        wWhat: "يسجّلك كمستثمر أجنبي لدى وزارة الاستثمار. منذ فبراير ٢٠٢٥ أصبح تسجيلاً مبسّطاً وليس ترخيصاً كالسابق — وهو خطوتك الأولى التي تفتح ما بعدها.",
+        wPrep: ["سجل الشركة الأم / مستخرج بلد المنشأ (مصدّق من السفارة السعودية والخارجية)", "القوائم المالية للسنة الأخيرة (مصدّقة)", "هويات / جوازات الشركاء", "النشاط التجاري المختار (رمز ISIC4)", "قرار مجلس الإدارة والتفويض (لشريك اعتباري)"],
+        wSteps: ["اختر نشاطك وشكلك القانوني (غالباً ذ.م.م)", "جهّز وصدّق مستندات بلد المنشأ", "قدّم التسجيل عبر بوابة ميسا", "ادفع الرسوم (٢٠٠٠ ريال للطلب)", "استلم تسجيل الاستثمار"],
+        wTime: "≈٣–١٠ أيام عمل بعد اكتمال المستندات", url: "https://investsaudi.sa" },
+      { key: "moc", portal: "وزارة التجارة", sub: "السجل التجاري", days: 5,
+        wWhat: "شهادة ميلاد شركتك — السجل التجاري يمنحك رقماً من ١٠ خانات ترتبط به كل الخطوات التالية (البنك، زاتكا، التأمينات، قوى).",
+        wPrep: ["شهادة تسجيل ميسا", "اسم شركة محجوز", "عقد التأسيس", "هويات الشركاء / المدير", "العنوان الوطني؛ عقد الإيجار إن لزم موقع"],
+        wSteps: ["احجز اسم شركتك", "صُغ وصدّق عقد التأسيس", "أصدر السجل عبر المركز السعودي للأعمال", "سجّل العنوان الوطني (البريد)", "فعّل عضوية الغرفة التجارية"],
+        wTime: "حجز الاسم ≈يومان؛ العقد ≈٣–٥ أيام؛ السجل بعدها", url: "https://business.sa" },
+      { key: "zatca", portal: "زاتكا", sub: "التسجيل الضريبي والضريبة", days: 4,
+        subDone: "صدرت شهادة الضريبة",
         subtasks: [{ t: "المستندات مُرسلة · ١٤ أغسطس", done: true }, { t: "صدور الشهادة", done: false }],
-        action: "رفع خطاب البنك" },
-      { portal: "التأمينات", sub: "تسجيل التأمينات الاجتماعية" },
-      { portal: "قوى", sub: "ملف العمل ونطاق السعودة" },
+        action: "أكّد إرسال خطاب البنك",
+        wWhat: "يسجّل شركتك لدى هيئة الزكاة والضريبة والجمارك، وللضريبة إن تجاوزت الحد. وهنا تنطبق الفوترة الإلكترونية (فاتورة).",
+        wPrep: ["رقم وشهادة السجل التجاري", "هوية / إقامة المدير", "دخول أبشر / نفاذ", "آيبان حساب الشركة", "تقدير المبيعات والمصروفات الخاضعة سنوياً"],
+        wSteps: ["ادخل زاتكا عبر نفاذ", "أكّد التسجيل الزكوي / الضريبي (يُسحب أغلبه من سجلك)", "سجّل للضريبة إن تجاوز دخلك الخاضع ٣٧٥٬٠٠٠ ريال (اختياري من ١٨٧٬٥٠٠)", "أرسل خطاب البنك", "استلم شهادة الضريبة"],
+        wTime: "≈٤ أيام", url: "https://zatca.gov.sa" },
+      { key: "gosi", portal: "التأمينات", sub: "التأمينات الاجتماعية", days: 5,
+        wWhat: "يسجّل منشأتك لدى المؤسسة العامة للتأمينات الاجتماعية. يُسجّل الموظفون تلقائياً عند توظيفهم عبر قوى.",
+        wPrep: ["رقم السجل التجاري", "دخول نفاذ للمدير", "بيانات الشركة"],
+        wSteps: ["افتح ملف منشأتك (مرتبط بسجلك)", "أكّد بيانات المنشأة", "يُسجّل الموظفون تلقائياً عند إصدار العقود في قوى", "رتّب دفع الاشتراكات الشهرية"],
+        wTime: "ضمن كتلة بوابات الموارد ≈١٠ أيام", url: "https://gosi.gov.sa" },
+      { key: "qiwa", portal: "قوى", sub: "ملف العمل والسعودة", days: 5,
+        wWhat: "ملف منشأتك كموظِّف لدى الموارد البشرية عبر قوى — حيث العقود وتصاريح العمل ونطاق السعودة (نطاقات).",
+        wPrep: ["رقم السجل التجاري", "دخول نفاذ للمدير", "العدد المخطط للموظفين"],
+        wSteps: ["افتح ملف العمل في قوى", "استلم رصيد التأشيرات الافتراضي (مثلاً ٣ تأشيرات، نطاق أخضر منخفض لمرحلة التأسيس)", "أصدر عقود العمل عبر قوى (تُسجّل الموظفين تلقائياً في التأمينات؛ الأجور تتدفق لمدد)", "يتحدّث نطاقك تلقائياً — دون تسجيل منفصل"],
+        wTime: "ضمن كتلة بوابات الموارد ≈١٠ أيام", url: "https://qiwa.sa" },
     ],
     stDone: "مكتمل", stCurrent: "الحالي", stUpcoming: "قادم",
-    needPro: "تحتاج مختصاً مرخّصاً؟", openMarket: "السوق",
+    wWhatT: "ما هي", wPrepT: "جهّز", wStepsT: "الخطوات", wTimeT: "المدة", wOpen: "افتح البوابة",
+    wMarkDone: "أكّد الإكمال", wMarkedDone: "مكتمل ✓",
+    needPro: "تحتاج مختصاً مرخّصاً؟", openMarket: "شركاؤنا",
     seeConnect: "تطابقات التمويل والمسرّعات",
-    marketSub: "شركاء موثّقون — عند اللزوم فقط.",
+    marketSub: "بعض الخطوات قد تحتاج مختصاً مرخّصاً قانوناً. اختر شريكاً موثّقاً — نرسل طلبك ونتابع تقدّمه هنا.",
     partners: [
-      { name: "الرشد للمحاماة", type: "مكتب محاماة", sla: "رد خلال يومين", price: "من ٣٥٠ ريال" },
-      { name: "تمكين للتعقيب", type: "معقّب", sla: "رد خلال يوم", price: "من ٢٠٠ ريال" },
-      { name: "ديوان للشركات", type: "مكتب محاماة", sla: "رد خلال يومين", price: "من ٥٠٠ ريال" },
+      { name: "ساريا", type: "تأسيس كامل (منجز عنك)", rating: 4.9, note: "تأسيس شامل يشمل ميسا والسجل والعقد والتعقيب." },
+      { name: "إبدأ", type: "هبوط ميسّر للمستثمر الأجنبي", rating: 4.8, note: "منذ ٢٠٠٥، ٢٠٠+ شركة؛ ميسا + السجل + التشغيل، ≈١٠ أيام." },
+      { name: "الرشد للمحاماة", type: "مكتب محاماة", rating: 4.7, note: "صياغة العقد والتصديقات والتمثيل القانوني." },
+      { name: "ديوان للشركات", type: "مكتب محاماة", rating: 4.6, note: "الهيكلة المؤسسية والعقود." },
+      { name: "تمكين للتعقيب", type: "معقّب", rating: 4.5, note: "العلاقات الحكومية ومعالجة البوابات." },
     ],
-    vetted: "موثّق", sla: "اتفاقية", quote: "اطلب عرض سعر", quoteSent: "أُرسل الطلب ✓",
+    vetted: "موثّق", submitReq: "أرسل الطلب",
+    refStages: ["أُرسل الطلب", "الشريك يراجع", "قيد التنفيذ", "تواصل معك"],
+    refFeedNote: "في الإنتاج، تأتي التحديثات مباشرة من نظام الشريك.",
     connectHdr: "إنطلاقة كونكت",
     connectSub: "مطابقة لجاهزيتك.",
     connectMatches: [
@@ -538,24 +670,46 @@ const T = {
     opHdr: "التشغيل",
     opCompany: "استوديو نفاذ · س.ت ٤٠٣٠",
     opStatus: "كل شيء محدّث",
+    tileOrders: "الطلبات", tileOrdersS: "٣ أعمال نشطة",
     tileInv: "الفوترة", tileInvS: "فاتورة هذا الشهر",
     tileCust: "العملاء", tileCustS: "٣٨ نشِط",
+    tileSched: "المواعيد", tileSchedS: "٢ اليوم",
     tileTeam: "الفريق", tileTeamS: "٦ · الرواتب يوم ٢٧",
     tileComp: "الالتزام", tileCompWarn: "الضريبة خلال ٩ أيام", tileCompOk: "كل شيء سليم",
+    retailNod: "للتجزئة والمطاعم", retailNodS: "المخزون ونقاط البيع — تتبّع المخزون، ونقطة بيع مربوطة بمدى", retailNodTag: "متاح لأنشطة التجزئة",
     recent: "الأحدث",
     recentItems: [
       { init: "AB", t: "دُفعت الفاتورة ٠١٤٢#", s: "أربيان بايتس · اليوم", v: "٨٬٤٠٠ ريال" },
       { init: "MK", t: "أُضيف عميل جديد", s: "مطابخ منارة · أمس", v: "العملاء" },
     ],
     custHdr: "العملاء", custSearch: "ابحث عن عميل",
+    pipeStages: ["عميل محتمل", "عرض سعر", "مُفوتر", "مدفوع"],
+    pipeOverdue: "متأخر",
     custRows: [
-      { init: "AB", name: "أربيان بايتس", chip: "نشِط", amt: "٨٬٤٠٠ ريال" },
-      { init: "MK", name: "مطابخ منارة", chip: "جديد", amt: "—" },
-      { init: "NI", name: "نورة للديكور", chip: "نشِط", amt: "١٬٣٨٠ ريال" },
-      { init: "WC", name: "مقهى وافي", chip: "متأخر", amt: "٢٬١٥٠ ريال" },
-      { init: "SC", name: "حِرف سدو", chip: "نشِط", amt: "٦٤٠ ريال" },
+      { init: "AB", name: "أربيان بايتس", stage: 3, amt: "٨٬٤٠٠ ريال", last: "قبل يومين" },
+      { init: "MK", name: "مطابخ منارة", stage: 0, amt: "—", last: "قبل ٦ أيام", stale: true },
+      { init: "NI", name: "نورة للديكور", stage: 2, amt: "١٬٣٨٠ ريال", last: "اليوم" },
+      { init: "WC", name: "مقهى وافي", stage: -1, amt: "٢٬١٥٠ ريال", last: "قبل ١٢ يوماً" },
+      { init: "SC", name: "حِرف سدو", stage: 1, amt: "٦٤٠ ريال", last: "قبل يوم" },
     ],
-    addCust: "+ أضف عميلاً",
+    addCust: "+ أضف عميلاً", importCust: "استيراد العملاء", importFrom: "من واتساب أو إكسل أو CSV",
+    importDone: "تم استيراد ١٢ عميلاً من إكسل ✓",
+    pipeSummary: "المسار", followUp: "دون متابعة منذ ٥ أيام+", createInv: "أنشئ فاتورة", advanceHint: "اضغط لتقديم المرحلة",
+    ordersHdr: "الطلبات", ordersSub: "الأعمال من الطلب إلى الفاتورة.",
+    orderStages: ["مطلوب", "مجدول", "قيد التنفيذ", "مُسلّم", "مُفوتر"],
+    orderRows: [
+      { cust: "نورة للديكور", desc: "صيانة منزلية — شهري", amt: "١٬٣٨٠ ريال", stage: 3 },
+      { cust: "أربيان بايتس", desc: "تنظيف عميق للمطبخ", amt: "٨٬٤٠٠ ريال", stage: 4 },
+      { cust: "حِرف سدو", desc: "تجهيز جناح المعرض", amt: "٦٤٠ ريال", stage: 1 },
+    ],
+    newOrder: "+ عمل جديد", orderToInv: "أنشئ فاتورة", orderDelivered: "جاهز للفوترة",
+    schedHdr: "المواعيد", schedSub: "المواعيد القادمة.",
+    apptRows: [
+      { cust: "نورة للديكور", svc: "زيارة صيانة شهرية", when: "اليوم · ٢:٠٠ م", status: "مؤكد" },
+      { cust: "حِرف سدو", svc: "تجهيز جناح المعرض", when: "اليوم · ٥:٣٠ م", status: "مؤكد" },
+      { cust: "مقهى وافي", svc: "معاينة الموقع", when: "غداً · ١٠:٠٠ ص", status: "معلّق" },
+    ],
+    newAppt: "+ موعد جديد",
     teamHdr: "الفريق", payrollNote: "الرواتب تصرف يوم ٢٧",
     employees: [
       { init: "س", name: "سارة الحربي", role: "العمليات", gosi: "التأمينات ✓" },
@@ -564,14 +718,26 @@ const T = {
     ],
     compHdr: "الالتزام",
     badgePdpl: "حماية البيانات ✓", badgeZatca: "زاتكا متصلة ✓",
+    alertTitle: "ما الجديد", alertHeadline: "الفوترة الإلكترونية (فاتورة) — المرحلة الثانية، الموجة القادمة",
+    alertBody: "يجري ربط المنشآت في نطاق إيراداتك بتكامل المرحلة الثانية على دفعات. فواتيرك تستخدم الصيغة المتوافقة بالفعل.",
+    alertAction: "الإجراء: أكّد نافذة الربط عند إشعار زاتكا لك — لا حاجة لإجراء اليوم.",
+    alertUpdated: "حُدّث ١٢ أغسطس ٢٠٢٦", alertSource: "المصدر: زاتكا", alertReviewed: "أُطلّع عليه", alertReviewedOk: "تمت المراجعة ✓",
     vatCard: "إقرار الضريبة", vatDue: "خلال ٩ أيام", fileNow: "قدّم الآن", filed: "قُدّم ✓",
     upcoming: "القادم",
     compItems: [
       { t: "اشتراك التأمينات الشهري", d: "٢٧ أغسطس" },
       { t: "تجديد السجل التجاري", d: "مارس ٢٠٢٧" },
     ],
+    invListHdr: "الفواتير", invListSub: "بصيغة متوافقة مع زاتكا.",
+    invList: [
+      { no: "#0142", cust: "أربيان بايتس", amt: "٨٬٤٠٠ ريال", status: "مدفوع" },
+      { no: "#0141", cust: "مقهى وافي", amt: "٢٬١٥٠ ريال", status: "متأخر" },
+      { no: "#0140", cust: "حِرف سدو", amt: "٦٤٠ ريال", status: "مُرسل" },
+    ],
+    invStatusPaid: "مدفوع", invStatusSent: "مُرسل", invStatusOverdue: "متأخر",
+    newInvoice: "+ فاتورة جديدة",
     invHdr: "فاتورة جديدة",
-    invSub: "متوافقة مع زاتكا. تُصدر في دقائق.",
+    invSub: "بصيغة متوافقة مع زاتكا. تُصدر في دقائق.",
     invFields: [
       { k: "العميل", v: "نورة للديكور" },
       { k: "الرقم الضريبي", v: "٣•• ••• •••••• ٠٠٣" },
@@ -580,7 +746,7 @@ const T = {
       { k: "الضريبة (١٥٪)", v: "١٨٠٫٠٠ ريال" },
     ],
     invTotal: "الإجمالي", invTotalV: "١٬٣٨٠٫٠٠ ريال",
-    invCompliant: "فاتورة زاتكا · رمز QR والبصمة",
+    invCompliant: "صيغة متوافقة مع زاتكا · رمز QR والبصمة",
     issue: "إصدار الفاتورة",
     invOkHdr: "صدرت الفاتورة",
     invOkTitle: "صدرت الفاتورة ٠١٤٣#",
@@ -588,9 +754,16 @@ const T = {
     invOkDone: "عودة إلى اللوحة",
     growHdr: "النمو",
     growTitle: "قريباً",
-    growSub: "المرحلة التالية من إنطلاقة.",
-    growFeats: ["درجة جاهزية التمويل", "تخطيط السعودة", "تحليلات النمو"],
-    joinWait: "انضم لقائمة الانتظار", onList: "أنت على القائمة ✓",
+    growSub: "المرحلة التالية من إنطلاقة — حين تكون جاهزاً للتوسّع.",
+    growFeats: [
+      { icon: "chart", t: "درجة جاهزية التمويل", d: "اعرف مدى جاهزيتك للمستثمرين قبل أن تعرض، مع قائمة بما ينبغي تقويته." },
+      { icon: "users", t: "مخطّط السعودة (نطاقات)", d: "تابع نطاقك واستبق مستهدفات السعودة قبل أن تؤثر عليك." },
+      { icon: "grid", t: "تحليلات النمو", d: "الإيرادات والعملاء والتدفق النقدي في شاشة واحدة — اعرف ما ينجح." },
+      { icon: "receipt", t: "متتبّع المنح والتمويل", d: "اكتشف وتابع منح منشآت والمسابقات والصناديق المؤهّل لها، مع المواعيد." },
+      { icon: "launchNav", t: "تعدّد الفروع والتوسّع", d: "افتح فرعاً أو نشاطاً ثانياً وأدرها جميعاً في مكان واحد." },
+    ],
+    growTag: "خارطة السنة ٢–٣",
+    notifyMe: "أبلغني عند الجاهزية", notified: "سنُبلغك ✓",
     prHdr: "الخطط",
     prTitle: "ادفع للمرحلة التي أنت فيها",
     prSub: "بلا باقات. ارتقِ عندما تكون جاهزاً.",
@@ -631,6 +804,9 @@ function Icon({ name, size = 22, color = C.forest, stroke = 2 }) {
     bang: <><path d="M12 7v6M12 16v.5" {...p} stroke={C.goldText} /></>,
     search: <><circle cx="11" cy="11" r="6" {...p} /><path d="M20 20l-4-4" {...p} /></>,
     bigCheck: <><circle cx="12" cy="12" r="10" fill={C.forest} /><path d="M7.5 12.5l3 3 6-7" stroke="#fff" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" /></>,
+    calendar: <><rect x="4" y="5" width="16" height="16" rx="2.5" {...p} /><path d="M4 9h16M8 3v4M16 3v4" {...p} /></>,
+    box: <><path d="M4 8l8-4 8 4v8l-8 4-8-4V8Z M4 8l8 4 8-4 M12 12v8" {...p} /></>,
+    download: <><path d="M12 4v10M8 11l4 4 4-4M5 19h14" {...p} /></>,
   };
   return <svg width={size} height={size} viewBox="0 0 24 24">{paths[name]}</svg>;
 }
@@ -754,7 +930,7 @@ function Splash({ t, lang, setLang, go, idx, setIdx }) {
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <Logo light /><span style={{ color: "#fff", fontWeight: 700, fontSize: 19 }}>{lang === "ar" ? "إنطلاقة" : "Intilaqa"}</span>
         </div>
-        <button onClick={() => go("onboarding")} style={{ background: "none", border: "none", color: "rgba(255,255,255,.65)", fontSize: 15, fontWeight: 600, cursor: "pointer" }}>{t.skip}</button>
+        <button onClick={() => go("login")} style={{ background: "none", border: "none", color: "rgba(255,255,255,.65)", fontSize: 15, fontWeight: 600, cursor: "pointer" }}>{t.skip}</button>
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0 32px", textAlign: "center" }}>
         <div style={{ width: 112, height: 112, borderRadius: 32, background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.12)", display: "grid", placeItems: "center", marginBottom: 34 }}>
@@ -770,7 +946,7 @@ function Splash({ t, lang, setLang, go, idx, setIdx }) {
             <div key={i} style={{ width: i === idx ? 26 : 8, height: 8, borderRadius: 5, background: i === idx ? C.gold : "rgba(255,255,255,.3)", transition: "width .25s" }} />
           ))}
         </div>
-        <button onClick={() => last ? go("onboarding") : setIdx(idx + 1)}
+        <button onClick={() => last ? go("login") : setIdx(idx + 1)}
           style={{ width: "100%", background: C.gold, color: C.forestDk, border: "none", borderRadius: 18, padding: 18, fontSize: 17, fontWeight: 700, cursor: "pointer" }}>
           {last ? t.getStarted : t.next}
         </button>
@@ -782,12 +958,33 @@ function Splash({ t, lang, setLang, go, idx, setIdx }) {
   );
 }
 
-// ---------- Onboarding ----------
-function Onboarding({ t, lang, setLang, go, S }) {
+// ---------- Login ----------
+function Login({ t, lang, setLang, go, S }) {
+  const loginAs = (acct) => {
+    S.setPersona(acct.id);
+    // reset per-account state so each demo login starts clean
+    S.setQuizDone(false); S.setQuizIdx(0); S.setAnswers({}); S.setResult(null);
+    S.setZatcaDone(acct.id === "ohoud");
+    S.setLaunchSteps(acct.id === "ohoud"
+      ? { misa: true, moc: true, zatca: true, gosi: true, qiwa: true }
+      : { misa: true, moc: true, zatca: false, gosi: false, qiwa: false });
+    S.setLaunchStep(null); S.setReferrals({});
+    S.setCrm(null); S.setOrders(null); S.setImported(false); S.setAlertReviewed(false);
+    S.setVatFiled(acct.id === "ohoud"); S.setInvoices(12);
+    go(acct.go);
+  };
+  const field = (label, ph, type) => (
+    <div style={{ marginBottom: 14 }}>
+      <div style={{ fontSize: 13, fontWeight: 700, color: C.pine, marginBottom: 7 }}>{label}</div>
+      <div style={{ background: C.card, border: `1.5px solid ${C.line}`, borderRadius: 14, padding: "14px 16px", display: "flex", alignItems: "center" }}>
+        <span style={{ fontSize: 15, color: C.mute }}>{ph}</span>
+      </div>
+    </div>
+  );
   return (
     <ScrollDark>
-      <div style={{ background: C.forest, position: "relative", paddingBottom: 30, overflow: "hidden" }}>
-        <svg style={{ position: "absolute", top: -30, right: -60, opacity: .5 }} width="250" height="250" viewBox="0 0 260 260" fill="none">
+      <div style={{ background: C.forest, position: "relative", paddingBottom: 34, overflow: "hidden" }}>
+        <svg style={{ position: "absolute", top: -30, [t.dir === "rtl" ? "left" : "right"]: -60, opacity: .5 }} width="250" height="250" viewBox="0 0 260 260" fill="none">
           <circle cx="200" cy="60" r="120" stroke={C.gold} strokeWidth="1" opacity=".35" />
           <circle cx="200" cy="60" r="80" stroke={C.gold} strokeWidth="1" opacity=".3" />
         </svg>
@@ -798,44 +995,43 @@ function Onboarding({ t, lang, setLang, go, S }) {
           </div>
           <LangToggle lang={lang} setLang={setLang} light />
         </div>
-        <div style={{ padding: "28px 24px 0" }}>
-          <div style={{ color: C.gold, fontWeight: 700, fontSize: 12.5, letterSpacing: 1.5 }}>{t.onbKicker}</div>
-          <h1 style={{ color: "#fff", fontSize: 31, lineHeight: 1.15, margin: "10px 0 10px", fontWeight: 700 }}>{t.onbTitle}</h1>
-          <p style={{ color: "rgba(255,255,255,.72)", fontSize: 15.5, lineHeight: 1.4, margin: 0 }}>{t.onbSub}</p>
+        <div style={{ padding: "26px 24px 0" }}>
+          <h1 style={{ color: "#fff", fontSize: 29, lineHeight: 1.15, margin: "0 0 8px", fontWeight: 700 }}>{t.loginTitle}</h1>
+          <p style={{ color: "rgba(255,255,255,.72)", fontSize: 15, lineHeight: 1.4, margin: 0 }}>{t.loginSub}</p>
         </div>
       </div>
-      <div style={{ background: C.paper, borderRadius: "26px 26px 0 0", marginTop: -18, padding: "22px 18px 20px" }}>
-        {t.onbCards.map((c, i) => {
-          const sel = S.persona === c.id;
-          return (
-            <button key={i} onClick={() => { S.setPersona(c.id); go("journey"); }}
-              style={{ width: "100%", textAlign: t.dir === "rtl" ? "right" : "left", background: C.card, border: `1.5px solid ${sel ? C.forest : "transparent"}`,
-                borderRadius: 20, padding: 17, marginBottom: 13, cursor: "pointer", boxShadow: "0 4px 16px rgba(30,50,40,.06)" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                <div style={{ width: 50, height: 50, borderRadius: 14, background: sel ? C.forest : C.sageLt, display: "grid", placeItems: "center", flexShrink: 0 }}>
-                  <Icon name={c.icon} size={22} color={sel ? C.gold : C.pine} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-                    <span style={{ fontSize: 18, fontWeight: 700, color: C.ink }}>{c.title}</span>
-                    {c.free && <span style={{ background: C.goldSoft, color: C.goldText, fontSize: 11.5, fontWeight: 700, padding: "3px 10px", borderRadius: 20 }}>{t.dir === "rtl" ? "مجاني" : "Free"}</span>}
-                  </div>
-                  <div style={{ fontSize: 14.5, color: C.mute, marginTop: 3, lineHeight: 1.35 }}>{c.sub}</div>
-                  {c.portals && (
-                    <div style={{ display: "flex", gap: 7, marginTop: 9, alignItems: "center", flexWrap: "wrap" }}>
-                      {c.portals.map(p => <span key={p} style={{ background: C.sageLt, color: C.pine, fontSize: 12, fontWeight: 600, padding: "4px 10px", borderRadius: 8 }}>{p}</span>)}
-                      <span style={{ color: C.mute, fontSize: 12.5 }}>{c.plus}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </button>
-          );
-        })}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, background: C.sageLt, borderRadius: 16, padding: "14px 16px", marginTop: 3 }}>
-          <Icon name="shield" size={21} color={C.pine} />
-          <span style={{ fontSize: 14, color: C.pine, lineHeight: 1.35 }}>{t.promise}</span>
+      <div style={{ background: C.paper, borderRadius: "26px 26px 0 0", marginTop: -18, padding: "24px 20px 22px" }}>
+        {/* real-looking auth fields (decorative for demo) */}
+        {field(t.loginEmail, t.loginEmailPh)}
+        {field(t.loginPassword, t.loginPasswordPh)}
+        <div style={{ textAlign: t.dir === "rtl" ? "left" : "right", marginBottom: 16 }}>
+          <span style={{ fontSize: 13, color: C.pine, fontWeight: 600 }}>{t.loginForgot}</span>
         </div>
+        <button style={{ width: "100%", background: C.forest, color: "#fff", border: "none", borderRadius: 16, padding: 16, fontSize: 16, fontWeight: 700, cursor: "pointer", opacity: .5 }}>{t.loginBtn}</button>
+
+        {/* divider */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "22px 0 16px" }}>
+          <div style={{ flex: 1, height: 1, background: C.line }} />
+          <span style={{ fontSize: 12.5, fontWeight: 700, color: C.mute, letterSpacing: .5 }}>{t.loginDivider}</span>
+          <div style={{ flex: 1, height: 1, background: C.line }} />
+        </div>
+        <div style={{ fontSize: 13, color: C.mute, textAlign: "center", marginBottom: 14 }}>{t.loginDemoHint}</div>
+
+        {/* one-tap demo accounts */}
+        {t.demoAccounts.map((a, i) => (
+          <button key={i} onClick={() => loginAs(a)}
+            style={{ width: "100%", textAlign: t.dir === "rtl" ? "right" : "left", background: C.card, border: `1.5px solid transparent`,
+              borderRadius: 18, padding: 15, marginBottom: 11, cursor: "pointer", boxShadow: "0 4px 16px rgba(30,50,40,.06)", display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ width: 46, height: 46, borderRadius: 13, background: C.sageLt, display: "grid", placeItems: "center", flexShrink: 0 }}>
+              <Icon name={a.icon} size={22} color={C.pine} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 16.5, fontWeight: 700, color: C.ink }}>{a.name}</div>
+              <div style={{ fontSize: 13.5, color: C.mute, marginTop: 2 }}>{a.role}</div>
+            </div>
+            <span style={{ color: C.mute, fontSize: 20 }}>{t.dir === "rtl" ? "‹" : "›"}</span>
+          </button>
+        ))}
       </div>
     </ScrollDark>
   );
@@ -847,7 +1043,7 @@ function Journey({ t, lang, go, S }) {
   const ideateDone = p !== "amal" || S.quizDone;
   const launchDone = p === "ohoud";
   const launchCurrent = !launchDone && ideateDone;
-  const doneCount = launchDone ? 5 : (S.zatcaDone ? 3 : 2);
+  const doneCount = launchDone ? 5 : ["misa","moc","zatca","gosi","qiwa"].filter(k => S.launchSteps[k]).length;
   const stageState = {
     ideate: ideateDone ? "done" : "current",
     launch: launchDone ? "done" : launchCurrent ? "current" : "next",
@@ -1160,27 +1356,56 @@ function Mapper({ t }) {
   );
 }
 
-// ---------- Launch ----------
+// ---------- Launch (interactive tracker + personalization) ----------
+// Foreign founders: full 5-step path, MISA first. Saudi/GCC: MISA marked not-required.
+function isForeign(S) {
+  // Fahad demo = foreign. Otherwise read the quiz's founder answer (0 Saudi,1 GCC,2 resident,3 abroad).
+  if (S.persona === "fahad") return true;
+  const f = S.answers && S.answers.founder;
+  if (f == null) return true;        // fallback: full path
+  return f >= 2;                     // resident / abroad = foreign
+}
+
 function Launch({ t, lang, go, S }) {
-  const allDone = S.persona === "ohoud";
-  const doneCount = allDone ? 5 : (S.zatcaDone ? 3 : 2);
+  const foreign = isForeign(S);
+  const steps = t.steps;
+  // Saudi/GCC skip MISA: treat it as auto-satisfied and not counted.
+  const active = steps.map((s, i) => (i === 0 && !foreign ? false : true)); // is step part of the path
+  const isDone = (i) => S.launchSteps[steps[i].key];
+  const doneCount = steps.filter((s, i) => active[i] && isDone(i)).length;
+  const totalCount = active.filter(Boolean).length;
+  const remainingDays = steps.reduce((sum, s, i) => (active[i] && !isDone(i) ? sum + s.days : sum), 0);
+  const allDone = doneCount === totalCount;
+  // first not-done active step = current
+  const curIdx = steps.findIndex((s, i) => active[i] && !isDone(i));
+
   return (
     <>
+      <div style={{ background: C.sageLt, borderRadius: 16, padding: "13px 16px", marginBottom: 18, display: "flex", gap: 11, alignItems: "flex-start" }}>
+        <Icon name="shield" size={18} color={C.pine} />
+        <span style={{ fontSize: 13.5, color: C.pine, lineHeight: 1.4 }}>{t.launchFramer}</span>
+      </div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 12 }}>
         <span style={{ fontSize: 27, fontWeight: 700, color: C.ink }}>{num(doneCount, lang)} {t.portalsOf}</span>
-        <span style={{ fontSize: 15, fontWeight: 600, color: doneCount === 5 ? C.pine : C.mute }}>{doneCount === 5 ? t.complete : t.daysLeft}</span>
+        <span style={{ fontSize: 15, fontWeight: 600, color: allDone ? C.pine : C.mute }}>{allDone ? t.complete : t.daysEst(remainingDays)}</span>
       </div>
-      <div style={{ height: 10, background: C.lineSoft, borderRadius: 6, overflow: "hidden", marginBottom: 24 }}>
-        <div style={{ width: `${(doneCount / 5) * 100}%`, height: "100%", background: C.forest, borderRadius: 6, transition: "width .4s" }} />
+      <div style={{ height: 10, background: C.lineSoft, borderRadius: 6, overflow: "hidden", marginBottom: 5 }}>
+        <div style={{ width: `${(doneCount / totalCount) * 100}%`, height: "100%", background: C.forest, borderRadius: 6, transition: "width .4s" }} />
       </div>
-      {t.steps.map((s, i) => {
-        const done = i < doneCount;
-        const cur = i === doneCount && doneCount < 5;
-        const showSubtasks = cur && i === 2 && !S.zatcaDone;
+      {!allDone && <div style={{ fontSize: 12, color: C.mute, marginBottom: 20, textAlign: t.dir === "rtl" ? "right" : "left" }}>{t.daysCalc}</div>}
+      {allDone && <div style={{ marginBottom: 20 }} />}
+
+      {steps.map((s, i) => {
+        const inactive = !active[i];       // MISA for Saudi/GCC
+        const done = active[i] && isDone(i);
+        const cur = i === curIdx;
         return (
-          <div key={i} style={{ background: !done && !cur ? "rgba(255,255,255,.55)" : C.card,
-            border: `1.5px solid ${cur ? C.forest : "transparent"}`, borderRadius: 22, padding: 18, marginBottom: 13,
-            boxShadow: !done && !cur ? "none" : "0 6px 18px rgba(30,50,40,.05)" }}>
+          <button key={i} onClick={() => { if (!inactive) { S.setLaunchStep(i); go("walkthrough"); } }}
+            disabled={inactive}
+            style={{ width: "100%", textAlign: t.dir === "rtl" ? "right" : "left", display: "block",
+              background: inactive ? "rgba(255,255,255,.4)" : (!done && !cur ? "rgba(255,255,255,.6)" : C.card),
+              border: `1.5px solid ${cur ? C.forest : "transparent"}`, borderRadius: 22, padding: 18, marginBottom: 13,
+              boxShadow: inactive || (!done && !cur) ? "none" : "0 6px 18px rgba(30,50,40,.05)", cursor: inactive ? "default" : "pointer", opacity: inactive ? .75 : 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
               <div style={{ width: 36, height: 36, borderRadius: "50%", flexShrink: 0, display: "grid", placeItems: "center",
                 background: done ? C.forest : "transparent", border: done ? "none" : cur ? `2.5px solid ${C.forest}` : `2px solid ${C.line}` }}>
@@ -1188,28 +1413,21 @@ function Launch({ t, lang, go, S }) {
                 {cur && <div style={{ width: 12, height: 12, borderRadius: "50%", background: C.forest }} />}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 17.5, fontWeight: 700, color: !done && !cur ? C.mute : C.ink }}>{s.portal}</div>
-                <div style={{ fontSize: 14, color: C.mute, marginTop: 2 }}>{i === 2 && S.zatcaDone ? s.subDone : s.sub}</div>
+                <div style={{ fontSize: 17.5, fontWeight: 700, color: inactive || (!done && !cur) ? C.mute : C.ink }}>{s.portal}</div>
+                <div style={{ fontSize: 14, color: C.mute, marginTop: 2 }}>{inactive ? t.gccSkip : (done && s.subDone ? s.subDone : s.sub)}</div>
               </div>
-              <span style={{ fontSize: 14.5, fontWeight: 700, color: done ? C.pine : cur ? "#fff" : C.mute,
-                background: cur ? C.forest : "transparent", padding: cur ? "6px 14px" : 0, borderRadius: 20 }}>
-                {done ? t.stDone : cur ? t.stCurrent : t.stUpcoming}
-              </span>
+              {!inactive && (
+                <span style={{ fontSize: 14.5, fontWeight: 700, color: done ? C.pine : cur ? "#fff" : C.mute,
+                  background: cur ? C.forest : "transparent", padding: cur ? "6px 14px" : 0, borderRadius: 20 }}>
+                  {done ? t.stDone : cur ? t.stCurrent : t.stUpcoming}
+                </span>
+              )}
+              {!inactive && <span style={{ color: C.mute, fontSize: 20, marginLeft: t.dir === "rtl" ? 0 : 4, marginRight: t.dir === "rtl" ? 4 : 0 }}>{t.dir === "rtl" ? "‹" : "›"}</span>}
             </div>
-            {showSubtasks && (
-              <div style={{ marginTop: 15, paddingLeft: t.dir === "rtl" ? 0 : 51, paddingRight: t.dir === "rtl" ? 51 : 0 }}>
-                {s.subtasks.map((st, j) => (
-                  <div key={j} style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 9 }}>
-                    <div style={{ width: 9, height: 9, borderRadius: "50%", background: st.done ? C.forest : C.line }} />
-                    <span style={{ fontSize: 15, color: st.done ? C.ink : C.mute }}>{st.t}</span>
-                  </div>
-                ))}
-                <button onClick={() => S.setZatcaDone(true)} style={{ width: "100%", background: C.forest, color: "#fff", border: "none", borderRadius: 16, padding: 16, fontSize: 16.5, fontWeight: 700, cursor: "pointer", marginTop: 11 }}>{s.action}</button>
-              </div>
-            )}
-          </div>
+          </button>
         );
       })}
+
       <div style={{ background: C.card, border: `1.5px dashed ${C.sage}`, borderRadius: 20, padding: 16, marginTop: 7, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
         <span style={{ fontSize: 15, fontWeight: 600, color: C.ink }}>{t.needPro}</span>
         <button onClick={() => go("market")} style={{ background: C.sageLt, color: C.pine, border: "none", borderRadius: 12, padding: "10px 15px", fontSize: 14, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>{t.openMarket}</button>
@@ -1219,31 +1437,109 @@ function Launch({ t, lang, go, S }) {
   );
 }
 
-// ---------- Market ----------
-function Market({ t, S }) {
+// ---------- Walkthrough (portal detail) ----------
+function Walkthrough({ t, lang, go, S }) {
+  const i = S.launchStep;
+  if (i == null) { go("launch"); return null; }
+  const s = t.steps[i];
+  const done = S.launchSteps[s.key];
+  const foreign = isForeign(S);
+  const markDone = () => {
+    S.setLaunchSteps({ ...S.launchSteps, [s.key]: true });
+    if (s.key === "zatca") S.setZatcaDone(true); // keep other screens in sync
+    go("launch");
+  };
+  const Sec = ({ title, children }) => (
+    <div style={{ marginBottom: 18 }}>
+      <div style={{ fontSize: 13, fontWeight: 700, color: C.goldText, letterSpacing: .5, marginBottom: 9 }}>{title}</div>
+      {children}
+    </div>
+  );
+  const list = (arr, ordered) => arr.map((x, j) => (
+    <div key={j} style={{ display: "flex", gap: 11, marginBottom: 9, alignItems: "flex-start" }}>
+      <span style={{ flexShrink: 0, fontWeight: 700, color: C.pine, fontSize: 14.5, minWidth: ordered ? 18 : "auto" }}>{ordered ? num(j + 1, lang) + "." : "•"}</span>
+      <span style={{ fontSize: 14.5, color: C.ink, lineHeight: 1.4 }}>{x}</span>
+    </div>
+  ));
   return (
     <>
-      <p style={{ color: C.mute, fontSize: 15, margin: "0 0 16px" }}>{t.marketSub}</p>
+      <div style={{ fontSize: 15, color: C.ink, lineHeight: 1.5, marginBottom: 18 }}>{s.wWhat}</div>
+      {i === 0 && foreign && (
+        <div style={{ background: C.goldSoft, borderRadius: 16, padding: "13px 16px", marginBottom: 18, fontSize: 13.5, color: C.ink, lineHeight: 1.4 }}>{t.foreignNote}</div>
+      )}
+      <Sec title={t.wPrepT}>{list(s.wPrep, false)}</Sec>
+      <Sec title={t.wStepsT}>{list(s.wSteps, true)}</Sec>
+      <Sec title={t.wTimeT}><div style={{ fontSize: 14.5, color: C.ink }}>{s.wTime}</div></Sec>
+
+      <a href={s.url} target="_blank" rel="noopener noreferrer"
+        style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, width: "100%", background: C.forest, color: "#fff", borderRadius: 16, padding: 16, fontSize: 16, fontWeight: 700, textDecoration: "none", marginBottom: 12, boxSizing: "border-box" }}>
+        {t.wOpen} {t.dir === "rtl" ? "←" : "→"}
+      </a>
+      <button onClick={markDone} disabled={done}
+        style={{ width: "100%", background: done ? C.sageLt : "#fff", color: done ? C.pine : C.forest, border: `1.5px solid ${C.forest}`, borderRadius: 16, padding: 15, fontSize: 15.5, fontWeight: 700, cursor: done ? "default" : "pointer" }}>
+        {done ? t.wMarkedDone : t.wMarkDone}
+      </button>
+    </>
+  );
+}
+
+// ---------- Our Partners (ratings + tracked referral) ----------
+function Stars({ rating }) {
+  const full = Math.round(rating);
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+      <span style={{ letterSpacing: 1, color: C.gold, fontSize: 14 }}>{"★".repeat(full)}<span style={{ color: C.line }}>{"★".repeat(5 - full)}</span></span>
+      <span style={{ fontSize: 13, fontWeight: 700, color: C.ink }}>{rating.toFixed(1)}</span>
+    </span>
+  );
+}
+
+function Market({ t, S }) {
+  const advance = (i) => {
+    const cur = S.referrals[i];
+    const next = cur == null ? 0 : Math.min(cur + 1, t.refStages.length - 1);
+    S.setReferrals({ ...S.referrals, [i]: next });
+  };
+  return (
+    <>
+      <p style={{ color: C.mute, fontSize: 14.5, margin: "0 0 16px", lineHeight: 1.45 }}>{t.marketSub}</p>
       {t.partners.map((p, i) => {
-        const sent = !!S.quotes[i];
+        const stage = S.referrals[i]; // undefined until submitted
+        const submitted = stage != null;
         return (
           <div key={i} style={{ background: C.card, borderRadius: 22, padding: 19, marginBottom: 14, boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
+              <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 18, fontWeight: 700, color: C.ink }}>{p.name}</div>
                 <div style={{ fontSize: 14, color: C.mute, marginTop: 2 }}>{p.type}</div>
               </div>
-              <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, fontWeight: 700, color: C.pine, background: C.sageLt, padding: "6px 12px", borderRadius: 20 }}>
-                <Icon name="check" size={14} color="#fff" /> {t.vetted}</span>
+              <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12.5, fontWeight: 700, color: C.pine, background: C.sageLt, padding: "5px 11px", borderRadius: 20, whiteSpace: "nowrap" }}>
+                <Icon name="check" size={13} color="#fff" /> {t.vetted}</span>
             </div>
-            <div style={{ display: "flex", gap: 10, margin: "14px 0", flexWrap: "wrap" }}>
-              <span style={{ fontSize: 13.5, color: C.ink, background: C.paper, border: `1px solid ${C.line}`, padding: "7px 13px", borderRadius: 11 }}>{t.sla}: {p.sla}</span>
-              <span style={{ fontSize: 13.5, color: C.goldText, background: C.goldSoft, padding: "7px 13px", borderRadius: 11, fontWeight: 700 }}>{p.price}</span>
+            <div style={{ margin: "12px 0" }}>
+              <Stars rating={p.rating} />
             </div>
-            <button onClick={() => S.setQuotes({ ...S.quotes, [i]: true })}
-              style={{ width: "100%", background: sent ? C.forest : C.sageLt, color: sent ? "#fff" : C.pine, border: "none", borderRadius: 14, padding: 14, fontSize: 15, fontWeight: 700, cursor: "pointer", transition: "background .2s" }}>
-              {sent ? t.quoteSent : t.quote}
-            </button>
+            <div style={{ fontSize: 13.5, color: C.mute, lineHeight: 1.4, marginBottom: 14 }}>{p.note}</div>
+
+            {submitted ? (
+              <>
+                <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 10 }}>
+                  {t.refStages.map((st, j) => (
+                    <div key={j} style={{ flex: 1, height: 6, borderRadius: 4, background: j <= stage ? C.forest : C.lineSoft }} />
+                  ))}
+                </div>
+                <button onClick={() => advance(i)} disabled={stage >= t.refStages.length - 1}
+                  style={{ width: "100%", background: C.sageLt, color: C.pine, border: "none", borderRadius: 14, padding: 13, fontSize: 14.5, fontWeight: 700, cursor: stage >= t.refStages.length - 1 ? "default" : "pointer" }}>
+                  {t.refStages[stage]}
+                </button>
+                <div style={{ fontSize: 11.5, color: C.mute, textAlign: "center", marginTop: 8, opacity: .8 }}>{t.refFeedNote}</div>
+              </>
+            ) : (
+              <button onClick={() => advance(i)}
+                style={{ width: "100%", background: C.forest, color: "#fff", border: "none", borderRadius: 14, padding: 14, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+                {t.submitReq}
+              </button>
+            )}
           </div>
         );
       })}
@@ -1289,9 +1585,13 @@ function Connect({ t, S }) {
 
 // ---------- Operate ----------
 function Operate({ t, lang, go, S }) {
+  const orders = S.orders || t.orderRows;
+  const activeJobs = orders.filter(o => o.stage < 4).length;
   const tiles = [
-    { t: t.tileInv, s: `${num(S.invoices, lang)} ${t.tileInvS}`, icon: "receipt", go: "invoice" },
+    { t: t.tileOrders, s: `${num(activeJobs, lang)} ${t.tileOrdersS.replace(/^[\d٠-٩]+\s?/, "")}`, icon: "bag", go: "orders" },
     { t: t.tileCust, s: t.tileCustS, icon: "users", go: "customers" },
+    { t: t.tileSched, s: t.tileSchedS, icon: "calendar", go: "schedule" },
+    { t: t.tileInv, s: `${num(S.invoices, lang)} ${t.tileInvS}`, icon: "receipt", go: "invoice" },
     { t: t.tileTeam, s: t.tileTeamS, icon: "bag", go: "team" },
     { t: t.tileComp, s: S.vatFiled ? t.tileCompOk : t.tileCompWarn, icon: "shield", warn: !S.vatFiled, go: "compliance" },
   ];
@@ -1299,20 +1599,31 @@ function Operate({ t, lang, go, S }) {
     <>
       <div style={{ color: C.mute, fontSize: 15.5, marginBottom: 4 }}>{t.opCompany}</div>
       <h1 style={{ fontSize: 28, fontWeight: 700, color: C.ink, margin: "0 0 22px" }}>{t.opStatus}</h1>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 15, marginBottom: 26 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 15, marginBottom: 18 }}>
         {tiles.map((tile, i) => (
           <button key={i} onClick={() => go(tile.go)}
-            style={{ textAlign: t.dir === "rtl" ? "right" : "left", background: C.card, border: "none", borderRadius: 22, padding: 18, height: 162,
+            style={{ textAlign: t.dir === "rtl" ? "right" : "left", background: C.card, border: "none", borderRadius: 22, padding: 18, height: 150,
               display: "flex", flexDirection: "column", justifyContent: "space-between", cursor: "pointer", boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
-            <div style={{ width: 48, height: 48, borderRadius: 14, background: tile.warn ? C.goldSoft : C.sageLt, display: "grid", placeItems: "center" }}>
-              <Icon name={tile.icon} size={24} color={tile.warn ? C.goldText : C.pine} />
+            <div style={{ width: 46, height: 46, borderRadius: 14, background: tile.warn ? C.goldSoft : C.sageLt, display: "grid", placeItems: "center" }}>
+              <Icon name={tile.icon} size={23} color={tile.warn ? C.goldText : C.pine} />
             </div>
             <div>
-              <div style={{ fontSize: 18, fontWeight: 700, color: C.ink }}>{tile.t}</div>
-              <div style={{ fontSize: 14, color: tile.warn ? C.goldText : C.mute, marginTop: 4, fontWeight: tile.warn ? 700 : 400 }}>{tile.s}</div>
+              <div style={{ fontSize: 17.5, fontWeight: 700, color: C.ink }}>{tile.t}</div>
+              <div style={{ fontSize: 13.5, color: tile.warn ? C.goldText : C.mute, marginTop: 4, fontWeight: tile.warn ? 700 : 400 }}>{tile.s}</div>
             </div>
           </button>
         ))}
+      </div>
+      {/* Retail & F&B nod */}
+      <div style={{ background: C.card, border: `1.5px dashed ${C.sage}`, borderRadius: 20, padding: 16, marginBottom: 26, display: "flex", alignItems: "center", gap: 14, opacity: .9 }}>
+        <div style={{ width: 44, height: 44, borderRadius: 12, background: C.paper, border: `1px solid ${C.line}`, display: "grid", placeItems: "center", flexShrink: 0 }}>
+          <Icon name="box" size={22} color={C.mute} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 15.5, fontWeight: 700, color: C.ink }}>{t.retailNod}</div>
+          <div style={{ fontSize: 13, color: C.mute, marginTop: 2, lineHeight: 1.35 }}>{t.retailNodS}</div>
+        </div>
+        <span style={{ fontSize: 10.5, fontWeight: 700, color: C.mute, background: C.paper, border: `1px solid ${C.line}`, padding: "5px 9px", borderRadius: 10, whiteSpace: "nowrap", maxWidth: 96, textAlign: "center", lineHeight: 1.2 }}>{t.retailNodTag}</span>
       </div>
       <div style={{ fontSize: 20, fontWeight: 700, color: C.ink, marginBottom: 13 }}>{t.recent}</div>
       <div style={{ background: C.card, borderRadius: 22, padding: "6px 18px", boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
@@ -1331,32 +1642,156 @@ function Operate({ t, lang, go, S }) {
   );
 }
 
-// ---------- Customers ----------
-function Customers({ t }) {
-  const chipStyle = (c) => {
-    if (c === "Overdue" || c === "متأخر") return { background: C.goldSoft, color: C.goldText };
-    if (c === "New" || c === "جديد") return { background: "#EAF0FB", color: "#2F5FA6" };
-    return { background: C.sageLt, color: C.pine };
+// pipeline stage chip color: -1 overdue (gold), else sage progression
+function stageChip(stage, t) {
+  if (stage === -1) return { label: t.pipeOverdue, bg: C.goldSoft, fg: C.goldText };
+  const label = t.pipeStages[stage] || t.pipeStages[0];
+  const paid = stage >= 3;
+  return { label, bg: paid ? C.forest : C.sageLt, fg: paid ? "#fff" : C.pine };
+}
+
+// ---------- Customers (pipeline + import) ----------
+function Customers({ t, lang, go, S }) {
+  const rows = S.crm || t.custRows;
+  const setRows = (r) => S.setCrm(r);
+  const advance = (i) => {
+    const r = rows.map((x, j) => {
+      if (j !== i) return x;
+      const ns = x.stage === -1 ? 0 : Math.min(x.stage + 1, 3);
+      return { ...x, stage: ns, stale: false };
+    });
+    setRows(r);
+  };
+  // pipeline counts
+  const counts = t.pipeStages.map((_, si) => rows.filter(r => r.stage === si).length);
+  const overdue = rows.filter(r => r.stage === -1).length;
+  return (
+    <>
+      {/* pipeline summary */}
+      <div style={{ background: C.card, borderRadius: 18, padding: "14px 16px", marginBottom: 14, boxShadow: "0 4px 14px rgba(30,50,40,.04)" }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: C.mute, marginBottom: 10, letterSpacing: .3 }}>{t.pipeSummary}</div>
+        <div style={{ display: "flex", gap: 8 }}>
+          {t.pipeStages.map((st, i) => (
+            <div key={i} style={{ flex: 1, textAlign: "center" }}>
+              <div style={{ fontSize: 20, fontWeight: 700, color: C.ink }}>{num(counts[i], lang)}</div>
+              <div style={{ fontSize: 10.5, color: C.mute, marginTop: 2 }}>{st}</div>
+            </div>
+          ))}
+          {overdue > 0 && (
+            <div style={{ flex: 1, textAlign: "center" }}>
+              <div style={{ fontSize: 20, fontWeight: 700, color: C.goldText }}>{num(overdue, lang)}</div>
+              <div style={{ fontSize: 10.5, color: C.goldText, marginTop: 2 }}>{t.pipeOverdue}</div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* import affordance */}
+      <button onClick={() => { S.setImported(true); }}
+        style={{ width: "100%", display: "flex", alignItems: "center", gap: 11, background: S.imported ? C.sageLt : C.card, borderRadius: 16, padding: "13px 16px", marginBottom: 16, boxShadow: "0 4px 14px rgba(30,50,40,.04)", border: "none", cursor: "pointer", textAlign: t.dir === "rtl" ? "right" : "left" }}>
+        <Icon name={S.imported ? "check" : "download"} size={18} color={C.pine} />
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 14.5, fontWeight: 700, color: C.pine }}>{S.imported ? t.importDone : t.importCust}</div>
+          {!S.imported && <div style={{ fontSize: 12.5, color: C.mute, marginTop: 1 }}>{t.importFrom}</div>}
+        </div>
+      </button>
+
+      <div style={{ fontSize: 11.5, color: C.mute, marginBottom: 10, textAlign: t.dir === "rtl" ? "right" : "left" }}>{t.advanceHint}</div>
+      <div style={{ background: C.card, borderRadius: 22, padding: "6px 18px", boxShadow: "0 6px 18px rgba(30,50,40,.05)", marginBottom: 18 }}>
+        {rows.map((r, i) => {
+          const chip = stageChip(r.stage, t);
+          const canInvoice = r.stage === 1; // quoted -> can create invoice
+          return (
+            <div key={i} style={{ padding: "15px 0", borderBottom: i < rows.length - 1 ? `1px solid ${C.lineSoft}` : "none" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: C.sageLt, display: "grid", placeItems: "center", fontSize: 14, fontWeight: 700, color: C.pine, flexShrink: 0 }}>{r.init}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 16, fontWeight: 600, color: C.ink }}>{r.name}</div>
+                  <button onClick={() => advance(i)} style={{ marginTop: 5, background: chip.bg, color: chip.fg, border: "none", fontSize: 11.5, fontWeight: 700, padding: "4px 11px", borderRadius: 20, cursor: "pointer" }}>{chip.label}{r.stage < 3 && r.stage !== -1 ? " ›" : ""}</button>
+                  {r.stale && <span style={{ fontSize: 11, color: C.goldText, marginInlineStart: 8 }}>· {t.followUp}</span>}
+                </div>
+                <span style={{ fontSize: 15, fontWeight: 700, color: C.ink }}>{r.amt}</span>
+              </div>
+              {canInvoice && (
+                <button onClick={() => go("invoice")} style={{ marginTop: 10, marginInlineStart: 58, background: "none", border: `1.5px solid ${C.forest}`, color: C.forest, fontSize: 13, fontWeight: 700, padding: "7px 14px", borderRadius: 12, cursor: "pointer" }}>{t.createInv} {t.dir === "rtl" ? "←" : "→"}</button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <Primary tone="sage">{t.addCust}</Primary>
+    </>
+  );
+}
+
+// ---------- Orders / Jobs ----------
+function Orders({ t, lang, go, S }) {
+  const rows = S.orders || t.orderRows;
+  const advance = (i) => {
+    const r = rows.map((x, j) => (j === i ? { ...x, stage: Math.min(x.stage + 1, 4) } : x));
+    S.setOrders(r);
   };
   return (
     <>
-      <div style={{ display: "flex", alignItems: "center", gap: 11, background: C.card, borderRadius: 16, padding: "13px 16px", marginBottom: 18, boxShadow: "0 4px 14px rgba(30,50,40,.04)" }}>
-        <Icon name="search" size={19} color={C.mute} />
-        <span style={{ color: C.mute, fontSize: 15 }}>{t.custSearch}</span>
-      </div>
-      <div style={{ background: C.card, borderRadius: 22, padding: "6px 18px", boxShadow: "0 6px 18px rgba(30,50,40,.05)", marginBottom: 18 }}>
-        {t.custRows.map((r, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 0", borderBottom: i < t.custRows.length - 1 ? `1px solid ${C.lineSoft}` : "none" }}>
-            <div style={{ width: 44, height: 44, borderRadius: 12, background: C.sageLt, display: "grid", placeItems: "center", fontSize: 14, fontWeight: 700, color: C.pine, flexShrink: 0 }}>{r.init}</div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 16, fontWeight: 600, color: C.ink }}>{r.name}</div>
-              <span style={{ ...chipStyle(r.chip), fontSize: 11.5, fontWeight: 700, padding: "3px 10px", borderRadius: 20, display: "inline-block", marginTop: 4 }}>{r.chip}</span>
+      <p style={{ color: C.mute, fontSize: 14.5, margin: "0 0 8px" }}>{t.ordersSub}</p>
+      <div style={{ fontSize: 11.5, color: C.mute, marginBottom: 14, textAlign: t.dir === "rtl" ? "right" : "left" }}>{t.advanceHint}</div>
+      {rows.map((o, i) => {
+        const delivered = o.stage === 3;
+        const invoiced = o.stage === 4;
+        return (
+          <div key={i} style={{ background: C.card, borderRadius: 20, padding: 18, marginBottom: 13, boxShadow: "0 5px 16px rgba(30,50,40,.05)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10, marginBottom: 13 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 16.5, fontWeight: 700, color: C.ink }}>{o.cust}</div>
+                <div style={{ fontSize: 13.5, color: C.mute, marginTop: 2 }}>{o.desc}</div>
+              </div>
+              <span style={{ fontSize: 15, fontWeight: 700, color: C.ink, whiteSpace: "nowrap" }}>{o.amt}</span>
             </div>
-            <span style={{ fontSize: 15, fontWeight: 700, color: C.ink }}>{r.amt}</span>
+            {/* stage progress */}
+            <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 11 }}>
+              {t.orderStages.map((st, j) => (
+                <div key={j} style={{ flex: 1, height: 6, borderRadius: 4, background: j <= o.stage ? (invoiced ? C.forest : C.pine) : C.lineSoft }} />
+              ))}
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 13.5, fontWeight: 700, color: invoiced ? C.pine : C.mute }}>{t.orderStages[o.stage]}</span>
+              {delivered && (
+                <button onClick={() => go("invoice")} style={{ background: C.forest, color: "#fff", border: "none", borderRadius: 12, padding: "9px 15px", fontSize: 13.5, fontWeight: 700, cursor: "pointer" }}>{t.orderToInv} {t.dir === "rtl" ? "←" : "→"}</button>
+              )}
+              {!delivered && !invoiced && (
+                <button onClick={() => advance(i)} style={{ background: C.sageLt, color: C.pine, border: "none", borderRadius: 12, padding: "9px 15px", fontSize: 13.5, fontWeight: 700, cursor: "pointer" }}>{t.orderStages[o.stage + 1]} ›</button>
+              )}
+            </div>
           </div>
-        ))}
-      </div>
-      <Primary tone="sage">{t.addCust}</Primary>
+        );
+      })}
+      <Primary tone="sage">{t.newOrder}</Primary>
+    </>
+  );
+}
+
+// ---------- Schedule ----------
+function Schedule({ t, S }) {
+  return (
+    <>
+      <p style={{ color: C.mute, fontSize: 14.5, margin: "0 0 16px" }}>{t.schedSub}</p>
+      {t.apptRows.map((a, i) => {
+        const pending = a.status === "Pending" || a.status === "معلّق";
+        return (
+          <div key={i} style={{ background: C.card, borderRadius: 20, padding: 17, marginBottom: 12, display: "flex", alignItems: "center", gap: 14, boxShadow: "0 5px 16px rgba(30,50,40,.05)" }}>
+            <div style={{ width: 46, height: 46, borderRadius: 13, background: C.sageLt, display: "grid", placeItems: "center", flexShrink: 0 }}>
+              <Icon name="calendar" size={22} color={C.pine} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: C.ink }}>{a.cust}</div>
+              <div style={{ fontSize: 13.5, color: C.mute, marginTop: 2 }}>{a.svc}</div>
+              <div style={{ fontSize: 13, color: C.pine, fontWeight: 600, marginTop: 4 }}>{a.when}</div>
+            </div>
+            <span style={{ fontSize: 11.5, fontWeight: 700, color: pending ? C.goldText : C.pine, background: pending ? C.goldSoft : C.sageLt, padding: "5px 11px", borderRadius: 20, whiteSpace: "nowrap" }}>{a.status}</span>
+          </div>
+        );
+      })}
+      <Primary tone="sage">{t.newAppt}</Primary>
     </>
   );
 }
@@ -1387,6 +1822,23 @@ function Team({ t }) {
 function Compliance({ t, S }) {
   return (
     <>
+      {/* What-changed regulatory alert */}
+      <div style={{ background: C.card, borderRadius: 22, padding: 19, marginBottom: 18, boxShadow: "0 6px 18px rgba(30,50,40,.06)", borderLeft: t.dir === "rtl" ? "none" : `4px solid ${C.gold}`, borderRight: t.dir === "rtl" ? `4px solid ${C.gold}` : "none" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 9 }}>
+          <Icon name="bang" size={18} color={C.goldText} />
+          <span style={{ fontSize: 13, fontWeight: 700, color: C.goldText, letterSpacing: .5 }}>{t.alertTitle}</span>
+        </div>
+        <div style={{ fontSize: 16, fontWeight: 700, color: C.ink, lineHeight: 1.3, marginBottom: 8 }}>{t.alertHeadline}</div>
+        <div style={{ fontSize: 14, color: C.ink, lineHeight: 1.45, marginBottom: 10 }}>{t.alertBody}</div>
+        <div style={{ fontSize: 14, color: C.pine, lineHeight: 1.45, fontWeight: 600, marginBottom: 12 }}>{t.alertAction}</div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 12, color: C.mute }}>{t.alertUpdated} · {t.alertSource}</span>
+          <button onClick={() => S.setAlertReviewed(true)} disabled={S.alertReviewed}
+            style={{ background: S.alertReviewed ? C.sageLt : "#fff", color: C.pine, border: `1.5px solid ${C.forest}`, borderRadius: 12, padding: "8px 14px", fontSize: 13, fontWeight: 700, cursor: S.alertReviewed ? "default" : "pointer" }}>
+            {S.alertReviewed ? t.alertReviewedOk : t.alertReviewed}
+          </button>
+        </div>
+      </div>
       <div style={{ display: "flex", gap: 11, marginBottom: 18 }}>
         <span style={{ flex: 1, textAlign: "center", fontSize: 13.5, fontWeight: 700, color: C.pine, background: C.sageLt, padding: "13px 8px", borderRadius: 15 }}>{t.badgePdpl}</span>
         <span style={{ flex: 1, textAlign: "center", fontSize: 13.5, fontWeight: 700, color: C.pine, background: C.sageLt, padding: "13px 8px", borderRadius: 15 }}>{t.badgeZatca}</span>
@@ -1417,10 +1869,32 @@ function Compliance({ t, S }) {
 }
 
 // ---------- Invoice ----------
+function invStatusStyle(s, t) {
+  if (s === t.invStatusPaid) return { bg: C.sageLt, fg: C.pine };
+  if (s === t.invStatusOverdue) return { bg: C.goldSoft, fg: C.goldText };
+  return { bg: C.paper, fg: C.mute }; // Sent
+}
 function Invoice({ t, go, S }) {
   return (
     <>
-      <p style={{ color: C.mute, fontSize: 15, margin: "0 0 16px" }}>{t.invSub}</p>
+      {/* Invoice ledger */}
+      <div style={{ fontSize: 13, fontWeight: 700, color: C.mute, letterSpacing: .3, marginBottom: 10 }}>{t.invListHdr} · {t.invListSub}</div>
+      <div style={{ background: C.card, borderRadius: 20, padding: "4px 18px", marginBottom: 20, boxShadow: "0 5px 16px rgba(30,50,40,.05)" }}>
+        {t.invList.map((iv, i) => {
+          const st = invStatusStyle(iv.status, t);
+          return (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 0", borderBottom: i < t.invList.length - 1 ? `1px solid ${C.lineSoft}` : "none" }}>
+              <span style={{ fontSize: 13.5, fontWeight: 700, color: C.mute, minWidth: 42 }}>{iv.no}</span>
+              <span style={{ flex: 1, fontSize: 15, color: C.ink }}>{iv.cust}</span>
+              <span style={{ fontSize: 14.5, fontWeight: 700, color: C.ink }}>{iv.amt}</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: st.fg, background: st.bg, padding: "4px 9px", borderRadius: 20, whiteSpace: "nowrap" }}>{iv.status}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      <div style={{ fontSize: 18, fontWeight: 700, color: C.ink, marginBottom: 6 }}>{t.invHdr}</div>
+      <p style={{ color: C.mute, fontSize: 14.5, margin: "0 0 16px" }}>{t.invSub}</p>
       <div style={{ background: C.card, borderRadius: 22, padding: "8px 20px", boxShadow: "0 6px 18px rgba(30,50,40,.05)" }}>
         {t.invFields.map((f, i) => (
           <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "16px 0", borderBottom: `1px solid ${C.lineSoft}` }}>
@@ -1471,24 +1945,30 @@ function InvoiceSuccess({ t, go }) {
 // ---------- Grow ----------
 function Grow({ t, S }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 26 }}>
-      <div style={{ width: 84, height: 84, borderRadius: 26, background: C.goldSoft, display: "grid", placeItems: "center", marginBottom: 22 }}>
-        <Icon name="chart" size={40} color={C.goldText} />
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 20 }}>
+      <div style={{ width: 78, height: 78, borderRadius: 24, background: C.goldSoft, display: "grid", placeItems: "center", marginBottom: 16 }}>
+        <Icon name="chart" size={38} color={C.goldText} />
       </div>
-      <h1 style={{ fontSize: 26, fontWeight: 700, color: C.ink, margin: "0 0 6px" }}>{t.growTitle}</h1>
-      <p style={{ color: C.mute, fontSize: 15.5, margin: "0 0 26px" }}>{t.growSub}</p>
-      <div style={{ width: "100%", background: C.card, borderRadius: 22, padding: "8px 20px", boxShadow: "0 6px 18px rgba(30,50,40,.05)", marginBottom: 26 }}>
+      <span style={{ fontSize: 12, fontWeight: 700, color: C.goldText, background: C.goldSoft, padding: "5px 13px", borderRadius: 20, letterSpacing: .5, marginBottom: 14 }}>{t.growTag}</span>
+      <h1 style={{ fontSize: 26, fontWeight: 700, color: C.ink, margin: "0 0 6px", textAlign: "center" }}>{t.growTitle}</h1>
+      <p style={{ color: C.mute, fontSize: 15, margin: "0 0 24px", textAlign: "center", lineHeight: 1.4 }}>{t.growSub}</p>
+      <div style={{ width: "100%", marginBottom: 24 }}>
         {t.growFeats.map((f, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 13, padding: "16px 0", borderBottom: i < t.growFeats.length - 1 ? `1px solid ${C.lineSoft}` : "none" }}>
-            <Icon name="check" size={16} color={C.gold} />
-            <span style={{ fontSize: 16, color: C.ink, fontWeight: 500 }}>{f}</span>
+          <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 14, background: C.card, borderRadius: 18, padding: 16, marginBottom: 11, boxShadow: "0 4px 14px rgba(30,50,40,.04)" }}>
+            <div style={{ width: 42, height: 42, borderRadius: 12, background: C.sageLt, display: "grid", placeItems: "center", flexShrink: 0 }}>
+              <Icon name={f.icon} size={21} color={C.pine} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: C.ink }}>{f.t}</div>
+              <div style={{ fontSize: 13.5, color: C.mute, marginTop: 3, lineHeight: 1.4 }}>{f.d}</div>
+            </div>
           </div>
         ))}
       </div>
       <div style={{ width: "100%" }}>
         <button onClick={() => S.setWaitlist(true)}
-          style={{ width: "100%", background: S.waitlist ? C.sageLt : C.forest, color: S.waitlist ? C.pine : "#fff", border: "none", borderRadius: 18, padding: 18, fontSize: 17, fontWeight: 700, cursor: "pointer", transition: "background .2s" }}>
-          {S.waitlist ? t.onList : t.joinWait}
+          style={{ width: "100%", background: S.waitlist ? C.sageLt : C.forest, color: S.waitlist ? C.pine : "#fff", border: "none", borderRadius: 18, padding: 18, fontSize: 16.5, fontWeight: 700, cursor: "pointer", transition: "background .2s" }}>
+          {S.waitlist ? t.notified : t.notifyMe}
         </button>
       </div>
     </div>
@@ -1549,13 +2029,15 @@ function Pricing({ t, S }) {
 
 // ---------- Profile ----------
 function Profile({ t, lang, go, S }) {
+  const acct = t.demoAccounts.find(a => a.id === S.persona) || t.demoAccounts[2];
+  const initial = acct.name.trim().charAt(0);
   return (
     <>
       <div style={{ display: "flex", alignItems: "center", gap: 17, marginBottom: 26 }}>
-        <div style={{ width: 70, height: 70, borderRadius: 22, background: C.forest, display: "grid", placeItems: "center", color: C.gold, fontSize: 26, fontWeight: 700 }}>{lang === "ar" ? "ن" : "N"}</div>
+        <div style={{ width: 70, height: 70, borderRadius: 22, background: C.forest, display: "grid", placeItems: "center", color: C.gold, fontSize: 26, fontWeight: 700 }}>{initial}</div>
         <div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: C.ink }}>{t.profName}</div>
-          <div style={{ fontSize: 15, color: C.mute, marginTop: 2 }}>{t.profCo}</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: C.ink }}>{acct.name}</div>
+          <div style={{ fontSize: 15, color: C.mute, marginTop: 2 }}>{acct.email}</div>
         </div>
       </div>
       {t.profRows.map((it, i) => (
@@ -1565,6 +2047,10 @@ function Profile({ t, lang, go, S }) {
           <span style={{ color: C.mute, fontSize: 20 }}>{t.dir === "rtl" ? "‹" : "›"}</span>
         </button>
       ))}
+      <button onClick={() => go("login")}
+        style={{ width: "100%", background: "none", border: `1.5px solid ${C.line}`, borderRadius: 16, padding: 15, marginTop: 8, fontSize: 15.5, fontWeight: 700, color: C.goldText, cursor: "pointer" }}>
+        {t.logout}
+      </button>
     </>
   );
 }
@@ -1597,6 +2083,9 @@ function App() {
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
   const [zatcaDone, setZatcaDone] = useState(false);
+  const [launchSteps, setLaunchSteps] = useState({ misa: true, moc: true, zatca: false, gosi: false, qiwa: false });
+  const [launchStep, setLaunchStep] = useState(null); // which portal walkthrough is open
+  const [referrals, setReferrals] = useState({});      // partnerIndex -> stage (0..3)
   const [invoices, setInvoices] = useState(12);
   const [quotes, setQuotes] = useState({});
   const [applied, setApplied] = useState({});
@@ -1604,8 +2093,14 @@ function App() {
   const [waitlist, setWaitlist] = useState(false);
   const [tier, setTier] = useState(null);
   const [profileRow, setProfileRow] = useState(0);
-  const S = { persona, setPersona, quizDone, setQuizDone, quizIdx, setQuizIdx, answers, setAnswers, result, setResult, zatcaDone, setZatcaDone,
+  const [crm, setCrm] = useState(null);          // pipeline rows (init from t on first Operate render)
+  const [orders, setOrders] = useState(null);    // job rows
+  const [imported, setImported] = useState(false);
+  const [alertReviewed, setAlertReviewed] = useState(false);
+  const S = { persona, setPersona, quizDone, setQuizDone, quizIdx, setQuizIdx, answers, setAnswers, result, setResult,
+    zatcaDone, setZatcaDone, launchSteps, setLaunchSteps, launchStep, setLaunchStep, referrals, setReferrals,
     invoices, setInvoices, quotes, setQuotes, applied, setApplied, vatFiled, setVatFiled,
+    crm, setCrm, orders, setOrders, imported, setImported, alertReviewed, setAlertReviewed,
     waitlist, setWaitlist, tier, setTier, profileRow, setProfileRow };
 
   // ---- uniform canvas scaling ----
@@ -1629,23 +2124,23 @@ function App() {
 
   const tabForScreen = {
     journey: "journey", ideate: "journey", mapper: "journey", quiz: "journey", scoreReveal: "journey", grow: "journey", pricing: "journey",
-    launch: "launch", market: "launch", connect: "launch",
-    operate: "operate", invoice: "operate", invoiceSuccess: "operate", customers: "operate", team: "operate", compliance: "operate",
+    launch: "launch", walkthrough: "launch", market: "launch", connect: "launch",
+    operate: "operate", invoice: "operate", invoiceSuccess: "operate", customers: "operate", orders: "operate", schedule: "operate", team: "operate", compliance: "operate",
     profile: "profile", profileDetail: "profile",
   };
   const backMap = {
     ideate: "journey", mapper: "ideate", quiz: "journey", grow: "journey", pricing: "journey",
-    market: "launch", connect: "launch",
-    invoice: "operate", customers: "operate", team: "operate", compliance: "operate",
+    walkthrough: "launch", market: "launch", connect: "launch",
+    invoice: "operate", customers: "operate", orders: "operate", schedule: "operate", team: "operate", compliance: "operate",
     profileDetail: "profile",
   };
   const go = (s) => setScreen(s);
   const tab = tabForScreen[screen] || "journey";
   const hdr = {
     journey: null, ideate: t.ideateHdr, mapper: t.mapperHdr, quiz: t.quizHdr, scoreReveal: t.quizHdr,
-    launch: t.launchHdr, market: t.dir === "rtl" ? "سوق الشركاء" : "Partner marketplace", connect: t.connectHdr,
+    launch: t.launchHdr, walkthrough: (S.launchStep != null ? t.steps[S.launchStep].portal : t.launchHdr), market: t.openMarket, connect: t.connectHdr,
     operate: t.opHdr, invoice: t.invHdr, invoiceSuccess: t.invOkHdr,
-    customers: t.custHdr, team: t.teamHdr, compliance: t.compHdr,
+    customers: t.custHdr, orders: t.ordersHdr, schedule: t.schedHdr, team: t.teamHdr, compliance: t.compHdr,
     grow: t.growHdr, pricing: t.prHdr,
     profile: t.tabs.profile, profileDetail: t.profRows[profileRow],
   };
@@ -1659,12 +2154,15 @@ function App() {
       case "ideate": return <Ideate t={t} lang={lang} go={go} S={S} />;
       case "mapper": return <Mapper t={t} />;
       case "launch": return <Launch t={t} lang={lang} go={go} S={S} />;
+      case "walkthrough": return <Walkthrough t={t} lang={lang} go={go} S={S} />;
       case "market": return <Market t={t} S={S} />;
       case "connect": return <Connect t={t} S={S} />;
       case "operate": return <Operate t={t} lang={lang} go={go} S={S} />;
       case "invoice": return <Invoice t={t} go={go} S={S} />;
       case "invoiceSuccess": return <InvoiceSuccess t={t} go={go} />;
-      case "customers": return <Customers t={t} />;
+      case "customers": return <Customers t={t} lang={lang} go={go} S={S} />;
+      case "orders": return <Orders t={t} lang={lang} go={go} S={S} />;
+      case "schedule": return <Schedule t={t} S={S} />;
       case "team": return <Team t={t} />;
       case "compliance": return <Compliance t={t} S={S} />;
       case "grow": return <Grow t={t} S={S} />;
@@ -1697,12 +2195,12 @@ function App() {
         }
       `}</style>
 
-      <Phone dir={t.dir} dark={screen === "onboarding" || screen === "splash"} w={CW} h={fit.h} s={fit.s} mobile={fit.mobile}>
+      <Phone dir={t.dir} dark={screen === "login" || screen === "splash"} w={CW} h={fit.h} s={fit.s} mobile={fit.mobile}>
         <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
           {screen === "splash"
             ? <Splash t={t} lang={lang} setLang={setLang} go={go} idx={splashIdx} setIdx={setSplashIdx} />
-            : screen === "onboarding"
-            ? <Onboarding t={t} lang={lang} setLang={setLang} go={go} S={S} />
+            : screen === "login"
+            ? <Login t={t} lang={lang} setLang={setLang} go={go} S={S} />
             : (
               <>
                 <Header t={t} lang={lang} setLang={setLang} title={hdr[screen] ?? ""} onBack={showBack ? () => go(backMap[screen] || "journey") : null} />
@@ -1716,7 +2214,7 @@ function App() {
       <div className="intilaqa-pills" style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", maxWidth: 500, marginTop: 4 }}>
         {[
           ["splash", lang === "ar" ? "المقدمة" : "Intro"],
-          ["onboarding", lang === "ar" ? "البداية" : "Start"],
+          ["login", lang === "ar" ? "الدخول" : "Login"],
           ["journey", t.tabs.journey],
           ["quiz", lang === "ar" ? "الاختبار" : "Quiz"],
           ["ideate", lang === "ar" ? "النتائج" : "Results"],
