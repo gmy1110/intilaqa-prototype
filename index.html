@@ -77,17 +77,93 @@ const T = {
       operate: { label: "Operate", tag: "SAR 149–299/mo", tagType: "sage", desc: "Invoicing, customers, payroll." },
       grow: { label: "Grow", tag: "Soon", tagType: "gold", desc: "Funding and expansion." },
     },
-    ideateStatus: "Completed · Score 74",
+    ideateStatus: "Completed",
+    ideateScore: "Score",
     startQuiz: "Start validation",
     // quiz
     quizHdr: "Quick validation",
+    quizPick: "Select your sector",
     quizQs: [
-      { q: "How often do people hit this problem?", opts: ["Rarely", "Monthly", "Weekly", "Daily"] },
-      { q: "How many customer interviews so far?", opts: ["None", "1–5", "6–15", "15+"] },
-      { q: "How big is the market in KSA?", opts: ["Niche", "One city", "National", "GCC-wide"] },
-      { q: "Would customers pay today?", opts: ["No", "Maybe", "Some said yes", "Pre-orders"] },
-      { q: "Vision 2030 alignment?", opts: ["Not sure", "Loosely", "Directly"] },
-      { q: "Your edge in this field?", opts: ["New to it", "Some experience", "Deep expertise"] },
+      { key: "sector", type: "select", lens: "feasibility",
+        q: "What sector is your idea in?",
+        opts: [
+          { label: "Tourism & Entertainment", priority: "High", sat: "Low" },
+          { label: "Logistics & Supply Chain", priority: "High", sat: "Medium" },
+          { label: "HealthTech", priority: "High", sat: "Low" },
+          { label: "FinTech", priority: "High", sat: "Medium" },
+          { label: "EdTech", priority: "Medium", sat: "Medium" },
+          { label: "Manufacturing / Industrial", priority: "High", sat: "Low" },
+          { label: "Food & Beverage", priority: "Medium", sat: "High" },
+          { label: "E-commerce / Retail", priority: "Medium", sat: "High" },
+          { label: "Professional Services", priority: "Medium", sat: "Medium" },
+          { label: "Real Estate / Construction", priority: "Medium", sat: "Medium" },
+          { label: "Other", priority: "Low", sat: "Medium" },
+        ] },
+      { key: "impact", lens: "viability",
+        q: "Which best describes your idea's impact on Saudi Arabia?",
+        opts: [
+          { label: "Creates local jobs / Saudization", pts: 20 },
+          { label: "Substitutes imports (localises something foreign)", pts: 20 },
+          { label: "Grows non-oil GDP / a new sector", pts: 18 },
+          { label: "Serves tourism, entertainment or quality of life", pts: 16 },
+          { label: "Advances digital transformation", pts: 15 },
+          { label: "None of these clearly", pts: 5 },
+        ] },
+      { key: "payer", lens: "desirability",
+        q: "Who actually pays you?",
+        opts: [
+          { label: "Businesses (B2B)", pts: 18 },
+          { label: "Government / semi-gov entities (B2G)", pts: 16 },
+          { label: "Individual consumers (B2C)", pts: 15 },
+          { label: "Not sure yet", pts: 6 },
+        ] },
+      { key: "license", lens: "feasibility",
+        q: "Does your activity need a special license or regulator approval?",
+        opts: [
+          { label: "No special license needed", pts: 20 },
+          { label: "Yes — one regulator", pts: 15 },
+          { label: "Yes — multiple regulators", pts: 10 },
+          { label: "I don't know", pts: 8 },
+        ] },
+      { key: "founder", lens: "feasibility",
+        q: "What's your status as a founder?",
+        opts: [
+          { label: "Saudi national", pts: 20 },
+          { label: "GCC national", pts: 17 },
+          { label: "Foreign resident in KSA", pts: 14 },
+          { label: "Foreign investor (abroad)", pts: 12 },
+        ] },
+      { key: "evidence", lens: "desirability",
+        q: "How do you know this problem is real?",
+        opts: [
+          { label: "People are already asking to pay for a solution", pts: 20 },
+          { label: "I've talked to 5–15 people who face it", pts: 16 },
+          { label: "I face it myself", pts: 10 },
+          { label: "A hunch — it feels like a problem", pts: 5 },
+        ] },
+      { key: "competition", lens: "feasibility",
+        q: "Who solves this today in Saudi Arabia?",
+        opts: [
+          { label: "Informal / manual workarounds only", pts: 20 },
+          { label: "Foreign apps, not localised for KSA", pts: 18 },
+          { label: "Nobody — completely new", pts: 12 },
+          { label: "Established local competitors", pts: 10 },
+        ] },
+      { key: "money", lens: "viability",
+        q: "How clear are you on making money?",
+        opts: [
+          { label: "I know my pricing and roughly what it costs to deliver", pts: 20 },
+          { label: "I have a rough idea of pricing", pts: 13 },
+          { label: "I'll figure out money later", pts: 5 },
+        ] },
+      { key: "stage", lens: "viability",
+        q: "Where are you right now?",
+        opts: [
+          { label: "Generating revenue", pts: 20 },
+          { label: "Have early users", pts: 17 },
+          { label: "Building a prototype / MVP", pts: 13 },
+          { label: "Just an idea", pts: 8 },
+        ] },
     ],
     qOf: "of",
     revealTitle: "Calculating your score…",
@@ -95,15 +171,43 @@ const T = {
     // ideate results
     ideateHdr: "Idea validation",
     scoreOf: "out of 100",
-    scoreVerdict: "PROMISING", scoreLine1: "Worth building.", scoreLine2: "Fix pricing first.",
-    checkedTitle: "What we checked", checkedCount: "6 of 6",
-    checks: [
-      { label: "Problem is real and frequent", score: "18/20", ok: true },
-      { label: "Market size in KSA", score: "15/20", ok: true },
-      { label: "Regulatory path is clear", score: "17/20", ok: true },
-      { label: "Willingness to pay", score: "9/20", ok: false },
-      { label: "Founder–market fit", score: "15/20", ok: true },
-    ],
+    lensTitle: "Your feasibility snapshot",
+    lensNames: { desirability: "Desirability", feasibility: "Feasibility", viability: "Viability" },
+    insightTitle: "Saudi market read",
+    nextStepTitle: "Your next step",
+    verdicts: {
+      strong:    { tag: "STRONG",     line1: "Strong idea.",   line2: "Move to Launch." },
+      promising: { tag: "PROMISING",  line1: "Worth building.", line2: "Fix the weak lens first." },
+      needswork: { tag: "NEEDS WORK", line1: "Real gaps.",      line2: "Validate before you spend." },
+      tooearly:  { tag: "TOO EARLY",  line1: "Too early.",      line2: "Go back to problem discovery." },
+    },
+    nextSteps: {
+      desirability: "Talk to 10 more customers who face this problem before building.",
+      feasibility: "Confirm your regulator and licensing path — we'll map it in Launch.",
+      viability: "Nail down pricing and unit cost so the numbers hold up.",
+    },
+    insight: {
+      regKnown: (reg) => `Your activity likely falls under ${reg}. We'll walk you through it in Launch.`,
+      regUnknown: "Your sector usually needs a regulator — we'll identify exactly which in Launch.",
+      regNone: "No special license expected — a lighter registration path for you.",
+      priHigh: (s) => `${s} is a Vision 2030 priority sector — strong tailwind.`,
+      priMed: (s) => `${s} fits Vision 2030's broader goals.`,
+      priLow: "Tie your idea to a clearer Vision 2030 goal to strengthen it.",
+      compGap: "The real opening looks like a localisation gap — Arabic-first, ZATCA-ready, local payments.",
+      compNew: "No competitors can mean an untested market — validate demand carefully.",
+      compRival: "Established rivals exist — you'll need a clear, defensible edge.",
+    },
+    regulators: {
+      "FinTech": "SAMA (fintech sandbox)",
+      "HealthTech": "SFDA / Ministry of Health",
+      "Food & Beverage": "SFDA",
+      "EdTech": "Ministry of Education / TVTC",
+      "Logistics & Supply Chain": "TGA / Ministry of Transport",
+      "Real Estate / Construction": "REGA / Ministry of Municipalities",
+      "Tourism & Entertainment": "Ministry of Tourism / GEA",
+      "E-commerce / Retail": "Ministry of Commerce (e-commerce)",
+      "Manufacturing / Industrial": "MODON / Ministry of Industry",
+    },
     continueToLaunch: "Continue to Launch",
     downloadReport: "Download the full report",
     seeMapper: "See Vision 2030 matches",
@@ -260,31 +364,135 @@ const T = {
       operate: { label: "التشغيل", tag: "١٤٩–٢٩٩ ريال/شهر", tagType: "sage", desc: "الفوترة والعملاء والرواتب." },
       grow: { label: "النمو", tag: "قريباً", tagType: "gold", desc: "التمويل والتوسّع." },
     },
-    ideateStatus: "مكتمل · الدرجة ٧٤",
+    ideateStatus: "مكتمل",
+    ideateScore: "الدرجة",
     startQuiz: "ابدأ التحقق",
     quizHdr: "تحقق سريع",
+    quizPick: "اختر قطاعك",
     quizQs: [
-      { q: "كم يتكرر وقوع المشكلة؟", opts: ["نادراً", "شهرياً", "أسبوعياً", "يومياً"] },
-      { q: "كم مقابلة أجريت مع العملاء؟", opts: ["صفر", "١–٥", "٦–١٥", "١٥+"] },
-      { q: "ما حجم السوق في السعودية؟", opts: ["متخصص", "مدينة واحدة", "وطني", "خليجي"] },
-      { q: "هل سيدفع العملاء اليوم؟", opts: ["لا", "ربما", "بعضهم نعم", "طلبات مسبقة"] },
-      { q: "التوافق مع رؤية ٢٠٣٠؟", opts: ["غير متأكد", "جزئياً", "مباشرة"] },
-      { q: "خبرتك في المجال؟", opts: ["جديد", "خبرة متوسطة", "خبرة عميقة"] },
+      { key: "sector", type: "select", lens: "feasibility",
+        q: "في أي قطاع فكرتك؟",
+        opts: [
+          { label: "السياحة والترفيه", priority: "High", sat: "Low" },
+          { label: "الخدمات اللوجستية وسلاسل الإمداد", priority: "High", sat: "Medium" },
+          { label: "التقنية الصحية", priority: "High", sat: "Low" },
+          { label: "التقنية المالية", priority: "High", sat: "Medium" },
+          { label: "تقنية التعليم", priority: "Medium", sat: "Medium" },
+          { label: "التصنيع والصناعة", priority: "High", sat: "Low" },
+          { label: "الأغذية والمشروبات", priority: "Medium", sat: "High" },
+          { label: "التجارة الإلكترونية والتجزئة", priority: "Medium", sat: "High" },
+          { label: "الخدمات المهنية", priority: "Medium", sat: "Medium" },
+          { label: "العقار والإنشاءات", priority: "Medium", sat: "Medium" },
+          { label: "أخرى", priority: "Low", sat: "Medium" },
+        ] },
+      { key: "impact", lens: "viability",
+        q: "ما أنسب وصف لأثر فكرتك على السعودية؟",
+        opts: [
+          { label: "توفّر وظائف محلية / سعودة", pts: 20 },
+          { label: "تحل محل الاستيراد (توطين شيء أجنبي)", pts: 20 },
+          { label: "تنمّي الناتج غير النفطي / قطاع جديد", pts: 18 },
+          { label: "تخدم السياحة والترفيه وجودة الحياة", pts: 16 },
+          { label: "تدعم التحول الرقمي", pts: 15 },
+          { label: "لا ينطبق أي مما سبق بوضوح", pts: 5 },
+        ] },
+      { key: "payer", lens: "desirability",
+        q: "من الذي يدفع لك فعلاً؟",
+        opts: [
+          { label: "الشركات (B2B)", pts: 18 },
+          { label: "الجهات الحكومية وشبه الحكومية (B2G)", pts: 16 },
+          { label: "الأفراد المستهلكون (B2C)", pts: 15 },
+          { label: "غير متأكد بعد", pts: 6 },
+        ] },
+      { key: "license", lens: "feasibility",
+        q: "هل يحتاج نشاطك ترخيصاً خاصاً أو موافقة جهة تنظيمية؟",
+        opts: [
+          { label: "لا يحتاج ترخيصاً خاصاً", pts: 20 },
+          { label: "نعم — جهة واحدة", pts: 15 },
+          { label: "نعم — عدة جهات", pts: 10 },
+          { label: "لا أعرف", pts: 8 },
+        ] },
+      { key: "founder", lens: "feasibility",
+        q: "ما صفتك كمؤسس؟",
+        opts: [
+          { label: "مواطن سعودي", pts: 20 },
+          { label: "مواطن خليجي", pts: 17 },
+          { label: "مقيم أجنبي في السعودية", pts: 14 },
+          { label: "مستثمر أجنبي (من الخارج)", pts: 12 },
+        ] },
+      { key: "evidence", lens: "desirability",
+        q: "كيف تعرف أن المشكلة حقيقية؟",
+        opts: [
+          { label: "الناس يطلبون الدفع مقابل الحل بالفعل", pts: 20 },
+          { label: "تحدثت مع ٥–١٥ شخصاً يواجهونها", pts: 16 },
+          { label: "أواجهها بنفسي", pts: 10 },
+          { label: "حدس — تبدو مشكلة", pts: 5 },
+        ] },
+      { key: "competition", lens: "feasibility",
+        q: "من يحل هذه المشكلة اليوم في السعودية؟",
+        opts: [
+          { label: "حلول يدوية غير رسمية فقط", pts: 20 },
+          { label: "تطبيقات أجنبية غير موطّنة للسوق", pts: 18 },
+          { label: "لا أحد — جديدة تماماً", pts: 12 },
+          { label: "منافسون محليون قائمون", pts: 10 },
+        ] },
+      { key: "money", lens: "viability",
+        q: "ما مدى وضوح طريقة تحقيق الدخل لديك؟",
+        opts: [
+          { label: "أعرف تسعيري وتكلفة التقديم تقريباً", pts: 20 },
+          { label: "لدي فكرة مبدئية عن التسعير", pts: 13 },
+          { label: "سأحدد الأمور المالية لاحقاً", pts: 5 },
+        ] },
+      { key: "stage", lens: "viability",
+        q: "أين أنت الآن؟",
+        opts: [
+          { label: "أحقق إيرادات", pts: 20 },
+          { label: "لدي مستخدمون أوائل", pts: 17 },
+          { label: "أبني نموذجاً أولياً", pts: 13 },
+          { label: "مجرد فكرة", pts: 8 },
+        ] },
     ],
     qOf: "من",
     revealTitle: "نحسب درجتك…",
     seeResults: "اعرض النتائج",
     ideateHdr: "تحقّق الفكرة",
     scoreOf: "من ١٠٠",
-    scoreVerdict: "واعدة", scoreLine1: "تستحق البناء.", scoreLine2: "اضبط التسعير أولاً.",
-    checkedTitle: "ما تحقّقنا منه", checkedCount: "٦ من ٦",
-    checks: [
-      { label: "المشكلة حقيقية ومتكررة", score: "١٨/٢٠", ok: true },
-      { label: "حجم السوق في السعودية", score: "١٥/٢٠", ok: true },
-      { label: "المسار التنظيمي واضح", score: "١٧/٢٠", ok: true },
-      { label: "الاستعداد للدفع", score: "٩/٢٠", ok: false },
-      { label: "ملاءمة المؤسس للسوق", score: "١٥/٢٠", ok: true },
-    ],
+    lensTitle: "لقطة الجدوى",
+    lensNames: { desirability: "الرغبة", feasibility: "الجدوى", viability: "الاستدامة" },
+    insightTitle: "قراءة السوق السعودي",
+    nextStepTitle: "خطوتك التالية",
+    verdicts: {
+      strong:    { tag: "قوية",        line1: "فكرة قوية.",     line2: "انتقل إلى التأسيس." },
+      promising: { tag: "واعدة",       line1: "تستحق البناء.",   line2: "عالج الجانب الأضعف أولاً." },
+      needswork: { tag: "تحتاج عملاً", line1: "توجد ثغرات.",    line2: "تحقّق قبل أن تنفق." },
+      tooearly:  { tag: "مبكرة جداً",  line1: "مبكرة جداً.",    line2: "ارجع إلى اكتشاف المشكلة." },
+    },
+    nextSteps: {
+      desirability: "تحدث مع ١٠ عملاء إضافيين يواجهون المشكلة قبل البناء.",
+      feasibility: "حدّد جهتك التنظيمية ومسار الترخيص — سنرسمه في التأسيس.",
+      viability: "اضبط التسعير وتكلفة الوحدة حتى تصمد الأرقام.",
+    },
+    insight: {
+      regKnown: (reg) => `يقع نشاطك غالباً تحت ${reg}. سنرشدك خلاله في التأسيس.`,
+      regUnknown: "قطاعك يحتاج عادةً جهة تنظيمية — سنحددها بدقة في التأسيس.",
+      regNone: "لا يُتوقع ترخيص خاص — مسار تسجيل أخف لك.",
+      priHigh: (s) => `${s} قطاع ذو أولوية في رؤية ٢٠٣٠ — دعم قوي.`,
+      priMed: (s) => `${s} يتوافق مع أهداف رؤية ٢٠٣٠ الأوسع.`,
+      priLow: "اربط فكرتك بهدف أوضح من رؤية ٢٠٣٠ لتقويتها.",
+      compGap: "الفرصة الحقيقية تبدو ثغرة توطين — عربي أولاً، متوافق مع زاتكا، مدفوعات محلية.",
+      compNew: "غياب المنافسين قد يعني سوقاً غير مختبرة — تحقّق من الطلب بعناية.",
+      compRival: "يوجد منافسون أقوياء — تحتاج ميزة واضحة وقابلة للدفاع.",
+    },
+    regulators: {
+      "التقنية المالية": "ساما (البيئة التجريبية)",
+      "التقنية الصحية": "الهيئة العامة للغذاء والدواء / وزارة الصحة",
+      "الأغذية والمشروبات": "الهيئة العامة للغذاء والدواء",
+      "تقنية التعليم": "وزارة التعليم / التدريب التقني",
+      "الخدمات اللوجستية وسلاسل الإمداد": "الهيئة العامة للنقل",
+      "العقار والإنشاءات": "الهيئة العامة للعقار",
+      "السياحة والترفيه": "وزارة السياحة / هيئة الترفيه",
+      "التجارة الإلكترونية والتجزئة": "وزارة التجارة",
+      "التصنيع والصناعة": "مدن / وزارة الصناعة",
+    },
     continueToLaunch: "المتابعة إلى التأسيس",
     downloadReport: "تحميل التقرير الكامل",
     seeMapper: "تطابقات رؤية ٢٠٣٠",
@@ -676,7 +884,7 @@ function Journey({ t, lang, go, S }) {
                   <Tag type={m.tagType} text={m.tag} />
                 </div>
                 <div style={{ fontSize: 15, color: C.mute, lineHeight: 1.45 }}>{m.desc}</div>
-                {key === "ideate" && ideateDone && <div style={{ fontSize: 15, fontWeight: 700, color: C.ink, marginTop: 11 }}>{t.ideateStatus}</div>}
+                {key === "ideate" && ideateDone && <div style={{ fontSize: 15, fontWeight: 700, color: C.ink, marginTop: 11 }}>{t.ideateStatus}{S.result ? ` · ${t.ideateScore} ${num(S.result.overall, lang)}` : ""}</div>}
                 {key === "ideate" && !ideateDone && <div style={{ fontSize: 15, fontWeight: 700, color: C.gold, marginTop: 11 }}>{t.startQuiz} {t.dir === "rtl" ? "←" : "→"}</div>}
                 {key === "launch" && (launchCurrent || launchDone) && (
                   <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 14 }}>
@@ -695,15 +903,97 @@ function Journey({ t, lang, go, S }) {
   );
 }
 
+// ---------- Scoring engine (deterministic, rubric-aligned) ----------
+// Lenses: Desirability 40% / Feasibility 35% / Viability 25%.
+// answers = { [questionKey]: optionIndex }. Returns full result object.
+const LENS_W = { desirability: 0.40, feasibility: 0.35, viability: 0.25 };
+
+function scoreQuiz(t, answers) {
+  const qs = t.quizQs;
+  const buckets = { desirability: [], feasibility: [], viability: [] };
+  let sector = null;
+
+  qs.forEach((q) => {
+    const ai = answers[q.key];
+    if (ai == null) return;
+    const opt = q.opts[ai];
+    if (q.type === "select") { sector = opt; return; } // sector sets context, not points
+    buckets[q.lens].push(opt.pts); // each scored option is out of 20
+  });
+
+  // per-lens 0..100 = mean of its answered questions, scaled from /20
+  const lensPct = {};
+  ["desirability", "feasibility", "viability"].forEach((L) => {
+    const arr = buckets[L];
+    lensPct[L] = arr.length ? Math.round((arr.reduce((a, b) => a + b, 0) / arr.length) * 5) : 0;
+  });
+
+  const overall = Math.round(
+    lensPct.desirability * LENS_W.desirability +
+    lensPct.feasibility * LENS_W.feasibility +
+    lensPct.viability * LENS_W.viability
+  );
+
+  const weakest = ["desirability", "feasibility", "viability"]
+    .reduce((w, L) => (lensPct[L] < lensPct[w] ? L : w), "desirability");
+
+  const verdictKey = overall >= 75 ? "strong" : overall >= 55 ? "promising" : overall >= 40 ? "needswork" : "tooearly";
+
+  // ---- Saudi market insight, derived from sector + license + competition ----
+  const lines = [];
+  if (sector) {
+    const p = sector.priority;
+    if (p === "High") lines.push(t.insight.priHigh(sector.label));
+    else if (p === "Medium") lines.push(t.insight.priMed(sector.label));
+    else lines.push(t.insight.priLow);
+  }
+  const licAns = answers.license;
+  if (licAns != null) {
+    if (licAns === 0) lines.push(t.insight.regNone);
+    else if (licAns === 3) { // "I don't know"
+      const reg = sector && t.regulators[sector.label];
+      lines.push(reg ? t.insight.regKnown(reg) : t.insight.regUnknown);
+    } else {
+      const reg = sector && t.regulators[sector.label];
+      lines.push(reg ? t.insight.regKnown(reg) : t.insight.regUnknown);
+    }
+  }
+  const compAns = answers.competition;
+  if (compAns === 1) lines.push(t.insight.compGap);        // foreign apps not localised
+  else if (compAns === 2) lines.push(t.insight.compNew);   // nobody
+  else if (compAns === 3) lines.push(t.insight.compRival); // established local
+
+  return {
+    overall,
+    lens: lensPct,
+    weakest,
+    verdict: t.verdicts[verdictKey],
+    verdictKey,
+    sector,
+    insight: lines.slice(0, 3),
+    nextStep: t.nextSteps[weakest],
+  };
+}
+
 // ---------- Quiz ----------
 function Quiz({ t, lang, go, S }) {
   const idx = S.quizIdx;
   const total = t.quizQs.length;
   const q = t.quizQs[idx];
-  const pick = () => {
-    if (idx + 1 >= total) { S.setQuizDone(true); S.setQuizIdx(0); go("scoreReveal"); }
-    else S.setQuizIdx(idx + 1);
+  const isSelect = q.type === "select";
+  const pick = (i) => {
+    const next = { ...S.answers, [q.key]: i };
+    S.setAnswers(next);
+    if (idx + 1 >= total) {
+      S.setResult(scoreQuiz(t, next));
+      S.setQuizDone(true);
+      S.setQuizIdx(0);
+      go("scoreReveal");
+    } else {
+      S.setQuizIdx(idx + 1);
+    }
   };
+  const cur = S.answers[q.key];
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
@@ -713,28 +1003,39 @@ function Quiz({ t, lang, go, S }) {
         <div style={{ width: `${((idx) / total) * 100}%`, height: "100%", background: C.gold, borderRadius: 5, transition: "width .3s" }} />
       </div>
       <h1 style={{ fontSize: 25, fontWeight: 700, color: C.ink, margin: "0 0 22px", lineHeight: 1.25 }}>{q.q}</h1>
-      {q.opts.map((o, i) => (
-        <button key={i} onClick={pick}
-          style={{ width: "100%", textAlign: t.dir === "rtl" ? "right" : "left", background: C.card, border: `1.5px solid transparent`,
-            borderRadius: 18, padding: "18px 20px", marginBottom: 12, cursor: "pointer", fontSize: 16.5, fontWeight: 600, color: C.ink,
-            boxShadow: "0 4px 14px rgba(30,50,40,.05)" }}>
-          {o}
-        </button>
-      ))}
+      {isSelect && <div style={{ fontSize: 13.5, color: C.mute, marginBottom: 12, marginTop: -10 }}>{t.quizPick}</div>}
+      <div style={isSelect ? { maxHeight: 560, overflowY: "auto", margin: "0 -4px", padding: "0 4px" } : null}>
+        {q.opts.map((o, i) => {
+          const label = isSelect ? o.label : o.label;
+          const sel = cur === i;
+          return (
+            <button key={i} onClick={() => pick(i)}
+              style={{ width: "100%", textAlign: t.dir === "rtl" ? "right" : "left",
+                background: sel ? C.sageLt : C.card, border: `1.5px solid ${sel ? C.forest : "transparent"}`,
+                borderRadius: isSelect ? 14 : 18, padding: isSelect ? "15px 18px" : "18px 20px",
+                marginBottom: isSelect ? 9 : 12, cursor: "pointer", fontSize: isSelect ? 15.5 : 16.5,
+                fontWeight: 600, color: C.ink, boxShadow: "0 4px 14px rgba(30,50,40,.05)" }}>
+              {label}
+            </button>
+          );
+        })}
+      </div>
     </>
   );
 }
 
 // ---------- Score reveal ----------
-function ScoreReveal({ t, go }) {
+function ScoreReveal({ t, lang, go, S }) {
+  const target = (S.result && S.result.overall) || 0;
   const [n, setN] = React.useState(0);
   React.useEffect(() => {
     let v = 0;
-    const iv = setInterval(() => { v += 2; if (v >= 74) { v = 74; clearInterval(iv); } setN(v); }, 28);
+    const iv = setInterval(() => { v += 2; if (v >= target) { v = target; clearInterval(iv); } setN(v); }, 28);
     return () => clearInterval(iv);
-  }, []);
+  }, [target]);
   const r = 62, circ = 2 * Math.PI * r;
-  const done = n >= 74;
+  const done = n >= target;
+  const vd = (S.result && S.result.verdict) || t.verdicts.promising;
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 40 }}>
       <div style={{ color: C.mute, fontSize: 16, marginBottom: 26 }}>{done ? "" : t.revealTitle}</div>
@@ -745,14 +1046,14 @@ function ScoreReveal({ t, go }) {
             strokeDasharray={circ} strokeDashoffset={circ * (1 - n / 100)} transform="rotate(-90 75 75)" />
         </svg>
         <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-          <span style={{ fontSize: 48, fontWeight: 700, color: C.ink, lineHeight: 1 }}>{n}</span>
+          <span style={{ fontSize: 48, fontWeight: 700, color: C.ink, lineHeight: 1 }}>{num(n, lang)}</span>
           <span style={{ fontSize: 13, color: C.mute, marginTop: 4 }}>{t.scoreOf}</span>
         </div>
       </div>
       {done && (
         <>
-          <div style={{ color: C.gold, fontWeight: 700, fontSize: 14, letterSpacing: 1, marginTop: 26 }}>{t.scoreVerdict}</div>
-          <div style={{ color: C.ink, fontSize: 22, fontWeight: 700, marginTop: 8, textAlign: "center" }}>{t.scoreLine1}</div>
+          <div style={{ color: C.gold, fontWeight: 700, fontSize: 14, letterSpacing: 1, marginTop: 26 }}>{vd.tag}</div>
+          <div style={{ color: C.ink, fontSize: 22, fontWeight: 700, marginTop: 8, textAlign: "center" }}>{vd.line1}</div>
           <div style={{ width: "100%", marginTop: 30 }}>
             <Primary onClick={() => go("ideate")}>{t.seeResults}</Primary>
           </div>
@@ -763,11 +1064,14 @@ function ScoreReveal({ t, go }) {
 }
 
 // ---------- Ideate results ----------
-function Ideate({ t, go }) {
-  const val = 74, r = 52, circ = 2 * Math.PI * r;
+function Ideate({ t, lang, go, S }) {
+  // fall back to a sensible demo result if quiz wasn't taken this session
+  const res = S.result || scoreQuiz(t, { sector: 3, impact: 0, payer: 0, license: 3, founder: 0, evidence: 1, competition: 1, money: 1, stage: 2 });
+  const val = res.overall, r = 52, circ = 2 * Math.PI * r;
+  const lensOrder = ["desirability", "feasibility", "viability"];
   return (
     <>
-      <div style={{ background: C.forest, borderRadius: 26, padding: 24, display: "flex", alignItems: "center", gap: 20, marginBottom: 24 }}>
+      <div style={{ background: C.forest, borderRadius: 26, padding: 24, display: "flex", alignItems: "center", gap: 20, marginBottom: 22 }}>
         <div style={{ position: "relative", width: 128, height: 128, flexShrink: 0 }}>
           <svg width="128" height="128" viewBox="0 0 120 120">
             <circle cx="60" cy="60" r={r} fill="none" stroke="rgba(255,255,255,.15)" strokeWidth="9" />
@@ -775,30 +1079,58 @@ function Ideate({ t, go }) {
               strokeDasharray={circ} strokeDashoffset={circ * (1 - val / 100)} transform="rotate(-90 60 60)" />
           </svg>
           <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontSize: 37, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{t.dir === "rtl" ? "٧٤" : "74"}</span>
+            <span style={{ fontSize: 37, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{num(val, lang)}</span>
             <span style={{ fontSize: 12, color: "rgba(255,255,255,.6)", marginTop: 3 }}>{t.scoreOf}</span>
           </div>
         </div>
         <div>
-          <div style={{ color: C.gold, fontWeight: 700, fontSize: 13.5, letterSpacing: 1 }}>{t.scoreVerdict}</div>
-          <div style={{ color: "#fff", fontSize: 22, fontWeight: 700, lineHeight: 1.25, marginTop: 7 }}>{t.scoreLine1}<br />{t.scoreLine2}</div>
+          <div style={{ color: C.gold, fontWeight: 700, fontSize: 13.5, letterSpacing: 1 }}>{res.verdict.tag}</div>
+          <div style={{ color: "#fff", fontSize: 22, fontWeight: 700, lineHeight: 1.25, marginTop: 7 }}>{res.verdict.line1}<br />{res.verdict.line2}</div>
         </div>
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 13 }}>
-        <span style={{ fontSize: 20, fontWeight: 700, color: C.ink }}>{t.checkedTitle}</span>
-        <span style={{ fontSize: 14, color: C.mute }}>{t.checkedCount}</span>
-      </div>
-      <div style={{ background: C.card, borderRadius: 22, padding: "6px 18px", boxShadow: "0 6px 18px rgba(30,50,40,.05)", marginBottom: 22 }}>
-        {t.checks.map((c, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, padding: "17px 0", borderBottom: i < t.checks.length - 1 ? `1px solid ${C.lineSoft}` : "none" }}>
-            <div style={{ width: 28, height: 28, borderRadius: "50%", background: c.ok ? C.forest : C.goldSoft, display: "grid", placeItems: "center", flexShrink: 0 }}>
-              {c.ok ? <Icon name="check" size={15} /> : <Icon name="bang" size={17} />}
+
+      {/* Three-lens snapshot */}
+      <div style={{ fontSize: 20, fontWeight: 700, color: C.ink, marginBottom: 13 }}>{t.lensTitle}</div>
+      <div style={{ background: C.card, borderRadius: 22, padding: "20px 20px 8px", boxShadow: "0 6px 18px rgba(30,50,40,.05)", marginBottom: 20 }}>
+        {lensOrder.map((L) => {
+          const pct = res.lens[L];
+          const weak = res.weakest === L;
+          return (
+            <div key={L} style={{ marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 7 }}>
+                <span style={{ fontSize: 15.5, fontWeight: 600, color: C.ink }}>{t.lensNames[L]}</span>
+                <span style={{ fontSize: 14.5, fontWeight: 700, color: weak ? C.goldText : C.pine }}>{num(pct, lang)}</span>
+              </div>
+              <div style={{ height: 9, background: C.lineSoft, borderRadius: 6, overflow: "hidden" }}>
+                <div style={{ width: `${pct}%`, height: "100%", background: weak ? C.gold : C.forest, borderRadius: 6, transition: "width .5s" }} />
+              </div>
             </div>
-            <span style={{ flex: 1, fontSize: 16, color: C.ink }}>{c.label}</span>
-            <span style={{ fontSize: 15.5, fontWeight: 700, color: c.ok ? C.pine : C.goldText }}>{c.score}</span>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
+      {/* Saudi market insight card */}
+      {res.insight.length > 0 && (
+        <div style={{ background: C.sageLt, borderRadius: 22, padding: "18px 20px", marginBottom: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 11 }}>
+            <Icon name="shield" size={19} color={C.pine} />
+            <span style={{ fontSize: 16, fontWeight: 700, color: C.forest }}>{t.insightTitle}</span>
+          </div>
+          {res.insight.map((line, i) => (
+            <div key={i} style={{ display: "flex", gap: 9, marginBottom: i < res.insight.length - 1 ? 9 : 0 }}>
+              <span style={{ color: C.gold, fontWeight: 700, flexShrink: 0 }}>•</span>
+              <span style={{ fontSize: 14.5, color: C.pine, lineHeight: 1.4 }}>{line}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Next step tied to weakest lens */}
+      <div style={{ background: C.goldSoft, borderRadius: 22, padding: "16px 20px", marginBottom: 22 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: C.goldText, letterSpacing: .5, marginBottom: 6 }}>{t.nextStepTitle}</div>
+        <div style={{ fontSize: 15.5, color: C.ink, lineHeight: 1.4, fontWeight: 500 }}>{res.nextStep}</div>
+      </div>
+
       <Primary onClick={() => go("launch")}>{t.continueToLaunch}</Primary>
       <button onClick={() => go("mapper")} style={{ width: "100%", background: "none", color: C.mute, border: "none", padding: "17px 0 6px", fontSize: 15, fontWeight: 600, cursor: "pointer" }}>{t.seeMapper}</button>
       <div style={{ textAlign: "center", color: C.mute, fontSize: 14.5, opacity: .8 }}>{t.downloadReport}</div>
@@ -1262,6 +1594,8 @@ function App() {
   const [persona, setPersona] = useState("fahad");
   const [quizDone, setQuizDone] = useState(false);
   const [quizIdx, setQuizIdx] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [result, setResult] = useState(null);
   const [zatcaDone, setZatcaDone] = useState(false);
   const [invoices, setInvoices] = useState(12);
   const [quotes, setQuotes] = useState({});
@@ -1270,7 +1604,7 @@ function App() {
   const [waitlist, setWaitlist] = useState(false);
   const [tier, setTier] = useState(null);
   const [profileRow, setProfileRow] = useState(0);
-  const S = { persona, setPersona, quizDone, setQuizDone, quizIdx, setQuizIdx, zatcaDone, setZatcaDone,
+  const S = { persona, setPersona, quizDone, setQuizDone, quizIdx, setQuizIdx, answers, setAnswers, result, setResult, zatcaDone, setZatcaDone,
     invoices, setInvoices, quotes, setQuotes, applied, setApplied, vatFiled, setVatFiled,
     waitlist, setWaitlist, tier, setTier, profileRow, setProfileRow };
 
@@ -1321,8 +1655,8 @@ function App() {
     switch (screen) {
       case "journey": return <Journey t={t} lang={lang} go={go} S={S} />;
       case "quiz": return <Quiz t={t} lang={lang} go={go} S={S} />;
-      case "scoreReveal": return <ScoreReveal t={t} go={go} />;
-      case "ideate": return <Ideate t={t} go={go} />;
+      case "scoreReveal": return <ScoreReveal t={t} lang={lang} go={go} S={S} />;
+      case "ideate": return <Ideate t={t} lang={lang} go={go} S={S} />;
       case "mapper": return <Mapper t={t} />;
       case "launch": return <Launch t={t} lang={lang} go={go} S={S} />;
       case "market": return <Market t={t} S={S} />;
