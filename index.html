@@ -70,10 +70,11 @@ const T = {
     loginDivider: "Demo accounts",
     loginDemoHint: "Tap an account to explore",
     demoAccounts: [
-      { id: "amal", icon: "bulb", name: "Amal Al-Rashid", role: "Validating an idea", email: "amal@intilaqa.sa", go: "journey" },
-      { id: "fahad", icon: "home", name: "Fahad Al-Otaibi", role: "Registering · foreign founder", email: "fahad@intilaqa.sa", go: "launch" },
-      { id: "ohoud", icon: "chart", name: "Ohoud Al-Ghamdi", role: "Operating · Nafath Studio", email: "ohoud@intilaqa.sa", go: "operate" },
+      { id: "amal", icon: "bulb", name: "Amal Al-Rashid", role: "Validating an idea", email: "amal@intilaqa.sa", tier: "Free", go: "journey" },
+      { id: "fahad", icon: "home", name: "Fahad Al-Otaibi", role: "Registering · foreign founder", email: "fahad@intilaqa.sa", tier: "Pro", go: "launch" },
+      { id: "ohoud", icon: "chart", name: "Ohoud Al-Ghamdi", role: "Operating · Nafath Studio", email: "ohoud@intilaqa.sa", tier: "Business", go: "operate" },
     ],
+    tierNames: { Free: "Free", Pro: "Pro", Business: "Business" },
     logout: "Log out",
     onbKicker: "STEP 1 OF 3",
     onbTitle: "Where are you on the journey?",
@@ -444,10 +445,11 @@ const T = {
     loginDivider: "حسابات تجريبية",
     loginDemoHint: "اضغط على حساب للاستكشاف",
     demoAccounts: [
-      { id: "amal", icon: "bulb", name: "أمل الراشد", role: "تتحقق من فكرة", email: "amal@intilaqa.sa", go: "journey" },
-      { id: "fahad", icon: "home", name: "فهد العتيبي", role: "يسجّل · مؤسس أجنبي", email: "fahad@intilaqa.sa", go: "launch" },
-      { id: "ohoud", icon: "chart", name: "عهود الغامدي", role: "تشغّل · استوديو نفاذ", email: "ohoud@intilaqa.sa", go: "operate" },
+      { id: "amal", icon: "bulb", name: "أمل الراشد", role: "تتحقق من فكرة", email: "amal@intilaqa.sa", tier: "Free", go: "journey" },
+      { id: "fahad", icon: "home", name: "فهد العتيبي", role: "يسجّل · مؤسس أجنبي", email: "fahad@intilaqa.sa", tier: "Pro", go: "launch" },
+      { id: "ohoud", icon: "chart", name: "عهود الغامدي", role: "تشغّل · استوديو نفاذ", email: "ohoud@intilaqa.sa", tier: "Business", go: "operate" },
     ],
+    tierNames: { Free: "مجاني", Pro: "برو", Business: "بزنس" },
     logout: "تسجيل الخروج",
     onbKicker: "الخطوة ١ من ٣",
     onbTitle: "أين أنت في الرحلة؟",
@@ -959,6 +961,11 @@ function Splash({ t, lang, setLang, go, idx, setIdx }) {
 }
 
 // ---------- Login ----------
+function tierPill(tier) {
+  if (tier === "Free") return { bg: C.sageLt, fg: C.pine };
+  if (tier === "Pro") return { bg: C.goldSoft, fg: C.goldText };
+  return { bg: C.forest, fg: "#fff" }; // Business
+}
 function Login({ t, lang, setLang, go, S }) {
   const loginAs = (acct) => {
     S.setPersona(acct.id);
@@ -1026,8 +1033,13 @@ function Login({ t, lang, setLang, go, S }) {
               <Icon name={a.icon} size={22} color={C.pine} />
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 16.5, fontWeight: 700, color: C.ink }}>{a.name}</div>
-              <div style={{ fontSize: 13.5, color: C.mute, marginTop: 2 }}>{a.role}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 16.5, fontWeight: 700, color: C.ink }}>{a.name}</span>
+                {(() => { const tp = tierPill(a.tier); return (
+                  <span style={{ fontSize: 10.5, fontWeight: 700, color: tp.fg, background: tp.bg, padding: "3px 9px", borderRadius: 20, letterSpacing: .3 }}>{t.tierNames[a.tier]}</span>
+                ); })()}
+              </div>
+              <div style={{ fontSize: 13.5, color: C.mute, marginTop: 3 }}>{a.role}</div>
             </div>
             <span style={{ color: C.mute, fontSize: 20 }}>{t.dir === "rtl" ? "‹" : "›"}</span>
           </button>
@@ -2036,8 +2048,13 @@ function Profile({ t, lang, go, S }) {
       <div style={{ display: "flex", alignItems: "center", gap: 17, marginBottom: 26 }}>
         <div style={{ width: 70, height: 70, borderRadius: 22, background: C.forest, display: "grid", placeItems: "center", color: C.gold, fontSize: 26, fontWeight: 700 }}>{initial}</div>
         <div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: C.ink }}>{acct.name}</div>
-          <div style={{ fontSize: 15, color: C.mute, marginTop: 2 }}>{acct.email}</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+            <span style={{ fontSize: 22, fontWeight: 700, color: C.ink }}>{acct.name}</span>
+            {(() => { const tp = tierPill(acct.tier); return (
+              <span style={{ fontSize: 11, fontWeight: 700, color: tp.fg, background: tp.bg, padding: "3px 10px", borderRadius: 20 }}>{t.tierNames[acct.tier]}</span>
+            ); })()}
+          </div>
+          <div style={{ fontSize: 15, color: C.mute, marginTop: 3 }}>{acct.email}</div>
         </div>
       </div>
       {t.profRows.map((it, i) => (
