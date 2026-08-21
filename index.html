@@ -2208,7 +2208,6 @@ function App() {
         @media (max-width:640px){
           .intilaqa-stage{ padding:0; gap:0; background:#12201B; }
           .intilaqa-phone{ border-radius:0; border:0; }
-          .intilaqa-pills{ display:none !important; }
         }
       `}</style>
 
@@ -2227,34 +2226,6 @@ function App() {
             )}
         </div>
       </Phone>
-
-      <div className="intilaqa-pills" style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", maxWidth: 500, marginTop: 4 }}>
-        {[
-          ["splash", lang === "ar" ? "المقدمة" : "Intro"],
-          ["login", lang === "ar" ? "الدخول" : "Login"],
-          ["journey", t.tabs.journey],
-          ["quiz", lang === "ar" ? "الاختبار" : "Quiz"],
-          ["ideate", lang === "ar" ? "النتائج" : "Results"],
-          ["mapper", lang === "ar" ? "المُخطِّط" : "Mapper"],
-          ["launch", t.tabs.launch],
-          ["market", lang === "ar" ? "السوق" : "Market"],
-          ["connect", "Connect"],
-          ["operate", t.tabs.operate],
-          ["customers", lang === "ar" ? "العملاء" : "CRM"],
-          ["team", lang === "ar" ? "الفريق" : "Team"],
-          ["compliance", lang === "ar" ? "الالتزام" : "Compliance"],
-          ["invoice", lang === "ar" ? "الفوترة" : "Invoice"],
-          ["grow", lang === "ar" ? "النمو" : "Grow"],
-          ["pricing", lang === "ar" ? "الأسعار" : "Pricing"],
-          ["profile", t.tabs.profile],
-        ].map(([k, label]) => (
-          <button key={k} onClick={() => setScreen(k)}
-            style={{ background: screen === k ? C.forest : "#fff", color: screen === k ? "#fff" : C.mute,
-              border: `1px solid ${screen === k ? C.forest : C.line}`, borderRadius: 20, padding: "7px 12px", fontSize: 11.5, fontWeight: 600, cursor: "pointer" }}>
-            {label}
-          </button>
-        ))}
-      </div>
     </div>
   );
 }
